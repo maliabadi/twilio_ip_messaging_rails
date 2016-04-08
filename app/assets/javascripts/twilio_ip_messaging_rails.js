@@ -1,4 +1,4 @@
-/* twilio-ip-messaging.js 0.9.4
+/* twilio-ip-messaging.js 0.10.0
 The following license applies to all parts of this software except as
 documented below.
 
@@ -145,21 +145,23 @@ This software includes platform.js under the following license.
     LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
     OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/ 
+*/
 
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function (global){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}(g.Twilio || (g.Twilio = {})).IPMessaging = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 'use strict';
 
-var log = require('loglevel');
+var log = _dereq_('loglevel');
 
-var DataSyncConfig = require('./configuration.js');
-var Subscriptions = require('./subscriptions.js');
-var Router = require('./router.js');
-var Network = require('./network.js');
+var DataSyncConfig = _dereq_('./configuration.js');
+var Subscriptions = _dereq_('./subscriptions.js');
+var Router = _dereq_('./router.js');
+var Network = _dereq_('./network.js');
 
-var DataEntity = require('./dataentity.js');
-var DataStream = require('./datastream.js');
-var DataMap = require('./datamap.js');
+var DataEntity = _dereq_('./dataentity.js');
+var DataStream = _dereq_('./datastream.js');
+var DataMap = _dereq_('./datamap.js');
 
 var COREDATA_ENTITY_NOTIFICATION_TYPE = 'com.twilio.rtd.cds.entity';
 var COREDATA_STREAM_NOTIFICATION_TYPE = 'com.twilio.rtd.cds.stream';
@@ -334,7 +336,7 @@ Object.freeze(DataSyncClient);
 
 module.exports = DataSyncClient;
 
-},{"./configuration.js":3,"./dataentity.js":4,"./datamap.js":5,"./datastream.js":6,"./network.js":7,"./router.js":8,"./subscriptions.js":9,"loglevel":56}],2:[function(require,module,exports){
+},{"./configuration.js":3,"./dataentity.js":4,"./datamap.js":5,"./datastream.js":6,"./network.js":7,"./router.js":8,"./subscriptions.js":9,"loglevel":60}],2:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -373,7 +375,7 @@ Object.freeze(CollectionEntity);
 
 module.exports = CollectionEntity;
 
-},{}],3:[function(require,module,exports){
+},{}],3:[function(_dereq_,module,exports){
 'use strict';
 
 var CDS_URI = 'https://cds.twilio.com';
@@ -428,15 +430,15 @@ DataSyncConfig.prototype.updateToken = function (token) {
 
 module.exports = DataSyncConfig;
 
-},{}],4:[function(require,module,exports){
+},{}],4:[function(_dereq_,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
-var EventEmitter = require('events').EventEmitter;
-var inherits = require('util').inherits;
-var JsonDiff = require('../../util/jsondiff');
-var log = require('loglevel');
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
+var JsonDiff = _dereq_('../../util/jsondiff');
+var log = _dereq_('loglevel');
 
 /**
  *  @class DataEntity
@@ -680,7 +682,7 @@ DataEntity.prototype.addEventHandler = function (eventName, path, handler) {
  * @param {string} path JSON path
  */
 DataEntity.prototype.value = function (path) {
-  var result = undefined;
+  var result = void 0;
   try {
     var pathArr = path.replace(/^\/|\/$/gm, '').split('/');
     var obj = this.getData();
@@ -746,16 +748,16 @@ Object.freeze(DataEntity);
 
 module.exports = DataEntity;
 
-},{"../../util/jsondiff":33,"events":49,"loglevel":56,"util":91}],5:[function(require,module,exports){
+},{"../../util/jsondiff":37,"events":54,"loglevel":60,"util":94}],5:[function(_dereq_,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
-var EventEmitter = require('events').EventEmitter;
-var inherits = require('util').inherits;
-var util = require('../../util');
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
+var util = _dereq_('../../util');
 
-var Entity = require('./collectionentity');
+var Entity = _dereq_('./collectionentity');
 
 /**
  * @class DataMap
@@ -811,7 +813,7 @@ DataMap.prototype._tryPostOrUpdate = function (uri, data) {
     }).catch(function (err) {
       if (err.status === 409) {
         var _ret = function () {
-          var location = undefined;
+          var location = void 0;
           try {
             var body = JSON.parse(err.body);
             location = body.links.entity;
@@ -1029,7 +1031,7 @@ DataMap.prototype.forEach = function (handler) {
           }).catch(reject);
         };
 
-        var _undefined = undefined;
+        var _undefined = void 0;
         processChunk(_undefined, handler, function () {
           _this10._cacheState.ensured = true;resolve();
         });
@@ -1122,15 +1124,15 @@ Object.freeze(DataMap);
 
 module.exports = DataMap;
 
-},{"../../util":32,"./collectionentity":2,"events":49,"util":91}],6:[function(require,module,exports){
+},{"../../util":36,"./collectionentity":2,"events":54,"util":94}],6:[function(_dereq_,module,exports){
 'use strict';
 
-var EventEmitter = require('events').EventEmitter;
-var inherits = require('util').inherits;
-var util = require('../../util');
-var log = require('loglevel');
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
+var util = _dereq_('../../util');
+var log = _dereq_('loglevel');
 
-var Entity = require('./collectionentity');
+var Entity = _dereq_('./collectionentity');
 
 /**
  * @class EventStream
@@ -1431,7 +1433,7 @@ Object.freeze(EventStream);
 
 module.exports = EventStream;
 
-},{"../../util":32,"./collectionentity":2,"events":49,"loglevel":56,"util":91}],7:[function(require,module,exports){
+},{"../../util":36,"./collectionentity":2,"events":54,"loglevel":60,"util":94}],7:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -1499,11 +1501,11 @@ Object.freeze(Network);
 
 module.exports = Network;
 
-},{}],8:[function(require,module,exports){
+},{}],8:[function(_dereq_,module,exports){
 'use strict';
 
-var util = require('../../util');
-var log = require('loglevel');
+var util = _dereq_('../../util');
+var log = _dereq_('loglevel');
 
 var COREDATA_ENTITY_NOTIFICATION_TYPE = 'com.twilio.rtd.cds.entity';
 var COREDATA_STREAM_NOTIFICATION_TYPE = 'com.twilio.rtd.cds.stream';
@@ -1534,8 +1536,8 @@ Router.prototype.onMessage = function (type, message) {
       entity._update(copiedMessage.event);
     });
   } else if (type === COREDATA_STREAM_NOTIFICATION_TYPE || type === COREDATA_MAP_NOTIFICATION_TYPE) {
-    var uri = message.collection.links.collection;
-    this._subscriptions.getSubscribers(uri).forEach(function (eventStream) {
+    var _uri = message.collection.links.collection;
+    this._subscriptions.getSubscribers(_uri).forEach(function (eventStream) {
       var copiedMessage = util.deepClone(message);
       eventStream._update(copiedMessage.event);
     });
@@ -1588,10 +1590,10 @@ Object.freeze(Router);
 
 module.exports = Router;
 
-},{"../../util":32,"loglevel":56}],9:[function(require,module,exports){
+},{"../../util":36,"loglevel":60}],9:[function(_dereq_,module,exports){
 'use strict';
 
-var log = require('loglevel');
+var log = _dereq_('loglevel');
 
 /**
  * @class Subscriptions
@@ -1737,17 +1739,17 @@ Object.freeze(Subscriptions);
 
 module.exports = Subscriptions;
 
-},{"loglevel":56}],10:[function(require,module,exports){
+},{"loglevel":60}],10:[function(_dereq_,module,exports){
 'use strict';
 
-var EventEmitter = require('events').EventEmitter;
-var inherits = require('util').inherits;
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
 
-var MembersEntity = require('./data/members');
-var Member = require('./member');
-var MessagesEntity = require('./data/messages');
-var JsonDiff = require('../../util/jsondiff');
-var log = require('loglevel');
+var MembersEntity = _dereq_('./data/members');
+var Member = _dereq_('./member');
+var MessagesEntity = _dereq_('./data/messages');
+var JsonDiff = _dereq_('../../util/jsondiff');
+var log = _dereq_('loglevel');
 
 var fieldMappings = {
   attributes: 'attributes',
@@ -1762,6 +1764,14 @@ var fieldMappings = {
   type: 'type',
   uniqueName: 'uniqueName'
 };
+
+function parseTime(timeString) {
+  try {
+    return new Date(timeString);
+  } catch (e) {
+    return null;
+  }
+}
 
 /**
  * @class
@@ -1784,6 +1794,7 @@ var fieldMappings = {
  * @fires Channel#memberJoined
  * @fires Channel#memberLeft
  * @fires Channel#memberUpdated
+ * @fires Channel#memberInfoUpdated
  * @fires Channel#messageAdded
  * @fires Channel#messageRemoved
  * @fires Channel#messageUpdated
@@ -1792,18 +1803,18 @@ var fieldMappings = {
  * @fires Channel#updated
  */
 
-function Channel(session, data, sid) {
+function Channel(services, data, sid) {
   var _this = this;
 
   if (!(this instanceof Channel)) {
-    return new Channel(session, data, sid);
+    return new Channel(services, data, sid);
   }
 
   var attributes = data.attributes || {};
   var createdBy = data.createdBy;
-  var dateCreated = data.dateCreated;
-  var dateUpdated = data.dateUpdated;
-  var friendlyName = data.name || data.friendlyName;
+  var dateCreated = parseTime(data.dateCreated);
+  var dateUpdated = parseTime(data.dateUpdated);
+  var friendlyName = data.name || data.friendlyName || null;
   var lastConsumedMessageIndex = data.lastConsumedMessageIndex || null;
   var status = 'known';
   var type = data.type || Channel.type.PUBLIC;
@@ -1821,13 +1832,14 @@ function Channel(session, data, sid) {
   }
 
   var members = new Map();
-  var membersEntity = new MembersEntity(this, session, members);
+  var membersEntity = new MembersEntity(this, services.session, services.userInfos, members);
   membersEntity.on('memberJoined', this.emit.bind(this, 'memberJoined'));
   membersEntity.on('memberLeft', this.emit.bind(this, 'memberLeft'));
   membersEntity.on('memberUpdated', this.emit.bind(this, 'memberUpdated'));
+  membersEntity.on('memberInfoUpdated', this.emit.bind(this, 'memberInfoUpdated'));
 
   var messages = [];
-  var messagesEntity = new MessagesEntity(this, session, messages);
+  var messagesEntity = new MessagesEntity(this, services.session, messages);
   messagesEntity.on('messageAdded', this.emit.bind(this, 'messageAdded'));
   messagesEntity.on('messageUpdated', this.emit.bind(this, 'messageUpdated'));
   messagesEntity.on('messageRemoved', this.emit.bind(this, 'messageRemoved'));
@@ -1915,10 +1927,11 @@ function Channel(session, data, sid) {
     },
     _entityPromise: { value: null, writable: true },
     _subscribePromise: { value: null, writable: true },
-    _lastTypingUpdate: { value: 0, writable: true },
     _membersEntity: { value: membersEntity },
     _messagesEntity: { value: messagesEntity },
-    _session: { value: session },
+    _session: { value: services.session },
+    _typingIndicator: { value: services.typingIndicator },
+    _consumptionHorizon: { value: services.consumptionHorizon },
     _uri: { value: uri, writable: true },
     attributes: {
       enumerable: true,
@@ -2119,20 +2132,16 @@ Channel.prototype._setStatus = function (status) {
 
   this._status = status;
 
-  if (status === 'joined') {
+  if (status === Channel.status.JOINED) {
     this._subscribeStreams();
-  } else if (status === 'invited') {
+  } else if (status === Channel.status.INVITED) {
     this._subscribe();
   } else if (this._entityPromise) {
     this._unsubscribe();
   }
 };
 
-/**
- * Updates local channel object with new values
- * @private
- */
-Channel.prototype._update = function (update) {
+function preprocessUpdate(update, channelSid) {
   try {
     if (typeof update.attributes === 'string') {
       update.attributes = JSON.parse(update.attributes);
@@ -2140,37 +2149,65 @@ Channel.prototype._update = function (update) {
       JSON.stringify(update.attributes);
     }
   } catch (e) {
-    log.warn('Retrieved malformed attributes from the server for channel: ' + this._sid);
+    log.warn('Retrieved malformed attributes from the server for channel: ' + channelSid);
     update.attributes = {};
   }
+
+  try {
+    if (update.dateCreated) {
+      update.dateCreated = new Date(update.dateCreated);
+    }
+  } catch (e) {
+    log.warn('Retrieved malformed attributes from the server for channel: ' + channelSid);
+    delete update.dateCreated;
+  }
+
+  try {
+    if (update.dateUpdated) {
+      update.dateUpdated = new Date(update.dateUpdated);
+    }
+  } catch (e) {
+    log.warn('Retrieved malformed attributes from the server for channel: ' + channelSid);
+    delete update.dateUpdated;
+  }
+}
+
+/**
+ * Updates local channel object with new values
+ * @private
+ */
+Channel.prototype._update = function (update) {
+  preprocessUpdate(update, this._sid);
 
   var updated = false;
   for (var key in update) {
     var localKey = fieldMappings[key];
-    if (localKey && localKey === fieldMappings.attributes) {
+    if (!localKey) {
+      continue;
+    }
+
+    if (localKey === fieldMappings.attributes) {
       if (!JsonDiff.isDeepEqual(this._attributes, update.attributes)) {
         this._attributes = update.attributes;
         updated = true;
       }
-    } else if (localKey && this[localKey] !== update[key]) {
+    } else if (update[key] instanceof Date) {
+      if (!this[localKey] || this[localKey].getTime() !== update[key].getTime()) {
+        this['_' + localKey] = update[key];
+        updated = true;
+      }
+    } else if (this[localKey] !== update[key]) {
       this['_' + localKey] = update[key];
       updated = true;
     }
   }
-  // if uniqueName is not present in the update - then we should set it to undefined on the client object
+
+  // if uniqueName is not present in the update - then we should set it to null on the client object
   if (!update.status && !update.uniqueName) {
     if (this._uniqueName) {
       this._uniqueName = null;
       updated = true;
     }
-  }
-
-  if (this._dateCreated && !(this._dateCreated instanceof Date)) {
-    this._dateCreated = new Date(this._dateCreated);
-  }
-
-  if (this._dateUpdated && !(this._dateUpdated instanceof Date)) {
-    this._dateUpdated = new Date(this._dateUpdated);
   }
 
   if (updated) {
@@ -2201,14 +2238,15 @@ Channel.prototype.advanceLastConsumedMessageIndex = function advanceLastConsumed
   var _this4 = this;
 
   if (parseInt(index) !== index) {
-    var err = 'Channel.advanceLastConsumedMessageIndex requires an integral <Number>index parameter';
-    throw new Error(err);
+    throw new Error('Channel.advanceLastConsumedMessageIndex requires an integral <Number>index parameter');
+  }
+
+  if (this.lastConsumedMessageIndex !== null && index <= this.lastConsumedMessageIndex || 0) {
+    return Promise.resolve();
   }
 
   return this._subscribeStreams().then(function () {
-    if (_this4.lastConsumedMessageIndex === null || parseInt(index) > _this4.lastConsumedMessageIndex) {
-      _this4._session.advanceLastConsumedMessageIndexForChannel(_this4, index);
-    }
+    _this4._consumptionHorizon.advanceLastConsumedMessageIndexForChannel(_this4.sid, index);
   }).then(function () {
     return _this4;
   });
@@ -2216,7 +2254,7 @@ Channel.prototype.advanceLastConsumedMessageIndex = function advanceLastConsumed
 
 /**
  * Decline an invitation to the Channel.
- * @returns {Promise<Channel>}
+ * @returns {Promise<Channel|SessionError>}
  */
 Channel.prototype.decline = function declineChannel() {
   var _this5 = this;
@@ -2230,7 +2268,7 @@ Channel.prototype.decline = function declineChannel() {
 
 /**
  * Delete the Channel.
- * @returns {Promise<Channel>}
+ * @returns {Promise<Channel|SessionError>}
  */
 Channel.prototype.delete = function deleteChannel() {
   var _this6 = this;
@@ -2304,7 +2342,7 @@ Channel.prototype.invite = function inviteByIdentity(identity) {
 
 /**
  * Join the Channel.
- * @returns {Promise<Channel>}
+ * @returns {Promise<Channel|SessionError>}
  */
 Channel.prototype.join = function joinChannel() {
   var _this10 = this;
@@ -2318,7 +2356,7 @@ Channel.prototype.join = function joinChannel() {
 
 /**
  * Leave the Channel.
- * @returns {Promise<Channel>}
+ * @returns {Promise<Channel|SessionError>}
  */
 Channel.prototype.leave = function leaveChannel() {
   var _this11 = this;
@@ -2364,7 +2402,7 @@ Channel.prototype.setAllMessagesConsumed = function setAllChannelMessagesConsume
   var _this12 = this;
 
   return this._subscribeStreams().then(function () {
-    if (_this12.messages !== null && _this12.messages.length > 0) {
+    if (_this12.messages && _this12.messages.length > 0) {
       return _this12.advanceLastConsumedMessageIndex(_this12.messages[_this12.messages.length - 1].index);
     }
   }).then(function () {
@@ -2377,18 +2415,13 @@ Channel.prototype.setAllMessagesConsumed = function setAllChannelMessagesConsume
  * @returns {Promise}
  */
 Channel.prototype.typing = function typing() {
-  if (this._lastTypingUpdate > Date.now() - this._session.typingTimeout) {
-    return Promise.resolve();
-  }
-
-  this._lastTypingUpdate = Date.now();
-  return this._session.sendTypingIndicator(this._sid);
+  return this._typingIndicator.send(this._sid);
 };
 
 /**
  * Update the Channel's attributes.
  * @param {Object} attributes - The new attributes object.
- * @returns {Promise<Channel>} A Promise for the Channel
+ * @returns {Promise<Channel|SessionError>} A Promise for the Channel
  */
 Channel.prototype.updateAttributes = function updateAttributes(attributes) {
   var _this13 = this;
@@ -2410,7 +2443,7 @@ Channel.prototype.updateAttributes = function updateAttributes(attributes) {
 /**
  * Update the Channel's friendlyName.
  * @param {String} name - The new Channel friendlyName.
- * @returns {Promise<Channel>} A Promise for the Channel
+ * @returns {Promise<Channel|SessionError>} A Promise for the Channel
  */
 Channel.prototype.updateFriendlyName = function updateFriendlyName(name) {
   var _this14 = this;
@@ -2441,7 +2474,7 @@ Channel.prototype.updateLastConsumedMessageIndex = function updateLastConsumedMe
   }
 
   return this._subscribeStreams().then(function () {
-    _this15._session.updateLastConsumedMessageIndexForChannel(_this15, index);
+    _this15._consumptionHorizon.updateLastConsumedMessageIndexForChannel(_this15.sid, index);
   }).then(function () {
     return _this15;
   });
@@ -2468,7 +2501,7 @@ Channel.prototype.updateType = function (type) {
 /**
  * Update the Channel's unique name (tag).
  * @param {String} uniqueName - The new Channel uniqueName.
- * @returns {Promise<Channel>} A Promise for the Channel
+ * @returns {Promise<Channel|SessionError>} A Promise for the Channel
  */
 Channel.prototype.updateUniqueName = function updateUniqueName(uniqueName) {
   var _this16 = this;
@@ -2503,6 +2536,11 @@ Object.freeze(Channel);
  * @event Channel#memberUpdated
  */
 /**
+ * Fired when a Member's UserInfo fields has been updated.
+ * @param {Member} member
+ * @event Channel#memberInfoUpdated
+ */
+/**
  * Fired when a new Message has been added to the Channel on the server.
  * @param {Message} message
  * @event Channel#messageAdded
@@ -2535,26 +2573,27 @@ Object.freeze(Channel);
 
 module.exports = Channel;
 
-},{"../../util/jsondiff":33,"./data/members":14,"./data/messages":15,"./member":16,"events":49,"loglevel":56,"util":91}],11:[function(require,module,exports){
+},{"../../util/jsondiff":37,"./data/members":14,"./data/messages":15,"./member":17,"events":54,"loglevel":60,"util":94}],11:[function(_dereq_,module,exports){
 'use strict';
 
-var EventEmitter = require('events').EventEmitter;
-var inherits = require('util').inherits;
-var log = require('loglevel');
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
+var log = _dereq_('loglevel');
 
-var Configuration = require('./configuration');
-var Session = require('./session.js');
-var Channel = require('./channel.js');
-var ChannelsEntity = require('./data/channels.js');
+var Configuration = _dereq_('./configuration');
+var Session = _dereq_('./session.js');
+var ChannelsEntity = _dereq_('./data/channels.js');
 
-var DataSyncClient = require('../datasync/client');
-var NotificationClient = require('../notification/client');
-var TwilsockClient = require('../twilsock/client');
-var Transport = require('../transport');
+var UserInfos = _dereq_('./data/userinfos.js');
+var TypingIndicator = _dereq_('./services/typingindicator');
+var ConsumptionHorizon = _dereq_('./services/consumptionhorizon');
 
-var AccessManager = require('twilio-common').AccessManager;
+var DataSyncClient = _dereq_('../datasync/client');
+var NotificationClient = _dereq_('../notification/client');
+var TwilsockClient = _dereq_('../twilsock/client');
+var Transport = _dereq_('../transport');
 
-var SDK_VERSION = require('../../../package.json').version;
+var SDK_VERSION = _dereq_('../../../package.json').version;
 
 /**
  * @class
@@ -2563,14 +2602,14 @@ var SDK_VERSION = require('../../../package.json').version;
  *   synchronously return an instance of Client, and will hold
  *   any outgoing methods until it has asynchronously finished
  *   syncing with the server.
- * @param {AccessManager|String} accessManager - The Client's AccessManager, or a Capability
- *   token JWT string.
+ * @param {AccessManager} accessManager - The Client's AccessManager
  * @param {Client#ClientOptions} options - Options to customize the Client
  * @property {AccessManager} accessManager - The Client's AccessManager
  * @property {Map<sid, Channel>} channels - A Map containing all Channels known locally on
  *   the Client. To ensure the Channels have loaded before getting a response, use
  *   {@link Client#getChannels}.
- * @property {String} identity - The unique identifier for the User of this Client.
+ * @property {UserInfo} userInfo - User information for logged in user
+ * @property {String} identity - Deprecated: User identity for logged in user
  * @fires Client#channelAdded
  * @fires Client#channelInvited
  * @fires Client#channelJoined
@@ -2586,6 +2625,7 @@ var SDK_VERSION = require('../../../package.json').version;
  * @fires Client#tokenExpired
  * @fires Client#typingEnded
  * @fires Client#typingStarted
+ * @fires Client#userInfoUpdated
  */
 function Client(accessManager, options) {
   var _this = this;
@@ -2597,12 +2637,8 @@ function Client(accessManager, options) {
   log.setLevel(options.logLevel);
   var config = new Configuration(options);
 
-  if (typeof accessManager === 'string') {
-    accessManager = new AccessManager(accessManager);
-  }
-
   if (!accessManager || !accessManager.token) {
-    throw new Error('A valid Twilio AccessManager or Capability Token must be passed to IPMessaging Client');
+    throw new Error('A valid Twilio AccessManager must be passed to IPMessaging Client');
   }
 
   var token = accessManager.token;
@@ -2611,11 +2647,17 @@ function Client(accessManager, options) {
   var transport = options.transportClient || new Transport(twilsock, options);
   var notification = options.notificationClient || new NotificationClient('ip_messaging', token, transport, twilsock, options);
   var datasync = options.dataSyncClient || new DataSyncClient(token, notification, transport, options);
-  var session = new Session(datasync, transport, token, config);
-  var sessionPromise = session.initialize();
+  var session = new Session(datasync, transport, config);
+  var sessionPromise = session.initialize(token);
+
+  var userInfos = new UserInfos(session, datasync, accessManager.identity);
+  userInfos.on('userInfoUpdated', this.emit.bind(this, 'userInfoUpdated'));
+
+  var consumptionHorizon = new ConsumptionHorizon(config, session);
+  var typingIndicator = new TypingIndicator(config, accessManager, transport, notification, this.getChannelBySid.bind(this));
 
   var channels = new Map();
-  var channelsEntity = new ChannelsEntity(session, channels);
+  var channelsEntity = new ChannelsEntity({ session: session, userInfos: userInfos, typingIndicator: typingIndicator, consumptionHorizon: consumptionHorizon }, channels);
   var channelsPromise = sessionPromise.then(function () {
     channelsEntity.on('channelAdded', _this.emit.bind(_this, 'channelAdded'));
     channelsEntity.on('channelRemoved', _this.emit.bind(_this, 'channelRemoved'));
@@ -2651,8 +2693,12 @@ function Client(accessManager, options) {
     _notification: { value: notification },
     _session: { value: session },
     _sessionPromise: { value: sessionPromise },
+    _initializePromise: { value: null, writable: true },
     _token: { value: token, writable: true },
     _twilsock: { value: twilsock },
+    _typingIndicator: { value: typingIndicator },
+    _userInfos: { value: userInfos },
+    _userInfo: { writable: true },
     accessManager: {
       enumerable: true,
       value: accessManager
@@ -2666,10 +2712,16 @@ function Client(accessManager, options) {
       get: function get() {
         return accessManager.identity;
       }
+    },
+    userInfo: {
+      enumerable: true,
+      get: function get() {
+        return _this._userInfos.myUserInfo;
+      }
     }
   });
 
-  this._initialize(options.typingTimeout || 5000);
+  this._initializePromise = this._initialize();
   EventEmitter.call(this);
 }
 
@@ -2687,60 +2739,34 @@ Object.defineProperties(Client, {
 });
 
 inherits(Client, EventEmitter);
+
 /**
- * @param typingTimeout
- * @returns {*|Promise.<T>|Request}
+ * @returns {Promise.<T>|Request}
  * @private
  */
-Client.prototype._initialize = function _initialize(typingTimeout) {
+Client.prototype._initialize = function _initialize() {
   var _this2 = this;
 
   return this._sessionPromise.then(function () {
-    _this2._notification.subscribe('twilio.ipmsg.typing_indicator', 'twilsock');
     _this2._notification.subscribe('twilio.channel.new_message', 'gcm');
     _this2._notification.subscribe('twilio.channel.added_to_channel', 'gcm');
+  }).then(this._typingIndicator.initialize());
+};
 
-    _this2._notification.on('message', function (type, message) {
-      if (type === 'twilio.ipmsg.typing_indicator') {
-        log.trace('Got new typing indicator push!');
-        log.trace(message);
+/**
+ * Initializes library
+ * Library will be eventually initialized even without this method called,
+ * but client can use returned promise to track library initialization state.
+ * It's safe to call this method multiple times. It won't reinitialize library in ready state.
+ *
+ * @public
+ * @returns {Promise<Client>}
+ */
+Client.prototype.initialize = function initialize() {
+  var _this3 = this;
 
-        _this2._channelsPromise.then(function (channels) {
-          return channels.channels.get(message.channel_sid);
-        }).then(function (channel) {
-          var _iteratorNormalCompletion = true;
-          var _didIteratorError = false;
-          var _iteratorError = undefined;
-
-          try {
-            for (var _iterator = channel.members.values()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-              var member = _step.value;
-
-              if (member.identity === message.identity) {
-                member._startTyping(typingTimeout);
-                break;
-              }
-            }
-          } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion && _iterator.return) {
-                _iterator.return();
-              }
-            } finally {
-              if (_didIteratorError) {
-                throw _iteratorError;
-              }
-            }
-          }
-        }).catch(function (err) {
-          log.error('IMPSG E: ', err);
-          throw err;
-        });
-      }
-    });
+  return this._initializePromise.then(function () {
+    return _this3;
   });
 };
 
@@ -2751,7 +2777,7 @@ Client.prototype._initialize = function _initialize(typingTimeout) {
  * @returns {Promise<Client>}
  */
 Client.prototype._updateToken = function _updateToken(token) {
-  var _this3 = this;
+  var _this4 = this;
 
   if (!token || token.split('.').length !== 3) {
     return log.error('Received a malformed token from AccessManager. \
@@ -2766,9 +2792,9 @@ Client.prototype._updateToken = function _updateToken(token) {
   log.info('IPMSG I: authTokenUpdated');
 
   return Promise.all([this._twilsock.setAuthToken(token), this._notification.setAuthToken(token), this._datasync.setAuthToken(token), this._sessionPromise.then(function () {
-    return _this3._session.updateToken(token);
+    return _this4._session.updateToken(token);
   })]).then(function () {
-    return _this3;
+    return _this4;
   });
 };
 
@@ -2778,14 +2804,14 @@ Client.prototype._updateToken = function _updateToken(token) {
  * @returns {Promise<Channel>}
  */
 Client.prototype.getChannelBySid = function getChannelBySid(channelSid) {
-  var _this4 = this;
+  var _this5 = this;
 
   if (!channelSid || typeof channelSid !== 'string') {
     throw new Error('Client.getChannelBySid requires a <String>channelSid parameter');
   }
 
   return this._channelsPromise.then(function () {
-    return _this4.channels.get(channelSid);
+    return _this5.channels.get(channelSid) || null;
   });
 };
 
@@ -2795,39 +2821,21 @@ Client.prototype.getChannelBySid = function getChannelBySid(channelSid) {
  * @returns {Promise<Channel>}
  */
 Client.prototype.getChannelByUniqueName = function getChannelByUniqueName(uniqueName) {
-  var _this5 = this;
+  var _this6 = this;
 
   if (!uniqueName || typeof uniqueName !== 'string') {
     throw new Error('Client.getChannelByUniqueName requires a <String>uniqueName parameter');
   }
 
   return this._channelsPromise.then(function () {
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
-
-    try {
-      for (var _iterator2 = _this5.channels.values()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-        var channel = _step2.value;
-
-        if (channel.uniqueName === uniqueName) {
-          return channel;
-        }
+    var foundChannel = null;
+    _this6.channels.forEach(function (channel) {
+      if (!foundChannel && channel.uniqueName === uniqueName) {
+        foundChannel = channel;
       }
-    } catch (err) {
-      _didIteratorError2 = true;
-      _iteratorError2 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-          _iterator2.return();
-        }
-      } finally {
-        if (_didIteratorError2) {
-          throw _iteratorError2;
-        }
-      }
-    }
+    });
+
+    return foundChannel;
   });
 };
 
@@ -2836,11 +2844,11 @@ Client.prototype.getChannelByUniqueName = function getChannelByUniqueName(unique
  * @returns {Promise<Array<Channel>>}
  */
 Client.prototype.getChannels = function getChannels() {
-  var _this6 = this;
+  var _this7 = this;
 
   return this._channelsPromise.then(function () {
     var channels = [];
-    _this6.channels.forEach(function (channel) {
+    _this7.channels.forEach(function (channel) {
       return channels.push(channel);
     });
     return channels;
@@ -2854,10 +2862,8 @@ Client.prototype.getChannels = function getChannels() {
  */
 Client.prototype.createChannel = function createChannel(options) {
   options = options || {};
-
-  var channel = new Channel(this._session, options, null);
   return this._channelsPromise.then(function (channelsEntity) {
-    return channelsEntity.addChannel(channel);
+    return channelsEntity.addChannel(options);
   });
 };
 
@@ -2955,10 +2961,15 @@ Object.freeze(Client);
  * @param {Member} member
  * @event Client#typingStarted
  */
+/**
+ * Fired when a userInfo has been updated.
+ * @param {UserInfo} UserInfo
+ * @event Client#userInfoUpdated
+ */
 
 module.exports = Client;
 
-},{"../../../package.json":95,"../datasync/client":1,"../notification/client":19,"../transport":23,"../twilsock/client":25,"./channel.js":10,"./configuration":12,"./data/channels.js":13,"./session.js":18,"events":49,"loglevel":56,"twilio-common":86,"util":91}],12:[function(require,module,exports){
+},{"../../../package.json":98,"../datasync/client":1,"../notification/client":24,"../transport":28,"../twilsock/client":30,"./configuration":12,"./data/channels.js":13,"./data/userinfos.js":16,"./services/consumptionhorizon":19,"./services/typingindicator":20,"./session.js":21,"events":54,"loglevel":60,"util":94}],12:[function(_dereq_,module,exports){
 'use strict';
 
 var TYPING_URI = 'https://aim.twilio.com';
@@ -2983,13 +2994,13 @@ function IPMessagingConfig(options) {
 
 module.exports = IPMessagingConfig;
 
-},{}],13:[function(require,module,exports){
+},{}],13:[function(_dereq_,module,exports){
 'use strict';
 
-var EventEmitter = require('events').EventEmitter;
-var inherits = require('util').inherits;
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
 
-var Channel = require('../channel');
+var Channel = _dereq_('../channel');
 
 /**
  * Creates an instance of channels collection {@see Channel}
@@ -2997,9 +3008,12 @@ var Channel = require('../channel');
  * @class ChannelsEntity
  * @classdesc Provides an access to the channels collection
  */
-function ChannelsEntity(session, channels) {
+function ChannelsEntity(services, channels) {
   Object.defineProperties(this, {
-    _session: { value: session },
+    _services: { value: services },
+    _userInfos: { value: services.userInfos },
+    _typingIndicator: { value: services.typingIndicator },
+    _session: { value: services.session },
     channels: {
       enumerable: true,
       value: channels
@@ -3014,27 +3028,24 @@ inherits(ChannelsEntity, EventEmitter);
 /**
  * Add channel to server
  * @private
- * @returns {Promise} Channel
+ * @returns {Promise<Channel|SessionError>} Channel
  */
-ChannelsEntity.prototype.addChannel = function addChannel(channel) {
+ChannelsEntity.prototype.addChannel = function addChannel(options) {
   var _this = this;
 
   return this._session.addCommand('createChannel', {
-    friendlyName: channel.friendlyName,
-    uniqueName: channel.uniqueName,
-    type: channel.isPrivate ? 'private' : 'public',
-    attributes: JSON.stringify(channel.attributes)
+    friendlyName: options.friendlyName,
+    uniqueName: options.uniqueName,
+    type: options.isPrivate ? 'private' : 'public',
+    attributes: JSON.stringify(options.attributes)
   }).then(function (response) {
     var existingChannel = _this.channels.get(response.channelSid);
-
-    channel._sid = response.channelSid;
-    channel._uri = response.channelUrl;
-
     if (existingChannel) {
-      existingChannel._update(channel);
+      existingChannel._update(response);
       return existingChannel;
     }
 
+    var channel = new Channel(_this._services, response, response.channelSid);
     _this.channels.set(channel.sid, channel);
     _this._registerForEvents(channel);
 
@@ -3143,7 +3154,7 @@ ChannelsEntity.prototype._fetchPublicChannels = function (url) {
       var channel = _this3.channels.get(sid);
 
       if (!channel) {
-        channel = new Channel(_this3._session, entity.value, sid);
+        channel = new Channel(_this3._services, entity.value, sid);
         _this3._registerForEvents(channel);
         _this3.channels.set(sid, channel);
         _this3.emit('channelAdded', channel);
@@ -3173,7 +3184,7 @@ ChannelsEntity.prototype._fetchPublicChannels = function (url) {
       var channelData = entity.value;
       var sid = entity.id;
 
-      var channel = new Channel(_this3._session, channelData, sid);
+      var channel = new Channel(_this3._services, channelData, sid);
       _this3._registerForEvents(channel);
       _this3.channels.set(sid, channel);
     }).then(function () {
@@ -3215,7 +3226,7 @@ ChannelsEntity.prototype._upsertChannel = function (sid, data) {
   }
 
   // Fetch the Channel if we don't know about it
-  channel = new Channel(this._session, data, sid);
+  channel = new Channel(this._services, data, sid);
   this._registerForEvents(channel);
 
   this.channels.set(sid, channel);
@@ -3250,24 +3261,29 @@ ChannelsEntity.prototype._registerForEvents = function (channel) {
 
 module.exports = ChannelsEntity;
 
-},{"../channel":10,"events":49,"util":91}],14:[function(require,module,exports){
+},{"../channel":10,"events":54,"util":94}],14:[function(_dereq_,module,exports){
 'use strict';
 
-var EventEmitter = require('events').EventEmitter;
-var inherits = require('util').inherits;
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
 
-var Member = require('../member');
+var Member = _dereq_('../member');
 
 /**
  * Creates members collection
  *
  * @class Members
  * @classdesc Represents the collection of members for the channel
+ * @fires Members#memberJoined
+ * @fires Members#memberLeft
+ * @fires Members#memberUpdated
+ * @fires Members#memberInfoUpdated
  */
-function Members(channel, session, members) {
+function Members(channel, session, userInfos, members) {
 
   Object.defineProperties(this, {
     _datasync: { value: session.datasync },
+    _userInfos: { value: userInfos },
     _session: { value: session },
     _rosterStreamPromise: {
       writable: true,
@@ -3301,12 +3317,9 @@ Members.prototype.subscribe = function (rosterUri) {
     rosterMap.subscribe();
 
     rosterMap.on('entityAdded', function (entity) {
-      var memberSid = entity.id;
-      if (_this.members.has(memberSid)) {
-        return;
-      }
-      var member = _this.upsertMember(memberSid, entity.value);
-      _this.emit('memberJoined', member);
+      _this.upsertMember(entity.id, entity.value).then(function (member) {
+        _this.emit('memberJoined', member);
+      });
     });
 
     rosterMap.on('entityRemoved', function (memberSid) {
@@ -3319,18 +3332,14 @@ Members.prototype.subscribe = function (rosterUri) {
     });
 
     rosterMap.on('entityUpdated', function (entity) {
-      var memberSid = entity.id;
-      if (!_this.members.has(memberSid)) {
-        return;
-      }
-      _this.upsertMember(memberSid, entity.value);
+      _this.upsertMember(entity.id, entity.value);
     });
 
+    var membersPromises = [];
     return rosterMap.forEach(function (entity) {
-      var memberSid = entity.id;
-      if (!_this.members.has(memberSid)) {
-        _this.upsertMember(memberSid, entity.value);
-      }
+      membersPromises.push(_this.upsertMember(entity.id, entity.value));
+    }).then(function () {
+      return Promise.all(membersPromises);
     }).then(function () {
       return rosterMap;
     });
@@ -3342,17 +3351,22 @@ Members.prototype.upsertMember = function upsertMember(memberSid, data) {
   var _this2 = this;
 
   var member = this.members.get(memberSid);
+  if (member) {
+    member._update(data);
+    return Promise.resolve(member);
+  }
 
-  if (!member) {
-    member = new Member(this.channel, data, memberSid);
-    this.members.set(memberSid, member);
+  return this._userInfos.getUserInfo(data.identity, data.userInfo).then(function (userInfo) {
+    member = new Member(_this2.channel, data, memberSid, userInfo);
+    _this2.members.set(memberSid, member);
     member.on('updated', function () {
       return _this2.emit('memberUpdated', member);
     });
-  } else {
-    member._update(data);
-  }
-  return member;
+    member.on('userInfoUpdated', function () {
+      return _this2.emit('memberInfoUpdated', member);
+    });
+    return member;
+  });
 };
 
 /**
@@ -3383,6 +3397,7 @@ Members.prototype.getMembers = function () {
 
 /**
  * Add user to the channel
+ * @returns {Promise<|SessionError>}
  */
 Members.prototype.add = function (username) {
   return this._session.addCommand('addMember', {
@@ -3394,6 +3409,7 @@ Members.prototype.add = function (username) {
 /**
  * Invites user to the channel
  * User can choose either to join or not
+ * @returns {Promise<|SessionError>}
  */
 Members.prototype.invite = function (username) {
   return this._session.addCommand('inviteMember', {
@@ -3404,6 +3420,7 @@ Members.prototype.invite = function (username) {
 
 /**
  * Remove user from channel
+ * @returns {Promise<|SessionError>}
  */
 Members.prototype.remove = function (username) {
   return this._session.addCommand('removeMember', {
@@ -3434,14 +3451,20 @@ module.exports = Members;
  * @type {Member}
  */
 
-},{"../member":16,"events":49,"util":91}],15:[function(require,module,exports){
+/**
+ * Fired when userInfo for member is updated
+ * @event Members#memberInfoUpdated
+ * @type {Member}
+ */
+
+},{"../member":17,"events":54,"util":94}],15:[function(_dereq_,module,exports){
 'use strict';
 
-var EventEmitter = require('events').EventEmitter;
-var inherits = require('util').inherits;
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
 
-var Message = require('../message');
-var Q = require('q');
+var Message = _dereq_('../message');
+var Q = _dereq_('q');
 
 /*
  * Creates an instance of messages collection
@@ -3488,33 +3511,13 @@ Messages.prototype.subscribe = function subscribe(uri) {
         return _this.emit('messageUpdated', message);
       });
 
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = _this.channel.members.values()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var member = _step.value;
-
-          if (member.identity === message.author) {
-            member._endTyping();
-            break;
-          }
+      // This place should be rewritten on iterators, etc.
+      // But currently IE11 support blocks that
+      _this.channel.members.forEach(function (member) {
+        if (member.identity === message.author) {
+          member._endTyping();
         }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
+      });
 
       _this.emit('messageAdded', message);
     });
@@ -3558,7 +3561,7 @@ Messages.prototype.unsubscribe = function unsubscribe() {
  * @private
  */
 Messages.prototype._removeMessageById = function (entityId) {
-  var removedMessage = undefined;
+  var removedMessage = void 0;
 
   for (var i = 0; i < this._sortedMessages.length; i++) {
     var message = this._sortedMessages[i];
@@ -3644,50 +3647,118 @@ Messages.prototype.getMessages = function getMessages(count, anchor) {
 
 Messages.prototype._updateSortedMessages = function _updateSortedMessages() {
   var uniqueValues = [];
-  var _iteratorNormalCompletion2 = true;
-  var _didIteratorError2 = false;
-  var _iteratorError2 = undefined;
-
-  try {
-    for (var _iterator2 = this._messagesByIndex.values()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-      var message = _step2.value;
-
-      uniqueValues.push(message);
-    }
-  } catch (err) {
-    _didIteratorError2 = true;
-    _iteratorError2 = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion2 && _iterator2.return) {
-        _iterator2.return();
-      }
-    } finally {
-      if (_didIteratorError2) {
-        throw _iteratorError2;
-      }
-    }
-  }
-
+  this._messagesByIndex.forEach(function (message) {
+    uniqueValues.push(message);
+  });
   uniqueValues.sort(function (message1, message2) {
     return message1.index - message2.index;
   });
+
   Array.prototype.splice.apply(this._sortedMessages, [0, this._sortedMessages.length].concat(uniqueValues));
 };
 
 module.exports = Messages;
 
-},{"../message":17,"events":49,"q":64,"util":91}],16:[function(require,module,exports){
+},{"../message":18,"events":54,"q":68,"util":94}],16:[function(_dereq_,module,exports){
 'use strict';
 
-var EventEmitter = require('events').EventEmitter;
-var inherits = require('util').inherits;
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
+
+var UserInfo = _dereq_('../userinfo');
+
+/**
+ * @class
+ * @classdesc Container for known user infos
+ * @fires UserInfos#userInfoUpdated
+ *
+ * @constructor
+ * @private
+ */
+function UserInfos(session, datasync, myIdentity) {
+  var _this = this;
+
+  Object.defineProperties(this, {
+    _session: { value: session },
+    _datasync: { value: datasync },
+    _mapsUrl: { value: '', writable: true },
+    _infos: { value: new Map() },
+
+    myUserInfo: { enumerable: true, get: function get() {
+        return _this._infos.get(myIdentity);
+      } }
+  });
+
+  var myUserInfo = new UserInfo(myIdentity, null, datasync, session);
+  this._infos.set(myIdentity, myUserInfo);
+  myUserInfo.on('updated', function () {
+    return _this.emit('userInfoUpdated', myUserInfo);
+  });
+
+  session.onKeyUpdated('/mapsUrl', function (url) {
+    _this._mapsUrl = url;
+  });
+
+  this._session.getUserInfosData().then(function (data) {
+    _this._mapsUrl = data.mapsUrl;
+    _this.myUserInfo._uri = data.mapsUrl + '/' + data.userInfo;
+    return data;
+  }).then(function () {
+    return myUserInfo._ensureFetched();
+  });
+
+  EventEmitter.call(this);
+}
+inherits(UserInfos, EventEmitter);
+
+/**
+ * @returns {Promise<UserInfo>} Fully initialized user info for logged in user
+ */
+UserInfos.prototype.getMyUserInfo = function () {
+  var _this2 = this;
+
+  return this._session.getUserInfosData().then(function (data) {
+    _this2._mapsUrl = data.mapsUrl;
+    return data;
+  }).then(function (data) {
+    return _this2.getUserInfo(data.identity, data.userInfo);
+  });
+};
+
+/**
+ * @returns {Promise<UserInfo>} Fully initialized user info
+ */
+UserInfos.prototype.getUserInfo = function (identity, id) {
+  var _this3 = this;
+
+  var userInfo = this._infos.get(identity);
+  if (!userInfo) {
+    var url = id ? this._mapsUrl + '/' + id : null;
+    userInfo = new UserInfo(identity, url, this._datasync, this._session);
+    this._infos.set(identity, userInfo);
+    userInfo.on('updated', function () {
+      return _this3.emit('userInfoUpdated', userInfo);
+    });
+  }
+  return userInfo._ensureFetched();
+};
+
+Object.freeze(UserInfos);
+
+module.exports = UserInfos;
+
+},{"../userinfo":23,"events":54,"util":94}],17:[function(_dereq_,module,exports){
+'use strict';
+
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
 
 /**
  * @class
  * @classdesc A Member represents a remote Client in a Channel.
  * @property {Channel} channel - The Channel the remote Client is a Member of.
- * @property {String} identity - The identity of the remote Client.
+ * @property {String} identity - Deprecated: The identity of the remote Client.
+ * @property {UserInfo} userInfo - UserInfo structure for member.
  * @property {Boolean} isTyping - Whether or not this Member is currently typing.
  * @property {Number} lastConsumedMessageIndex - Latest consumed Message index by this Member.
  * @property {Date} lastConsumptionTimestamp - Date when Member has updated his consumption horizon.
@@ -3695,10 +3766,13 @@ var inherits = require('util').inherits;
  * @fires Member#typingEnded
  * @fires Member#typingStarted
  * @fires Member#updated
+ * @fires Member#userInfoUpdated
  */
-function Member(channel, data, sid) {
+function Member(channel, data, sid, userInfo) {
+  var _this = this;
+
   if (!(this instanceof Member)) {
-    return new Member(channel, data, sid);
+    return new Member(channel, data, sid, userInfo);
   }
 
   var isTyping = false;
@@ -3795,10 +3869,20 @@ function Member(channel, data, sid) {
     sid: {
       enumerable: true,
       value: sid
+    },
+    userInfo: {
+      enumerable: true,
+      get: function get() {
+        return userInfo;
+      }
     }
   });
 
   EventEmitter.call(this);
+
+  userInfo.on('updated', function () {
+    return _this.emit('userInfoUpdated', _this);
+  });
 }
 
 inherits(Member, EventEmitter);
@@ -3810,7 +3894,7 @@ Object.freeze(Member);
  * @private
  */
 Member.prototype._startTyping = function (timeout) {
-  var _this = this;
+  var _this2 = this;
 
   clearTimeout(this._typingTimeout);
 
@@ -3819,7 +3903,7 @@ Member.prototype._startTyping = function (timeout) {
   this.channel.emit('typingStarted', this);
 
   this._typingTimeout = setTimeout(function () {
-    return _this._endTyping();
+    return _this2._endTyping();
   }, timeout);
   return this;
 };
@@ -3899,11 +3983,17 @@ module.exports = Member;
  * @type {Member}
  */
 
-},{"events":49,"util":91}],17:[function(require,module,exports){
+/**
+ * Fired when member's user info is updated
+ * @event Member#userInfoUpdated
+ * @type {Member}
+ */
+
+},{"events":54,"util":94}],18:[function(_dereq_,module,exports){
 'use strict';
 
-var EventEmitter = require('events').EventEmitter;
-var inherits = require('util').inherits;
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
 
 /**
  * @class
@@ -4022,7 +4112,7 @@ Message.prototype._update = function (data) {
 
 /**
  * Remove the Message.
- * @returns {Promise<Message>}
+ * @returns {Promise<Message|SessionError>}
  */
 Message.prototype.remove = function removeMessage() {
   var _this = this;
@@ -4038,7 +4128,7 @@ Message.prototype.remove = function removeMessage() {
 /**
  * Edit message body.
  * @param {String} body - new body of Message.
- * @returns {Promise<Message>}
+ * @returns {Promise<Message|SessionError>}
  */
 Message.prototype.updateBody = function updateMessageBody(body) {
   var _this2 = this;
@@ -4064,18 +4154,208 @@ Message.prototype.updateBody = function updateMessageBody(body) {
 
 module.exports = Message;
 
-},{"events":49,"util":91}],18:[function(require,module,exports){
+},{"events":54,"util":94}],19:[function(_dereq_,module,exports){
 'use strict';
 
-var guid = require('../../util/guid');
-var platform = require('platform');
-var log = require('loglevel');
+/**
+ * @classdesc Provides consumption horizon management functionality
+ *
+ * @constructor
+ * @private
+ */
 
-var ChangeTracker = require('../../util/changetracker');
+function ConsumptionHorizon(config, session) {
+  Object.defineProperties(this, {
+    _session: { value: session },
+    _consumptionHorizonReports: { value: new Map() },
+    _consumptionHorizonUpdateTimer: { value: null, writable: true }
+  });
+}
 
-var Durational = require('durational');
+ConsumptionHorizon.prototype._getReportInterval = function () {
+  return this._session.getConsumptionReportInterval().then(function (duration) {
+    return duration.seconds * 1000;
+  });
+};
 
-var SDK_VERSION = require('../../../package.json').version;
+/**
+ * Updates consumption horizon value without any checks
+ */
+ConsumptionHorizon.prototype.updateLastConsumedMessageIndexForChannel = function (channelSid, index) {
+  var _this = this;
+
+  this._consumptionHorizonReports.set(channelSid, {
+    channelSid: channelSid,
+    messageIdx: index
+  });
+
+  this._getReportInterval().then(function (delay) {
+    return _this._delayedSendConsumptionHorizon(delay);
+  });
+};
+
+/**
+ * Move consumption horizon forward
+ */
+ConsumptionHorizon.prototype.advanceLastConsumedMessageIndexForChannel = function (channelSid, index) {
+  var _this2 = this;
+
+  var currentHorizon = this._consumptionHorizonReports.get(channelSid);
+  if (currentHorizon && currentHorizon.messageIdx >= index) {
+    return;
+  }
+
+  this._consumptionHorizonReports.set(channelSid, {
+    channelSid: channelSid,
+    messageIdx: index
+  });
+
+  this._getReportInterval().then(function (delay) {
+    return _this2._delayedSendConsumptionHorizon(delay);
+  });
+};
+
+ConsumptionHorizon.prototype._delayedSendConsumptionHorizon = function (delay) {
+  var _this3 = this;
+
+  if (this._consumptionHorizonUpdateTimer !== null) {
+    return;
+  }
+
+  this._consumptionHorizonUpdateTimer = setTimeout(function () {
+    var reports = [];
+    _this3._consumptionHorizonReports.forEach(function (entry) {
+      return reports.push(entry);
+    });
+    if (reports.length > 0) {
+      _this3._session.addCommand('consumptionReport', { report: reports });
+    }
+    _this3._consumptionHorizonUpdateTimer = null;
+    _this3._consumptionHorizonReports.clear();
+  }, delay);
+};
+
+Object.freeze(ConsumptionHorizon);
+
+module.exports = ConsumptionHorizon;
+
+},{}],20:[function(_dereq_,module,exports){
+'use strict';
+
+var log = _dereq_('loglevel');
+
+var TYPING_INDICATOR_MESSAGE_TYPE = 'twilio.ipmsg.typing_indicator';
+
+/**
+ * @class TypingIndicator
+ *
+ * @constructor
+ * @private
+ */
+function TypingIndicator(config, accessManager, transport, notifications, getChannel) {
+  var _this = this;
+
+  Object.defineProperties(this, {
+    _transport: { value: transport },
+    _notifications: { value: notifications },
+    _config: { value: config },
+    _typingTimeout: { value: null, writable: true },
+    _sentUpdates: { value: new Map() },
+    _getChannel: { value: getChannel },
+    token: { get: function get() {
+        return accessManager.token;
+      } },
+    typingTimeout: { get: function get() {
+        return _this._typingTimeout || config.typingIndicatorTimeout;
+      } }
+  });
+}
+
+/**
+ * Initialize TypingIndicator controller
+ * Registers for needed message types and sets listeners
+ * @private
+ */
+TypingIndicator.prototype.initialize = function () {
+  var _this2 = this;
+
+  this._notifications.subscribe(TYPING_INDICATOR_MESSAGE_TYPE, 'twilsock');
+  this._notifications.on('message', function (type, message) {
+    if (type === TYPING_INDICATOR_MESSAGE_TYPE) {
+      _this2._handleRemoteTyping(message);
+    }
+  });
+};
+
+/**
+ * Remote members typing events handler
+ * @private
+ */
+TypingIndicator.prototype._handleRemoteTyping = function (message) {
+  var _this3 = this;
+
+  log.trace('Got new typing indicator ', message);
+  this._getChannel(message.channel_sid).then(function (channel) {
+    channel.members.forEach(function (member) {
+      if (member.identity === message.identity) {
+        member._startTyping(_this3.typingTimeout);
+      }
+    });
+  }).catch(function (err) {
+    log.error('IMPSG E: ', err);
+    throw err;
+  });
+};
+
+TypingIndicator.prototype.send = function (channelSid) {
+  var lastUpdate = this._sentUpdates.get(channelSid);
+  if (lastUpdate && lastUpdate > Date.now() - this.typingTimeout) {
+    return Promise.resolve();
+  }
+
+  this._sentUpdates.set(channelSid, Date.now());
+  return this._send(channelSid);
+};
+
+TypingIndicator.prototype._send = function (channelSid) {
+  var _this4 = this;
+
+  log.trace('IPMSG I: sending typing indicator');
+
+  var url = this._config.typingIndicatorUri;
+  var headers = {
+    'X-Twilio-Token': this.token,
+    'Content-Type': 'application/x-www-form-urlencoded'
+  };
+  var body = 'ChannelSid=' + channelSid;
+
+  this._transport.post(url, headers, body).then(function (response) {
+    if (response.body.hasOwnProperty('typing_timeout')) {
+      _this4._typingTimeout = response.body.typing_timeout * 1000;
+    }
+  }).catch(function (err) {
+    log.error('IPMSG E: failed to send typing indicator: ', err);
+    throw err;
+  });
+};
+
+Object.freeze(TypingIndicator);
+
+module.exports = TypingIndicator;
+
+},{"loglevel":60}],21:[function(_dereq_,module,exports){
+'use strict';
+
+var guid = _dereq_('../../util/guid');
+var platform = _dereq_('platform');
+var log = _dereq_('loglevel');
+
+var ChangeTracker = _dereq_('../../util/changetracker');
+var SessionError = _dereq_('./sessionerror');
+
+var Durational = _dereq_('durational');
+
+var SDK_VERSION = _dereq_('../../../package.json').version;
 
 /**
 *  Constructs the instance of Session
@@ -4087,12 +4367,11 @@ var SDK_VERSION = require('../../../package.json').version;
 *  and waits the answer from the server.
 */
 function Session(datasync, transport, token, config) {
+  var _this = this;
 
   var platformInfo = typeof navigator !== 'undefined' ? platform.parse(navigator.userAgent) : platform;
 
   Object.defineProperties(this, {
-    _consumptionHorizonUpdateTimer: { value: null, writable: true },
-    _consumptionHorizonReports: { value: new Map() },
     _purpose: { value: 'com.twilio.rtd.ipmsg' },
     _endpointPlatform: {
       value: ['js', SDK_VERSION, platformInfo.os, platformInfo.name, platformInfo.version].join('|')
@@ -4101,34 +4380,38 @@ function Session(datasync, transport, token, config) {
     _sessionContextChangeTracker: { value: new ChangeTracker() },
     _sessionStreamPromise: { value: null, writable: true },
     _config: { value: config },
+    identity: { enumerable: true, get: function get() {
+        return _this._sessionContextChangeTracker._data.identity;
+      } },
+    userInfo: { enumerable: true, get: function get() {
+        return _this._sessionContextChangeTracker._data.userInfo;
+      } },
     datasync: { enumerable: true, value: datasync },
-    transport: { value: transport },
-    token: { enumerable: true, value: token, writable: true },
-    typingTimeout: { value: config.typingIndicatorTimeout, writable: true }
+    transport: { value: transport }
   });
 }
 
-Session.prototype.initialize = function () {
-  var _this = this;
+Session.prototype.initialize = function (token) {
+  var _this2 = this;
 
   var context = {
     type: 'IpMsgSession',
     version: 'v2',
     endpointPlatform: this._endpointPlatform,
-    token: this.token
+    token: token
   };
 
   this._sessionStreamPromise = this.datasync.createStream(this._purpose, context).then(function (stream) {
     log.trace('IPMSG: session created');
 
     stream.on('entityAdded', function (entity) {
-      return _this._processCommandResponse(entity);
+      return _this2._processCommandResponse(entity);
     });
     stream.on('entityUpdated', function (entity) {
-      return _this._processCommandResponse(entity);
+      return _this2._processCommandResponse(entity);
     });
     stream.on('contextUpdated', function (updatedContext) {
-      return _this._sessionContextChangeTracker.update(updatedContext);
+      return _this2._sessionContextChangeTracker.update(updatedContext);
     });
 
     stream.subscribe();
@@ -4153,15 +4436,15 @@ Session.prototype.addCommand = function (action, params) {
 * @private
 */
 Session.prototype._processCommand = function (action, params) {
-  var _this2 = this;
+  var _this3 = this;
 
   var command = { request: params };
   command.request.action = action;
   command.commandId = guid();
 
   return new Promise(function (resolve, reject) {
-    _this2._sessionStreamPromise.then(function (stream) {
-      _this2._pendingCommands.set(command.commandId, {
+    _this3._sessionStreamPromise.then(function (stream) {
+      _this3._pendingCommands.set(command.commandId, {
         resolve: resolve,
         reject: reject
       });
@@ -4189,7 +4472,7 @@ Session.prototype._processCommandResponse = function (entity) {
       log.error('Command failed: ', value);
       var reject = this._pendingCommands.get(commandId).reject;
       this._pendingCommands.delete(commandId);
-      reject(new Error(JSON.stringify(value)));
+      reject(new SessionError(value.response.statusText, value.response.status));
     }
   }
 };
@@ -4212,129 +4495,247 @@ Session.prototype.onKeyUpdated = function (path, handler) {
 };
 
 Session.prototype.getChannelsUrl = function () {
-  var _this3 = this;
-
-  return new Promise(function (resolve) {
-    _this3._sessionStreamPromise.then(function (stream) {
-      return stream.getContext();
-    }).then(function (context) {
-      if (context.hasOwnProperty('channelsUrl')) {
-        resolve(context.channelsUrl);
-      } else {
-        _this3.onKeyUpdated('/channelsUrl', resolve);
-      }
-    });
-  });
-};
-
-Session.prototype.getMyChannelsUrl = function () {
   var _this4 = this;
 
   return new Promise(function (resolve) {
     _this4._sessionStreamPromise.then(function (stream) {
       return stream.getContext();
     }).then(function (context) {
-      if (context.hasOwnProperty('myChannelsUrl')) {
-        resolve(context.myChannelsUrl);
+      if (context.hasOwnProperty('channelsUrl')) {
+        resolve(context.channelsUrl);
       } else {
-        _this4.onKeyUpdated('/myChannelsUrl', resolve);
+        _this4.onKeyUpdated('/channelsUrl', resolve);
       }
     });
   });
 };
 
-Session.prototype._getConsumptionReportInterval = function () {
+Session.prototype.getMyChannelsUrl = function () {
   var _this5 = this;
+
+  return new Promise(function (resolve) {
+    _this5._sessionStreamPromise.then(function (stream) {
+      return stream.getContext();
+    }).then(function (context) {
+      if (context.hasOwnProperty('myChannelsUrl')) {
+        resolve(context.myChannelsUrl);
+      } else {
+        _this5.onKeyUpdated('/myChannelsUrl', resolve);
+      }
+    });
+  });
+};
+
+Session.prototype.getUserInfosData = function () {
+  var _this6 = this;
+
+  return new Promise(function (resolve) {
+    function resolveWithData(context) {
+      resolve({
+        mapsUrl: context.mapsUrl,
+        userInfo: context.userInfo,
+        identity: context.identity
+      });
+    }
+
+    _this6._sessionStreamPromise.then(function (stream) {
+      return stream.getContext();
+    }).then(function (context) {
+      if (context.hasOwnProperty('mapsUrl')) {
+        resolveWithData(context);
+      } else {
+        _this6.onKeyUpdated('/mapsUrl', function () {
+          _this6._sessionStreamPromise.then(function (stream) {
+            return stream.getContext();
+          }).then(function (updatedContext) {
+            return resolveWithData(updatedContext);
+          });
+        });
+      }
+    });
+  });
+};
+
+Session.prototype.getConsumptionReportInterval = function () {
+  var _this7 = this;
 
   return this._sessionStreamPromise.then(function (stream) {
     return stream.getContext();
   }).then(function (context) {
-    return Durational.fromString(context.consumptionReportInterval || _this5._config.consumptionReportInterval);
-  });
-};
-
-Session.prototype.updateLastConsumedMessageIndexForChannel = function (channel, index) {
-  var _this6 = this;
-
-  this._getConsumptionReportInterval().then(function (duration) {
-    _this6._consumptionHorizonReports.set(channel.sid, {
-      channelSid: channel.sid,
-      messageIdx: index
-    });
-    _this6._delayedSendConsumptionHorizon(duration);
-  });
-};
-
-Session.prototype.advanceLastConsumedMessageIndexForChannel = function (channel, index) {
-  var _this7 = this;
-
-  this._getConsumptionReportInterval().then(function (duration) {
-    var currentHorizon = _this7._consumptionHorizonReports.get(channel.sid);
-    if (!currentHorizon && channel.lastConsumedMessageIndex < index || currentHorizon.messageIdx < index) {
-      _this7._consumptionHorizonReports.set(channel.sid, {
-        channelSid: channel.sid,
-        messageIdx: index
-      });
-      _this7._delayedSendConsumptionHorizon(duration);
-    }
-  });
-};
-
-Session.prototype._delayedSendConsumptionHorizon = function (duration) {
-  var _this8 = this;
-
-  if (this._consumptionHorizonUpdateTimer === null) {
-    (function () {
-      var self = _this8;
-      _this8._consumptionHorizonUpdateTimer = setTimeout(function () {
-        var reports = [];
-        self._consumptionHorizonReports.forEach(function (entry) {
-          return reports.push(entry);
-        });
-        self._consumptionHorizonReports.clear();
-        if (reports.length > 0) {
-          self.addCommand('consumptionReport', { report: reports });
-        }
-        self._consumptionHorizonUpdateTimer = null;
-      }, duration.seconds * 1000);
-    })();
-  }
-};
-
-Session.prototype.sendTypingIndicator = function (channelSid) {
-  var _this9 = this;
-
-  log.trace('IPMSG I: sending typing indicator');
-
-  var url = this._config.typingIndicatorUri;
-  var headers = {
-    'X-Twilio-Token': this.token,
-    'Content-Type': 'application/x-www-form-urlencoded'
-  };
-  var body = 'ChannelSid=' + channelSid;
-
-  return this.transport.post(url, headers, body).then(function (res) {
-    if (body.hasOwnProperty('typing_timeout')) {
-      _this9.typingTimeout = body.typing_timeout * 1000;
-    }
-    return res;
-  }).then(null, function (reason) {
-    log.error('IPMSG E: failed to send typing indicator: ', reason);
-    throw reason;
+    return Durational.fromString(context.consumptionReportInterval || _this7._config.consumptionReportInterval);
   });
 };
 
 module.exports = Session;
 
-},{"../../../package.json":95,"../../util/changetracker":30,"../../util/guid":31,"durational":47,"loglevel":56,"platform":57}],19:[function(require,module,exports){
+},{"../../../package.json":98,"../../util/changetracker":34,"../../util/guid":35,"./sessionerror":22,"durational":52,"loglevel":60,"platform":61}],22:[function(_dereq_,module,exports){
 'use strict';
 
-var EventEmitter = require('events').EventEmitter;
-var inherits = require('util').inherits;
-var log = require('loglevel');
+var inherits = _dereq_('util').inherits;
 
-var NotificationConfig = require('./configuration');
-var Registrar = require('./registrar');
+/**
+ * @class
+ * @classdesc Exception type for service-side issues
+ *
+ * @property {Number} code - Error code
+ * @property {String} message - Error description
+ */
+function SessionError(message, code) {
+  Error.captureStackTrace(this, this.constructor);
+  this.name = this.constructor.name;
+  this.message = message;
+  this.code = code;
+}
+
+inherits(SessionError, Error);
+
+module.exports = SessionError;
+
+},{"util":94}],23:[function(_dereq_,module,exports){
+'use strict';
+
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
+
+/**
+ * @class
+ * @classdesc Extended user information
+ * @param {String} identity - Identity of user
+ * @param {String} uri - uri to user's info object
+ * @param {Object} datasync - datasync service
+ * @param {Object} session - session service
+ *
+ * @property {String} identity - User identity
+ * @property {String} friendlyName - User friendly name. Null if not set
+ * @property {Object} attributes - Object with custom attributes for user
+ * @fires UserInfo#updated
+ */
+function UserInfo(identity, uri, datasync, session) {
+  var _this = this;
+
+  Object.defineProperties(this, {
+    _datasync: { value: datasync },
+    _session: { value: session },
+    _identity: { value: identity },
+    _uri: { value: uri, writable: true }, // writable only because of lazy loading of myUserInfo
+    _attributes: { value: {}, writable: true },
+    _friendlyName: { value: null, writable: true },
+    _promiseToFetch: { writable: true },
+    identity: { enumerable: true, get: function get() {
+        return _this._identity;
+      } },
+    attributes: { enumerable: true, get: function get() {
+        return _this._attributes;
+      } },
+    friendlyName: { enumerable: true, get: function get() {
+        return _this._friendlyName;
+      } }
+  });
+
+  EventEmitter.call(this);
+}
+
+inherits(UserInfo, EventEmitter);
+
+UserInfo.prototype._update = function (key, value) {
+  switch (key) {
+    case 'friendlyName':
+      this._friendlyName = value;
+      break;
+    case 'attributes':
+      try {
+        this._attributes = JSON.parse(value);
+      } catch (e) {
+        this._attributes = {};
+      }
+      break;
+    default:
+      return;
+  }
+  this.emit('updated');
+};
+
+UserInfo.prototype._fetch = function () {
+  var _this2 = this;
+
+  if (!this._uri) {
+    return Promise.resolve(this);
+  }
+
+  var update = function update(item) {
+    return _this2._update(item.id, item.value.value);
+  };
+  this._promiseToFetch = this._datasync.openMap(this._uri).then(function (map) {
+    map.subscribe();
+    map.on('entityUpdated', update);
+    return Promise.all([map.get('friendlyName').then(update), map.get('attributes').then(update)]);
+  }).then(function () {
+    return _this2;
+  }).catch(function (err) {
+    _this2._promiseToFetch = null;
+    throw err;
+  });
+  return this._promiseToFetch;
+};
+
+UserInfo.prototype._ensureFetched = function () {
+  return this._promiseToFetch || this._fetch();
+};
+
+/**
+ * Update the UserInfo's attributes.
+ * @param {Object} attributes - The new attributes object.
+ * @returns {Promise<UserInfo|SessionError>} A Promise for the UserInfo
+ */
+UserInfo.prototype.updateAttributes = function (attributes) {
+  var _this3 = this;
+
+  if (attributes.constructor !== Object) {
+    throw new Error('Attributes must be an object.');
+  }
+
+  return this._session.addCommand('editUserAttributes', {
+    username: this._identity,
+    attributes: JSON.stringify(attributes)
+  }).then(function () {
+    return _this3;
+  });
+};
+
+/**
+ * Update the Users's friendlyName.
+ * @param {String} name - The new friendlyName.
+ * @returns {Promise<UserInfo|SessionError>} A Promise for the UserInfo
+ */
+UserInfo.prototype.updateFriendlyName = function (friendlyName) {
+  var _this4 = this;
+
+  return this._session.addCommand('editUserFriendlyName', {
+    username: this._identity,
+    friendlyName: friendlyName
+  }).then(function () {
+    return _this4;
+  });
+};
+
+Object.freeze(UserInfo);
+
+/**
+ * Fired when the UserInfo's fields have been updated.
+ * @event UserInfo#updated
+ */
+
+module.exports = UserInfo;
+
+},{"events":54,"util":94}],24:[function(_dereq_,module,exports){
+'use strict';
+
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
+var log = _dereq_('loglevel');
+
+var NotificationConfig = _dereq_('./configuration');
+var Registrar = _dereq_('./registrar');
 
 /**
  * Creates the instance of Notification helper library
@@ -4492,7 +4893,7 @@ Object.freeze(NotificationClient);
 
 module.exports = NotificationClient;
 
-},{"./configuration":20,"./registrar":22,"events":49,"loglevel":56,"util":91}],20:[function(require,module,exports){
+},{"./configuration":25,"./registrar":27,"events":54,"loglevel":60,"util":94}],25:[function(_dereq_,module,exports){
 'use strict';
 
 var ERS_URI = 'https://ers.twilio.com';
@@ -4526,14 +4927,14 @@ NotificationConfig.prototype.updateToken = function (token) {
 
 module.exports = NotificationConfig;
 
-},{}],21:[function(require,module,exports){
+},{}],26:[function(_dereq_,module,exports){
 'use strict';
 
-var EventEmitter = require('events').EventEmitter;
-var inherits = require('util').inherits;
-var StateMachine = require('javascript-state-machine');
-var Backoff = require('backoff');
-var log = require('loglevel');
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
+var StateMachine = _dereq_('javascript-state-machine');
+var Backoff = _dereq_('backoff');
+var log = _dereq_('loglevel');
 
 /**
  * Creates new instance of the ERS registrar
@@ -4723,7 +5124,7 @@ RegistrarClient.prototype._unregister = function () {
     return Promise.resolve();
   }
 
-  var uri = this._url + '/' + this._registrationId;
+  var uri = this._url + '/' + this._registrationId + '?productId=' + this._productId;
   var headers = {
     'Content-Type': 'application/json',
     'X-Twilio-Token': this._config.token
@@ -4747,14 +5148,14 @@ Object.freeze(RegistrarClient);
 
 module.exports = RegistrarClient;
 
-},{"backoff":34,"events":49,"javascript-state-machine":55,"loglevel":56,"util":91}],22:[function(require,module,exports){
+},{"backoff":39,"events":54,"javascript-state-machine":59,"loglevel":60,"util":94}],27:[function(_dereq_,module,exports){
 'use strict';
 
-var EventEmitter = require('events').EventEmitter;
-var inherits = require('util').inherits;
-var log = require('loglevel');
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
+var log = _dereq_('loglevel');
 
-var RegistrarClient = require('./registrar.connector');
+var RegistrarClient = _dereq_('./registrar.connector');
 
 /**
  * Creates the new instance of ERS registrar client
@@ -4934,10 +5335,10 @@ Object.freeze(Registrar);
 
 module.exports = Registrar;
 
-},{"./registrar.connector":21,"events":49,"loglevel":56,"util":91}],23:[function(require,module,exports){
+},{"./registrar.connector":26,"events":54,"loglevel":60,"util":94}],28:[function(_dereq_,module,exports){
 'use strict';
 
-var request = require('./request');
+var request = _dereq_('./request');
 
 function parseUri(uri) {
   var match = uri.match(/^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)(\/[^?#]*)(\?[^#]*|)(#.*|)$/);
@@ -5107,10 +5508,10 @@ Object.freeze(Transport);
 
 module.exports = Transport;
 
-},{"./request":24}],24:[function(require,module,exports){
+},{"./request":29}],29:[function(_dereq_,module,exports){
 'use strict';
 
-var XHR = typeof XMLHttpRequest === 'undefined' ? require('xmlhttprequest').XMLHttpRequest : XMLHttpRequest;
+var XHR = typeof XMLHttpRequest === 'undefined' ? _dereq_('xmlhttprequest').XMLHttpRequest : XMLHttpRequest;
 
 function parseResponseHeaders(headerString) {
   return headerString.split('\r\n').map(function (el) {
@@ -5203,16 +5604,16 @@ Request.delete = function (params) {
 
 module.exports = Request;
 
-},{"xmlhttprequest":93}],25:[function(require,module,exports){
+},{"xmlhttprequest":96}],30:[function(_dereq_,module,exports){
 'use strict';
 
-var EventEmitter = require('events').EventEmitter;
-var inherits = require('util').inherits;
-var log = require('loglevel');
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
+var log = _dereq_('loglevel');
 
-var Configuration = require('./configuration.js');
-var TwilsockChannel = require('./twilsock.js');
-var PacketInterface = require('./packetinterface.js');
+var Configuration = _dereq_('./configuration.js');
+var TwilsockChannel = _dereq_('./twilsock.js');
+var PacketInterface = _dereq_('./packetinterface.js');
 
 /**
  * Client library for the Twilsock protocol
@@ -5313,7 +5714,7 @@ Object.freeze(TwilsockClient);
 
 module.exports = TwilsockClient;
 
-},{"./configuration.js":26,"./packetinterface.js":27,"./twilsock.js":28,"events":49,"loglevel":56,"util":91}],26:[function(require,module,exports){
+},{"./configuration.js":31,"./packetinterface.js":32,"./twilsock.js":33,"events":54,"loglevel":60,"util":94}],31:[function(_dereq_,module,exports){
 'use strict';
 
 var TWILSOCK_URI = 'wss://tsock.twilio.com';
@@ -5352,10 +5753,10 @@ TwilsockConfig.prototype.updateToken = function (token) {
 
 module.exports = TwilsockConfig;
 
-},{}],27:[function(require,module,exports){
+},{}],32:[function(_dereq_,module,exports){
 'use strict';
 
-var log = require('loglevel');
+var log = _dereq_('loglevel');
 
 var TIMEOUT = 30000;
 
@@ -5416,21 +5817,21 @@ PacketInterface.prototype.shutdown = function () {
 
 module.exports = PacketInterface;
 
-},{"loglevel":56}],28:[function(require,module,exports){
+},{"loglevel":60}],33:[function(_dereq_,module,exports){
 (function (Buffer){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
-var EventEmitter = require('events').EventEmitter;
-var util = require('../../util');
-var inherits = require('util').inherits;
-var log = require('loglevel');
+var EventEmitter = _dereq_('events').EventEmitter;
+var util = _dereq_('../../util');
+var inherits = _dereq_('util').inherits;
+var log = _dereq_('loglevel');
 
-var Backoff = require('backoff');
-var WebSocket = require('ws');
+var Backoff = _dereq_('backoff');
+var WebSocket = _dereq_('ws');
 
-var StateMachine = require('javascript-state-machine');
+var StateMachine = _dereq_('javascript-state-machine');
 
 var ACTIVITY_CHECK_INTERVAL = 5000;
 var ACTIVITY_TIMEOUT = 43000;
@@ -5806,28 +6207,13 @@ Object.freeze(TwilsockChannel);
 
 module.exports = TwilsockChannel;
 
-}).call(this,require("buffer").Buffer)
-},{"../../util":32,"backoff":34,"buffer":43,"events":49,"javascript-state-machine":55,"loglevel":56,"util":91,"ws":92}],29:[function(require,module,exports){
+}).call(this,_dereq_("buffer").Buffer)
+},{"../../util":36,"backoff":39,"buffer":48,"events":54,"javascript-state-machine":59,"loglevel":60,"util":94,"ws":95}],34:[function(_dereq_,module,exports){
 'use strict';
 
-function IPMessaging(token, options) {
-  return new IPMessaging.Client(token, options);
-}
-
-IPMessaging.Client = require('./clients/ipmessaging/client');
-IPMessaging.DataSyncClient = require('./clients/datasync/client');
-IPMessaging.NotificationClient = require('./clients/notification/client');
-IPMessaging.Transport = require('./clients/transport');
-IPMessaging.TwilsockClient = require('./clients/twilsock/client');
-
-module.exports = IPMessaging;
-
-},{"./clients/datasync/client":1,"./clients/ipmessaging/client":11,"./clients/notification/client":19,"./clients/transport":23,"./clients/twilsock/client":25}],30:[function(require,module,exports){
-'use strict';
-
-var EventEmitter = require('events').EventEmitter;
-var inherits = require('util').inherits;
-var JsonDiff = require('./jsondiff');
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
+var JsonDiff = _dereq_('./jsondiff');
 
 /**
  * Tracks changes for JS objects and emits appropriate callbacks
@@ -5892,7 +6278,7 @@ ChangeTracker.prototype.addEventHandler = function (eventName, path, handler) {
 
 module.exports = ChangeTracker;
 
-},{"./jsondiff":33,"events":49,"util":91}],31:[function(require,module,exports){
+},{"./jsondiff":37,"events":54,"util":94}],35:[function(_dereq_,module,exports){
 'use strict';
 
 function guid() {
@@ -5904,7 +6290,7 @@ function guid() {
 
 module.exports = guid;
 
-},{}],32:[function(require,module,exports){
+},{}],36:[function(_dereq_,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -6238,8 +6624,8 @@ module.exports.overwriteArray = overwriteArray;
 module.exports.faultTolerantWait = faultTolerantWait;
 module.exports.UriBuilder = UriBuilder;
 
-}).call(this,require("buffer").Buffer)
-},{"buffer":43}],33:[function(require,module,exports){
+}).call(this,_dereq_("buffer").Buffer)
+},{"buffer":48}],37:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -6493,14 +6879,29 @@ JsonDiff.isDeepEqual = function (o1, o2) {
 
 module.exports = JsonDiff;
 
-},{}],34:[function(require,module,exports){
+},{}],38:[function(_dereq_,module,exports){
+'use strict';
+
+function IPMessaging(token, options) {
+  return new IPMessaging.Client(token, options);
+}
+
+IPMessaging.Client = _dereq_('./clients/ipmessaging/client');
+IPMessaging.DataSyncClient = _dereq_('./clients/datasync/client');
+IPMessaging.NotificationClient = _dereq_('./clients/notification/client');
+IPMessaging.Transport = _dereq_('./clients/transport');
+IPMessaging.TwilsockClient = _dereq_('./clients/twilsock/client');
+
+module.exports = IPMessaging;
+
+},{"./clients/datasync/client":1,"./clients/ipmessaging/client":11,"./clients/notification/client":24,"./clients/transport":28,"./clients/twilsock/client":30}],39:[function(_dereq_,module,exports){
 //      Copyright (c) 2012 Mathieu Turcotte
 //      Licensed under the MIT license.
 
-var Backoff = require('./lib/backoff');
-var ExponentialBackoffStrategy = require('./lib/strategy/exponential');
-var FibonacciBackoffStrategy = require('./lib/strategy/fibonacci');
-var FunctionCall = require('./lib/function_call.js');
+var Backoff = _dereq_('./lib/backoff');
+var ExponentialBackoffStrategy = _dereq_('./lib/strategy/exponential');
+var FibonacciBackoffStrategy = _dereq_('./lib/strategy/fibonacci');
+var FunctionCall = _dereq_('./lib/function_call.js');
 
 module.exports.Backoff = Backoff;
 module.exports.FunctionCall = FunctionCall;
@@ -6526,13 +6927,13 @@ module.exports.call = function(fn, vargs, callback) {
     return new FunctionCall(fn, vargs, callback);
 };
 
-},{"./lib/backoff":35,"./lib/function_call.js":36,"./lib/strategy/exponential":37,"./lib/strategy/fibonacci":38}],35:[function(require,module,exports){
+},{"./lib/backoff":40,"./lib/function_call.js":41,"./lib/strategy/exponential":42,"./lib/strategy/fibonacci":43}],40:[function(_dereq_,module,exports){
 //      Copyright (c) 2012 Mathieu Turcotte
 //      Licensed under the MIT license.
 
-var events = require('events');
-var precond = require('precond');
-var util = require('util');
+var events = _dereq_('events');
+var precond = _dereq_('precond');
+var util = _dereq_('util');
 
 // A class to hold the state of a backoff operation. Accepts a backoff strategy
 // to generate the backoff delays.
@@ -6593,16 +6994,16 @@ Backoff.prototype.reset = function() {
 
 module.exports = Backoff;
 
-},{"events":49,"precond":58,"util":91}],36:[function(require,module,exports){
+},{"events":54,"precond":62,"util":94}],41:[function(_dereq_,module,exports){
 //      Copyright (c) 2012 Mathieu Turcotte
 //      Licensed under the MIT license.
 
-var events = require('events');
-var precond = require('precond');
-var util = require('util');
+var events = _dereq_('events');
+var precond = _dereq_('precond');
+var util = _dereq_('util');
 
-var Backoff = require('./backoff');
-var FibonacciBackoffStrategy = require('./strategy/fibonacci');
+var Backoff = _dereq_('./backoff');
+var FibonacciBackoffStrategy = _dereq_('./strategy/fibonacci');
 
 // Wraps a function to be called in a backoff loop.
 function FunctionCall(fn, args, callback) {
@@ -6621,6 +7022,7 @@ function FunctionCall(fn, args, callback) {
     this.backoff_ = null;
     this.strategy_ = null;
     this.failAfter_ = -1;
+    this.retryPredicate_ = FunctionCall.DEFAULT_RETRY_PREDICATE_;
 
     this.state_ = FunctionCall.State_.PENDING;
 }
@@ -6637,6 +7039,11 @@ FunctionCall.State_ = {
     COMPLETED: 2,
     // The call was aborted.
     ABORTED: 3
+};
+
+// The default retry predicate which considers any error as retriable.
+FunctionCall.DEFAULT_RETRY_PREDICATE_ = function(err) {
+  return true;
 };
 
 // Checks whether the call is pending.
@@ -6667,6 +7074,16 @@ FunctionCall.prototype.setStrategy = function(strategy) {
     return this; // Return this for chaining.
 };
 
+// Sets the predicate which will be used to determine whether the errors
+// returned from the wrapped function should be retried or not, e.g. a
+// network error would be retriable while a type error would stop the
+// function call.
+FunctionCall.prototype.retryIf = function(retryPredicate) {
+    precond.checkState(this.isPending(), 'FunctionCall in progress.');
+    this.retryPredicate_ = retryPredicate;
+    return this;
+};
+
 // Returns all intermediary results returned by the wrapped function since
 // the initial call.
 FunctionCall.prototype.getLastResult = function() {
@@ -6687,19 +7104,24 @@ FunctionCall.prototype.failAfter = function(maxNumberOfRetry) {
 
 // Aborts the call.
 FunctionCall.prototype.abort = function() {
-    precond.checkState(!this.isCompleted(), 'FunctionCall already completed.');
+    if (this.isCompleted() || this.isAborted()) {
+      return;
+    }
 
     if (this.isRunning()) {
         this.backoff_.reset();
     }
 
     this.state_ = FunctionCall.State_.ABORTED;
+    this.lastResult_ = [new Error('Backoff aborted.')];
+    this.emit('abort');
+    this.doCallback_();
 };
 
 // Initiates the call to the wrapped function. Accepts an optional factory
 // function used to create the backoff instance; used when testing.
 FunctionCall.prototype.start = function(backoffFactory) {
-    precond.checkState(!this.isAborted(), 'FunctionCall aborted.');
+    precond.checkState(!this.isAborted(), 'FunctionCall is aborted.');
     precond.checkState(this.isPending(), 'FunctionCall already started.');
 
     var strategy = this.strategy_ || new FibonacciBackoffStrategy();
@@ -6748,8 +7170,9 @@ FunctionCall.prototype.handleFunctionCallback_ = function() {
     this.lastResult_ = args; // Save last callback arguments.
     events.EventEmitter.prototype.emit.apply(this, ['callback'].concat(args));
 
-    if (args[0]) {
-        this.backoff_.backoff(args[0]);
+    var err = args[0];
+    if (err && this.retryPredicate_(err)) {
+        this.backoff_.backoff(err);
     } else {
         this.state_ = FunctionCall.State_.COMPLETED;
         this.doCallback_();
@@ -6763,14 +7186,14 @@ FunctionCall.prototype.handleBackoff_ = function(number, delay, err) {
 
 module.exports = FunctionCall;
 
-},{"./backoff":35,"./strategy/fibonacci":38,"events":49,"precond":58,"util":91}],37:[function(require,module,exports){
+},{"./backoff":40,"./strategy/fibonacci":43,"events":54,"precond":62,"util":94}],42:[function(_dereq_,module,exports){
 //      Copyright (c) 2012 Mathieu Turcotte
 //      Licensed under the MIT license.
 
-var util = require('util');
-var precond = require('precond');
+var util = _dereq_('util');
+var precond = _dereq_('precond');
 
-var BackoffStrategy = require('./strategy');
+var BackoffStrategy = _dereq_('./strategy');
 
 // Exponential backoff strategy.
 function ExponentialBackoffStrategy(options) {
@@ -6806,13 +7229,13 @@ ExponentialBackoffStrategy.prototype.reset_ = function() {
 
 module.exports = ExponentialBackoffStrategy;
 
-},{"./strategy":39,"precond":58,"util":91}],38:[function(require,module,exports){
+},{"./strategy":44,"precond":62,"util":94}],43:[function(_dereq_,module,exports){
 //      Copyright (c) 2012 Mathieu Turcotte
 //      Licensed under the MIT license.
 
-var util = require('util');
+var util = _dereq_('util');
 
-var BackoffStrategy = require('./strategy');
+var BackoffStrategy = _dereq_('./strategy');
 
 // Fibonacci backoff strategy.
 function FibonacciBackoffStrategy(options) {
@@ -6836,12 +7259,12 @@ FibonacciBackoffStrategy.prototype.reset_ = function() {
 
 module.exports = FibonacciBackoffStrategy;
 
-},{"./strategy":39,"util":91}],39:[function(require,module,exports){
+},{"./strategy":44,"util":94}],44:[function(_dereq_,module,exports){
 //      Copyright (c) 2012 Mathieu Turcotte
 //      Licensed under the MIT license.
 
-var events = require('events');
-var util = require('util');
+var events = _dereq_('events');
+var util = _dereq_('util');
 
 function isDef(value) {
     return value !== undefined && value !== null;
@@ -6918,7 +7341,7 @@ BackoffStrategy.prototype.reset_ = function() {
 
 module.exports = BackoffStrategy;
 
-},{"events":49,"util":91}],40:[function(require,module,exports){
+},{"events":54,"util":94}],45:[function(_dereq_,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -7044,11 +7467,11 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],41:[function(require,module,exports){
+},{}],46:[function(_dereq_,module,exports){
 
-},{}],42:[function(require,module,exports){
-arguments[4][41][0].apply(exports,arguments)
-},{"dup":41}],43:[function(require,module,exports){
+},{}],47:[function(_dereq_,module,exports){
+arguments[4][46][0].apply(exports,arguments)
+},{"dup":46}],48:[function(_dereq_,module,exports){
 (function (global){
 /*!
  * The buffer module from node.js, for the browser.
@@ -7060,9 +7483,9 @@ arguments[4][41][0].apply(exports,arguments)
 
 'use strict'
 
-var base64 = require('base64-js')
-var ieee754 = require('ieee754')
-var isArray = require('isarray')
+var base64 = _dereq_('base64-js')
+var ieee754 = _dereq_('ieee754')
+var isArray = _dereq_('isarray')
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -8600,14 +9023,14 @@ function blitBuffer (src, dst, offset, length) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"base64-js":40,"ieee754":51,"isarray":44}],44:[function(require,module,exports){
+},{"base64-js":45,"ieee754":56,"isarray":49}],49:[function(_dereq_,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],45:[function(require,module,exports){
+},{}],50:[function(_dereq_,module,exports){
 module.exports = {
   "100": "Continue",
   "101": "Switching Protocols",
@@ -8672,7 +9095,7 @@ module.exports = {
   "511": "Network Authentication Required"
 }
 
-},{}],46:[function(require,module,exports){
+},{}],51:[function(_dereq_,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -8782,11 +9205,11 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 
-}).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":53}],47:[function(require,module,exports){
-module.exports = require('./lib');
+}).call(this,{"isBuffer":_dereq_("../../is-buffer/index.js")})
+},{"../../is-buffer/index.js":58}],52:[function(_dereq_,module,exports){
+module.exports = _dereq_('./lib');
 
-},{"./lib":48}],48:[function(require,module,exports){
+},{"./lib":53}],53:[function(_dereq_,module,exports){
 var FORMAT_REGEXP = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/;
 
 function matchToInteger(match){
@@ -8859,7 +9282,7 @@ exports.toSeconds = function(stringOrDuration) {
   return duration.hours * 3600 + duration.minutes * 60 + duration.seconds;
 };
 
-},{}],49:[function(require,module,exports){
+},{}],54:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -9159,8 +9582,8 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],50:[function(require,module,exports){
-var http = require('http');
+},{}],55:[function(_dereq_,module,exports){
+var http = _dereq_('http');
 
 var https = module.exports;
 
@@ -9175,7 +9598,7 @@ https.request = function (params, cb) {
     return http.request.call(this, params, cb);
 }
 
-},{"http":79}],51:[function(require,module,exports){
+},{"http":84}],56:[function(_dereq_,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -9261,7 +9684,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],52:[function(require,module,exports){
+},{}],57:[function(_dereq_,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -9286,7 +9709,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],53:[function(require,module,exports){
+},{}],58:[function(_dereq_,module,exports){
 /**
  * Determine if an object is Buffer
  *
@@ -9305,12 +9728,7 @@ module.exports = function (obj) {
     ))
 }
 
-},{}],54:[function(require,module,exports){
-module.exports = Array.isArray || function (arr) {
-  return Object.prototype.toString.call(arr) == '[object Array]';
-};
-
-},{}],55:[function(require,module,exports){
+},{}],59:[function(_dereq_,module,exports){
 /*
 
   Javascript State Machine Library - https://github.com/jakesgordon/javascript-state-machine
@@ -9522,7 +9940,7 @@ module.exports = Array.isArray || function (arr) {
   // AMD/REQUIRE
   //============
   else if (typeof define === 'function' && define.amd) {
-    define(function(require) { return StateMachine; });
+    define(function(_dereq_) { return StateMachine; });
   }
   //========
   // BROWSER
@@ -9539,7 +9957,7 @@ module.exports = Array.isArray || function (arr) {
 
 }());
 
-},{}],56:[function(require,module,exports){
+},{}],60:[function(_dereq_,module,exports){
 /*
 * loglevel - https://github.com/pimterry/loglevel
 *
@@ -9548,7 +9966,7 @@ module.exports = Array.isArray || function (arr) {
 */
 (function (root, definition) {
     "use strict";
-    if (typeof module === 'object' && module.exports && typeof require === 'function') {
+    if (typeof module === 'object' && module.exports && typeof _dereq_ === 'function') {
         module.exports = definition();
     } else if (typeof define === 'function' && typeof define.amd === 'object') {
         define(definition);
@@ -9764,7 +10182,7 @@ module.exports = Array.isArray || function (arr) {
     return defaultLogger;
 }));
 
-},{}],57:[function(require,module,exports){
+},{}],61:[function(_dereq_,module,exports){
 (function (global){
 /*!
  * Platform.js v1.3.1 <http://mths.be/platform>
@@ -10903,22 +11321,22 @@ module.exports = Array.isArray || function (arr) {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],58:[function(require,module,exports){
+},{}],62:[function(_dereq_,module,exports){
 /*
  * Copyright (c) 2012 Mathieu Turcotte
  * Licensed under the MIT license.
  */
 
-module.exports = require('./lib/checks');
-},{"./lib/checks":59}],59:[function(require,module,exports){
+module.exports = _dereq_('./lib/checks');
+},{"./lib/checks":63}],63:[function(_dereq_,module,exports){
 /*
  * Copyright (c) 2012 Mathieu Turcotte
  * Licensed under the MIT license.
  */
 
-var util = require('util');
+var util = _dereq_('util');
 
-var errors = module.exports = require('./errors');
+var errors = module.exports = _dereq_('./errors');
 
 function failCheck(ExceptionConstructor, callee, messageFormat, formatArgs) {
     messageFormat = messageFormat || '';
@@ -11006,13 +11424,13 @@ module.exports.checkIsBoolean = typeCheck('boolean');
 module.exports.checkIsFunction = typeCheck('function');
 module.exports.checkIsObject = typeCheck('object');
 
-},{"./errors":60,"util":91}],60:[function(require,module,exports){
+},{"./errors":64,"util":94}],64:[function(_dereq_,module,exports){
 /*
  * Copyright (c) 2012 Mathieu Turcotte
  * Licensed under the MIT license.
  */
 
-var util = require('util');
+var util = _dereq_('util');
 
 function IllegalArgumentError(message) {
     Error.call(this, message);
@@ -11032,7 +11450,7 @@ IllegalStateError.prototype.name = 'IllegalStateError';
 
 module.exports.IllegalStateError = IllegalStateError;
 module.exports.IllegalArgumentError = IllegalArgumentError;
-},{"util":91}],61:[function(require,module,exports){
+},{"util":94}],65:[function(_dereq_,module,exports){
 (function (process){
 'use strict';
 
@@ -11055,8 +11473,8 @@ function nextTick(fn) {
   });
 }
 
-}).call(this,require('_process'))
-},{"_process":62}],62:[function(require,module,exports){
+}).call(this,_dereq_('_process'))
+},{"_process":66}],66:[function(_dereq_,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -11149,7 +11567,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],63:[function(require,module,exports){
+},{}],67:[function(_dereq_,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.4.0 by @mathias */
 ;(function(root) {
@@ -11686,7 +12104,7 @@ process.umask = function() { return 0; };
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],64:[function(require,module,exports){
+},{}],68:[function(_dereq_,module,exports){
 (function (process){
 // vim:ts=4:sts=4:sw=4:
 /*!
@@ -13737,8 +14155,8 @@ return Q;
 
 });
 
-}).call(this,require('_process'))
-},{"_process":62}],65:[function(require,module,exports){
+}).call(this,_dereq_('_process'))
+},{"_process":66}],69:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13824,7 +14242,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],66:[function(require,module,exports){
+},{}],70:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13911,13 +14329,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],67:[function(require,module,exports){
+},{}],71:[function(_dereq_,module,exports){
 'use strict';
 
-exports.decode = exports.parse = require('./decode');
-exports.encode = exports.stringify = require('./encode');
+exports.decode = exports.parse = _dereq_('./decode');
+exports.encode = exports.stringify = _dereq_('./encode');
 
-},{"./decode":65,"./encode":66}],68:[function(require,module,exports){
+},{"./decode":69,"./encode":70}],72:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13941,15 +14359,15 @@ exports.encode = exports.stringify = require('./encode');
 
 module.exports = Stream;
 
-var EE = require('events').EventEmitter;
-var inherits = require('inherits');
+var EE = _dereq_('events').EventEmitter;
+var inherits = _dereq_('inherits');
 
 inherits(Stream, EE);
-Stream.Readable = require('readable-stream/readable.js');
-Stream.Writable = require('readable-stream/writable.js');
-Stream.Duplex = require('readable-stream/duplex.js');
-Stream.Transform = require('readable-stream/transform.js');
-Stream.PassThrough = require('readable-stream/passthrough.js');
+Stream.Readable = _dereq_('readable-stream/readable.js');
+Stream.Writable = _dereq_('readable-stream/writable.js');
+Stream.Duplex = _dereq_('readable-stream/duplex.js');
+Stream.Transform = _dereq_('readable-stream/transform.js');
+Stream.PassThrough = _dereq_('readable-stream/passthrough.js');
 
 // Backwards-compat with node 0.4.x
 Stream.Stream = Stream;
@@ -14046,10 +14464,12 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":49,"inherits":52,"readable-stream/duplex.js":69,"readable-stream/passthrough.js":75,"readable-stream/readable.js":76,"readable-stream/transform.js":77,"readable-stream/writable.js":78}],69:[function(require,module,exports){
-module.exports = require("./lib/_stream_duplex.js")
+},{"events":54,"inherits":57,"readable-stream/duplex.js":74,"readable-stream/passthrough.js":80,"readable-stream/readable.js":81,"readable-stream/transform.js":82,"readable-stream/writable.js":83}],73:[function(_dereq_,module,exports){
+arguments[4][49][0].apply(exports,arguments)
+},{"dup":49}],74:[function(_dereq_,module,exports){
+module.exports = _dereq_("./lib/_stream_duplex.js")
 
-},{"./lib/_stream_duplex.js":70}],70:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":75}],75:[function(_dereq_,module,exports){
 // a duplex stream is just a stream that is both readable and writable.
 // Since JS doesn't have multiple prototypal inheritance, this class
 // prototypally inherits from Readable, and then parasitically from
@@ -14058,55 +14478,49 @@ module.exports = require("./lib/_stream_duplex.js")
 'use strict';
 
 /*<replacement>*/
+
 var objectKeys = Object.keys || function (obj) {
   var keys = [];
-  for (var key in obj) keys.push(key);
-  return keys;
-}
+  for (var key in obj) {
+    keys.push(key);
+  }return keys;
+};
 /*</replacement>*/
-
 
 module.exports = Duplex;
 
 /*<replacement>*/
-var processNextTick = require('process-nextick-args');
+var processNextTick = _dereq_('process-nextick-args');
 /*</replacement>*/
-
-
 
 /*<replacement>*/
-var util = require('core-util-is');
-util.inherits = require('inherits');
+var util = _dereq_('core-util-is');
+util.inherits = _dereq_('inherits');
 /*</replacement>*/
 
-var Readable = require('./_stream_readable');
-var Writable = require('./_stream_writable');
+var Readable = _dereq_('./_stream_readable');
+var Writable = _dereq_('./_stream_writable');
 
 util.inherits(Duplex, Readable);
 
 var keys = objectKeys(Writable.prototype);
 for (var v = 0; v < keys.length; v++) {
   var method = keys[v];
-  if (!Duplex.prototype[method])
-    Duplex.prototype[method] = Writable.prototype[method];
+  if (!Duplex.prototype[method]) Duplex.prototype[method] = Writable.prototype[method];
 }
 
 function Duplex(options) {
-  if (!(this instanceof Duplex))
-    return new Duplex(options);
+  if (!(this instanceof Duplex)) return new Duplex(options);
 
   Readable.call(this, options);
   Writable.call(this, options);
 
-  if (options && options.readable === false)
-    this.readable = false;
+  if (options && options.readable === false) this.readable = false;
 
-  if (options && options.writable === false)
-    this.writable = false;
+  if (options && options.writable === false) this.writable = false;
 
   this.allowHalfOpen = true;
-  if (options && options.allowHalfOpen === false)
-    this.allowHalfOpen = false;
+  if (options && options.allowHalfOpen === false) this.allowHalfOpen = false;
 
   this.once('end', onend);
 }
@@ -14115,8 +14529,7 @@ function Duplex(options) {
 function onend() {
   // if we allow half-open state, or if the writable side ended,
   // then we're ok.
-  if (this.allowHalfOpen || this._writableState.ended)
-    return;
+  if (this.allowHalfOpen || this._writableState.ended) return;
 
   // no more data can be written.
   // But allow more writes to happen in this tick.
@@ -14127,13 +14540,12 @@ function onEndNT(self) {
   self.end();
 }
 
-function forEach (xs, f) {
+function forEach(xs, f) {
   for (var i = 0, l = xs.length; i < l; i++) {
     f(xs[i], i);
   }
 }
-
-},{"./_stream_readable":72,"./_stream_writable":74,"core-util-is":46,"inherits":52,"process-nextick-args":61}],71:[function(require,module,exports){
+},{"./_stream_readable":77,"./_stream_writable":79,"core-util-is":51,"inherits":57,"process-nextick-args":65}],76:[function(_dereq_,module,exports){
 // a passthrough stream.
 // basically just the most minimal sort of Transform stream.
 // Every written chunk gets output as-is.
@@ -14142,80 +14554,73 @@ function forEach (xs, f) {
 
 module.exports = PassThrough;
 
-var Transform = require('./_stream_transform');
+var Transform = _dereq_('./_stream_transform');
 
 /*<replacement>*/
-var util = require('core-util-is');
-util.inherits = require('inherits');
+var util = _dereq_('core-util-is');
+util.inherits = _dereq_('inherits');
 /*</replacement>*/
 
 util.inherits(PassThrough, Transform);
 
 function PassThrough(options) {
-  if (!(this instanceof PassThrough))
-    return new PassThrough(options);
+  if (!(this instanceof PassThrough)) return new PassThrough(options);
 
   Transform.call(this, options);
 }
 
-PassThrough.prototype._transform = function(chunk, encoding, cb) {
+PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-
-},{"./_stream_transform":73,"core-util-is":46,"inherits":52}],72:[function(require,module,exports){
+},{"./_stream_transform":78,"core-util-is":51,"inherits":57}],77:[function(_dereq_,module,exports){
 (function (process){
 'use strict';
 
 module.exports = Readable;
 
 /*<replacement>*/
-var processNextTick = require('process-nextick-args');
+var processNextTick = _dereq_('process-nextick-args');
 /*</replacement>*/
 
-
 /*<replacement>*/
-var isArray = require('isarray');
+var isArray = _dereq_('isarray');
 /*</replacement>*/
 
-
 /*<replacement>*/
-var Buffer = require('buffer').Buffer;
+var Buffer = _dereq_('buffer').Buffer;
 /*</replacement>*/
 
 Readable.ReadableState = ReadableState;
 
-var EE = require('events');
+var EE = _dereq_('events');
 
 /*<replacement>*/
-var EElistenerCount = function(emitter, type) {
+var EElistenerCount = function (emitter, type) {
   return emitter.listeners(type).length;
 };
 /*</replacement>*/
 
-
-
 /*<replacement>*/
 var Stream;
-(function (){try{
-  Stream = require('st' + 'ream');
-}catch(_){}finally{
-  if (!Stream)
-    Stream = require('events').EventEmitter;
-}}())
+(function () {
+  try {
+    Stream = _dereq_('st' + 'ream');
+  } catch (_) {} finally {
+    if (!Stream) Stream = _dereq_('events').EventEmitter;
+  }
+})();
 /*</replacement>*/
 
-var Buffer = require('buffer').Buffer;
+var Buffer = _dereq_('buffer').Buffer;
 
 /*<replacement>*/
-var util = require('core-util-is');
-util.inherits = require('inherits');
+var util = _dereq_('core-util-is');
+util.inherits = _dereq_('inherits');
 /*</replacement>*/
 
-
-
 /*<replacement>*/
-var debugUtil = require('util');
-var debug;
+var debugUtil = _dereq_('util');
+var debug = undefined;
 if (debugUtil && debugUtil.debuglog) {
   debug = debugUtil.debuglog('stream');
 } else {
@@ -14229,7 +14634,7 @@ util.inherits(Readable, Stream);
 
 var Duplex;
 function ReadableState(options, stream) {
-  Duplex = Duplex || require('./_stream_duplex');
+  Duplex = Duplex || _dereq_('./_stream_duplex');
 
   options = options || {};
 
@@ -14237,17 +14642,16 @@ function ReadableState(options, stream) {
   // make all the buffer merging and length checks go away
   this.objectMode = !!options.objectMode;
 
-  if (stream instanceof Duplex)
-    this.objectMode = this.objectMode || !!options.readableObjectMode;
+  if (stream instanceof Duplex) this.objectMode = this.objectMode || !!options.readableObjectMode;
 
   // the point at which it stops calling _read() to fill the buffer
   // Note: 0 is a valid value, means "don't call _read preemptively ever"
   var hwm = options.highWaterMark;
   var defaultHwm = this.objectMode ? 16 : 16 * 1024;
-  this.highWaterMark = (hwm || hwm === 0) ? hwm : defaultHwm;
+  this.highWaterMark = hwm || hwm === 0 ? hwm : defaultHwm;
 
   // cast to ints.
-  this.highWaterMark = ~~this.highWaterMark;
+  this.highWaterMark = ~ ~this.highWaterMark;
 
   this.buffer = [];
   this.length = 0;
@@ -14269,6 +14673,7 @@ function ReadableState(options, stream) {
   this.needReadable = false;
   this.emittedReadable = false;
   this.readableListening = false;
+  this.resumeScheduled = false;
 
   // Crypto is kind of old and crusty.  Historically, its default string
   // encoding is 'binary' so we have to make this configurable.
@@ -14288,8 +14693,7 @@ function ReadableState(options, stream) {
   this.decoder = null;
   this.encoding = null;
   if (options.encoding) {
-    if (!StringDecoder)
-      StringDecoder = require('string_decoder/').StringDecoder;
+    if (!StringDecoder) StringDecoder = _dereq_('string_decoder/').StringDecoder;
     this.decoder = new StringDecoder(options.encoding);
     this.encoding = options.encoding;
   }
@@ -14297,18 +14701,16 @@ function ReadableState(options, stream) {
 
 var Duplex;
 function Readable(options) {
-  Duplex = Duplex || require('./_stream_duplex');
+  Duplex = Duplex || _dereq_('./_stream_duplex');
 
-  if (!(this instanceof Readable))
-    return new Readable(options);
+  if (!(this instanceof Readable)) return new Readable(options);
 
   this._readableState = new ReadableState(options, this);
 
   // legacy
   this.readable = true;
 
-  if (options && typeof options.read === 'function')
-    this._read = options.read;
+  if (options && typeof options.read === 'function') this._read = options.read;
 
   Stream.call(this);
 }
@@ -14317,7 +14719,7 @@ function Readable(options) {
 // This returns true if the highWaterMark has not been hit yet,
 // similar to how Writable.write() returns true if you should
 // write() some more.
-Readable.prototype.push = function(chunk, encoding) {
+Readable.prototype.push = function (chunk, encoding) {
   var state = this._readableState;
 
   if (!state.objectMode && typeof chunk === 'string') {
@@ -14332,12 +14734,12 @@ Readable.prototype.push = function(chunk, encoding) {
 };
 
 // Unshift should *always* be something directly out of read()
-Readable.prototype.unshift = function(chunk) {
+Readable.prototype.unshift = function (chunk) {
   var state = this._readableState;
   return readableAddChunk(this, state, chunk, '', true);
 };
 
-Readable.prototype.isPaused = function() {
+Readable.prototype.isPaused = function () {
   return this._readableState.flowing === false;
 };
 
@@ -14356,26 +14758,28 @@ function readableAddChunk(stream, state, chunk, encoding, addToFront) {
       var e = new Error('stream.unshift() after end event');
       stream.emit('error', e);
     } else {
-      if (state.decoder && !addToFront && !encoding)
+      var skipAdd;
+      if (state.decoder && !addToFront && !encoding) {
         chunk = state.decoder.write(chunk);
+        skipAdd = !state.objectMode && chunk.length === 0;
+      }
 
-      if (!addToFront)
-        state.reading = false;
+      if (!addToFront) state.reading = false;
 
-      // if we want the data now, just emit it.
-      if (state.flowing && state.length === 0 && !state.sync) {
-        stream.emit('data', chunk);
-        stream.read(0);
-      } else {
-        // update the buffer info.
-        state.length += state.objectMode ? 1 : chunk.length;
-        if (addToFront)
-          state.buffer.unshift(chunk);
-        else
-          state.buffer.push(chunk);
+      // Don't add to the buffer if we've decoded to an empty string chunk and
+      // we're not in object mode
+      if (!skipAdd) {
+        // if we want the data now, just emit it.
+        if (state.flowing && state.length === 0 && !state.sync) {
+          stream.emit('data', chunk);
+          stream.read(0);
+        } else {
+          // update the buffer info.
+          state.length += state.objectMode ? 1 : chunk.length;
+          if (addToFront) state.buffer.unshift(chunk);else state.buffer.push(chunk);
 
-        if (state.needReadable)
-          emitReadable(stream);
+          if (state.needReadable) emitReadable(stream);
+        }
       }
 
       maybeReadMore(stream, state);
@@ -14387,7 +14791,6 @@ function readableAddChunk(stream, state, chunk, encoding, addToFront) {
   return needMoreData(state);
 }
 
-
 // if it's past the high water mark, we can push in some more.
 // Also, if we have no data yet, we can stand some
 // more bytes.  This is to work around cases where hwm=0,
@@ -14396,16 +14799,12 @@ function readableAddChunk(stream, state, chunk, encoding, addToFront) {
 // needReadable was set, then we ought to push more, so that another
 // 'readable' event will be triggered.
 function needMoreData(state) {
-  return !state.ended &&
-         (state.needReadable ||
-          state.length < state.highWaterMark ||
-          state.length === 0);
+  return !state.ended && (state.needReadable || state.length < state.highWaterMark || state.length === 0);
 }
 
 // backwards compatibility.
-Readable.prototype.setEncoding = function(enc) {
-  if (!StringDecoder)
-    StringDecoder = require('string_decoder/').StringDecoder;
+Readable.prototype.setEncoding = function (enc) {
+  if (!StringDecoder) StringDecoder = _dereq_('string_decoder/').StringDecoder;
   this._readableState.decoder = new StringDecoder(enc);
   this._readableState.encoding = enc;
   return this;
@@ -14430,29 +14829,22 @@ function computeNewHighWaterMark(n) {
 }
 
 function howMuchToRead(n, state) {
-  if (state.length === 0 && state.ended)
-    return 0;
+  if (state.length === 0 && state.ended) return 0;
 
-  if (state.objectMode)
-    return n === 0 ? 0 : 1;
+  if (state.objectMode) return n === 0 ? 0 : 1;
 
   if (n === null || isNaN(n)) {
     // only flow one buffer at a time
-    if (state.flowing && state.buffer.length)
-      return state.buffer[0].length;
-    else
-      return state.length;
+    if (state.flowing && state.buffer.length) return state.buffer[0].length;else return state.length;
   }
 
-  if (n <= 0)
-    return 0;
+  if (n <= 0) return 0;
 
   // If we're asking for more than the target buffer level,
   // then raise the water mark.  Bump up to the next highest
   // power of 2, to prevent increasing it excessively in tiny
   // amounts.
-  if (n > state.highWaterMark)
-    state.highWaterMark = computeNewHighWaterMark(n);
+  if (n > state.highWaterMark) state.highWaterMark = computeNewHighWaterMark(n);
 
   // don't have that much.  return null, unless we've ended.
   if (n > state.length) {
@@ -14468,25 +14860,19 @@ function howMuchToRead(n, state) {
 }
 
 // you can override either this method, or the async _read(n) below.
-Readable.prototype.read = function(n) {
+Readable.prototype.read = function (n) {
   debug('read', n);
   var state = this._readableState;
   var nOrig = n;
 
-  if (typeof n !== 'number' || n > 0)
-    state.emittedReadable = false;
+  if (typeof n !== 'number' || n > 0) state.emittedReadable = false;
 
   // if we're doing read(0) to trigger a readable event, but we
   // already have a bunch of data in the buffer, then just trigger
   // the 'readable' event and move on.
-  if (n === 0 &&
-      state.needReadable &&
-      (state.length >= state.highWaterMark || state.ended)) {
+  if (n === 0 && state.needReadable && (state.length >= state.highWaterMark || state.ended)) {
     debug('read: emitReadable', state.length, state.ended);
-    if (state.length === 0 && state.ended)
-      endReadable(this);
-    else
-      emitReadable(this);
+    if (state.length === 0 && state.ended) endReadable(this);else emitReadable(this);
     return null;
   }
 
@@ -14494,8 +14880,7 @@ Readable.prototype.read = function(n) {
 
   // if we've ended, and we're now clear, then finish it up.
   if (n === 0 && state.ended) {
-    if (state.length === 0)
-      endReadable(this);
+    if (state.length === 0) endReadable(this);
     return null;
   }
 
@@ -14543,8 +14928,7 @@ Readable.prototype.read = function(n) {
     state.reading = true;
     state.sync = true;
     // if the length is currently zero, then we *need* a readable event.
-    if (state.length === 0)
-      state.needReadable = true;
+    if (state.length === 0) state.needReadable = true;
     // call internal read method
     this._read(state.highWaterMark);
     state.sync = false;
@@ -14552,14 +14936,10 @@ Readable.prototype.read = function(n) {
 
   // If _read pushed data synchronously, then `reading` will be false,
   // and we need to re-evaluate how much data we can return to the user.
-  if (doRead && !state.reading)
-    n = howMuchToRead(nOrig, state);
+  if (doRead && !state.reading) n = howMuchToRead(nOrig, state);
 
   var ret;
-  if (n > 0)
-    ret = fromList(n, state);
-  else
-    ret = null;
+  if (n > 0) ret = fromList(n, state);else ret = null;
 
   if (ret === null) {
     state.needReadable = true;
@@ -14570,31 +14950,23 @@ Readable.prototype.read = function(n) {
 
   // If we have nothing in the buffer, then we want to know
   // as soon as we *do* get something into the buffer.
-  if (state.length === 0 && !state.ended)
-    state.needReadable = true;
+  if (state.length === 0 && !state.ended) state.needReadable = true;
 
   // If we tried to read() past the EOF, then emit end on the next tick.
-  if (nOrig !== n && state.ended && state.length === 0)
-    endReadable(this);
+  if (nOrig !== n && state.ended && state.length === 0) endReadable(this);
 
-  if (ret !== null)
-    this.emit('data', ret);
+  if (ret !== null) this.emit('data', ret);
 
   return ret;
 };
 
 function chunkInvalid(state, chunk) {
   var er = null;
-  if (!(Buffer.isBuffer(chunk)) &&
-      typeof chunk !== 'string' &&
-      chunk !== null &&
-      chunk !== undefined &&
-      !state.objectMode) {
+  if (!Buffer.isBuffer(chunk) && typeof chunk !== 'string' && chunk !== null && chunk !== undefined && !state.objectMode) {
     er = new TypeError('Invalid non-string/buffer chunk');
   }
   return er;
 }
-
 
 function onEofChunk(stream, state) {
   if (state.ended) return;
@@ -14620,10 +14992,7 @@ function emitReadable(stream) {
   if (!state.emittedReadable) {
     debug('emitReadable', state.flowing);
     state.emittedReadable = true;
-    if (state.sync)
-      processNextTick(emitReadable_, stream);
-    else
-      emitReadable_(stream);
+    if (state.sync) processNextTick(emitReadable_, stream);else emitReadable_(stream);
   }
 }
 
@@ -14632,7 +15001,6 @@ function emitReadable_(stream) {
   stream.emit('readable');
   flow(stream);
 }
-
 
 // at this point, the user has presumably seen the 'readable' event,
 // and called read() to consume some data.  that may have triggered
@@ -14649,15 +15017,12 @@ function maybeReadMore(stream, state) {
 
 function maybeReadMore_(stream, state) {
   var len = state.length;
-  while (!state.reading && !state.flowing && !state.ended &&
-         state.length < state.highWaterMark) {
+  while (!state.reading && !state.flowing && !state.ended && state.length < state.highWaterMark) {
     debug('maybeReadMore read 0');
     stream.read(0);
     if (len === state.length)
       // didn't get any data, stop spinning.
-      break;
-    else
-      len = state.length;
+      break;else len = state.length;
   }
   state.readingMore = false;
 }
@@ -14666,11 +15031,11 @@ function maybeReadMore_(stream, state) {
 // call cb(er, data) where data is <= n in length.
 // for virtual (non-string, non-buffer) streams, "length" is somewhat
 // arbitrary, and perhaps not very meaningful.
-Readable.prototype._read = function(n) {
+Readable.prototype._read = function (n) {
   this.emit('error', new Error('not implemented'));
 };
 
-Readable.prototype.pipe = function(dest, pipeOpts) {
+Readable.prototype.pipe = function (dest, pipeOpts) {
   var src = this;
   var state = this._readableState;
 
@@ -14688,15 +15053,10 @@ Readable.prototype.pipe = function(dest, pipeOpts) {
   state.pipesCount += 1;
   debug('pipe count=%d opts=%j', state.pipesCount, pipeOpts);
 
-  var doEnd = (!pipeOpts || pipeOpts.end !== false) &&
-              dest !== process.stdout &&
-              dest !== process.stderr;
+  var doEnd = (!pipeOpts || pipeOpts.end !== false) && dest !== process.stdout && dest !== process.stderr;
 
   var endFn = doEnd ? onend : cleanup;
-  if (state.endEmitted)
-    processNextTick(endFn);
-  else
-    src.once('end', endFn);
+  if (state.endEmitted) processNextTick(endFn);else src.once('end', endFn);
 
   dest.on('unpipe', onunpipe);
   function onunpipe(readable) {
@@ -14738,9 +15098,7 @@ Readable.prototype.pipe = function(dest, pipeOpts) {
     // flowing again.
     // So, if this is awaiting a drain, then we just call it now.
     // If we don't know, then assume that we are waiting for one.
-    if (state.awaitDrain &&
-        (!dest._writableState || dest._writableState.needDrain))
-      ondrain();
+    if (state.awaitDrain && (!dest._writableState || dest._writableState.needDrain)) ondrain();
   }
 
   src.on('data', ondata);
@@ -14751,10 +15109,7 @@ Readable.prototype.pipe = function(dest, pipeOpts) {
       // If the user unpiped during `dest.write()`, it is possible
       // to get stuck in a permanently paused state if that write
       // also returned false.
-      if (state.pipesCount === 1 &&
-          state.pipes[0] === dest &&
-          src.listenerCount('data') === 1 &&
-          !cleanedUp) {
+      if (state.pipesCount === 1 && state.pipes[0] === dest && src.listenerCount('data') === 1 && !cleanedUp) {
         debug('false write response, pause', src._readableState.awaitDrain);
         src._readableState.awaitDrain++;
       }
@@ -14768,18 +15123,11 @@ Readable.prototype.pipe = function(dest, pipeOpts) {
     debug('onerror', er);
     unpipe();
     dest.removeListener('error', onerror);
-    if (EElistenerCount(dest, 'error') === 0)
-      dest.emit('error', er);
+    if (EElistenerCount(dest, 'error') === 0) dest.emit('error', er);
   }
   // This is a brutally ugly hack to make sure that our error handler
   // is attached before any userland ones.  NEVER DO THIS.
-  if (!dest._events || !dest._events.error)
-    dest.on('error', onerror);
-  else if (isArray(dest._events.error))
-    dest._events.error.unshift(onerror);
-  else
-    dest._events.error = [onerror, dest._events.error];
-
+  if (!dest._events || !dest._events.error) dest.on('error', onerror);else if (isArray(dest._events.error)) dest._events.error.unshift(onerror);else dest._events.error = [onerror, dest._events.error];
 
   // Both close and finish should trigger unpipe, but only once.
   function onclose() {
@@ -14812,11 +15160,10 @@ Readable.prototype.pipe = function(dest, pipeOpts) {
 };
 
 function pipeOnDrain(src) {
-  return function() {
+  return function () {
     var state = src._readableState;
     debug('pipeOnDrain', state.awaitDrain);
-    if (state.awaitDrain)
-      state.awaitDrain--;
+    if (state.awaitDrain) state.awaitDrain--;
     if (state.awaitDrain === 0 && EElistenerCount(src, 'data')) {
       state.flowing = true;
       flow(src);
@@ -14824,29 +15171,24 @@ function pipeOnDrain(src) {
   };
 }
 
-
-Readable.prototype.unpipe = function(dest) {
+Readable.prototype.unpipe = function (dest) {
   var state = this._readableState;
 
   // if we're not piping anywhere, then do nothing.
-  if (state.pipesCount === 0)
-    return this;
+  if (state.pipesCount === 0) return this;
 
   // just one destination.  most common case.
   if (state.pipesCount === 1) {
     // passed in one, but it's not the right one.
-    if (dest && dest !== state.pipes)
-      return this;
+    if (dest && dest !== state.pipes) return this;
 
-    if (!dest)
-      dest = state.pipes;
+    if (!dest) dest = state.pipes;
 
     // got a match.
     state.pipes = null;
     state.pipesCount = 0;
     state.flowing = false;
-    if (dest)
-      dest.emit('unpipe', this);
+    if (dest) dest.emit('unpipe', this);
     return this;
   }
 
@@ -14860,20 +15202,18 @@ Readable.prototype.unpipe = function(dest) {
     state.pipesCount = 0;
     state.flowing = false;
 
-    for (var i = 0; i < len; i++)
-      dests[i].emit('unpipe', this);
-    return this;
+    for (var _i = 0; _i < len; _i++) {
+      dests[_i].emit('unpipe', this);
+    }return this;
   }
 
   // try to find the right one.
   var i = indexOf(state.pipes, dest);
-  if (i === -1)
-    return this;
+  if (i === -1) return this;
 
   state.pipes.splice(i, 1);
   state.pipesCount -= 1;
-  if (state.pipesCount === 1)
-    state.pipes = state.pipes[0];
+  if (state.pipesCount === 1) state.pipes = state.pipes[0];
 
   dest.emit('unpipe', this);
 
@@ -14882,7 +15222,7 @@ Readable.prototype.unpipe = function(dest) {
 
 // set up data events if they are asked for
 // Ensure readable listeners eventually get something
-Readable.prototype.on = function(ev, fn) {
+Readable.prototype.on = function (ev, fn) {
   var res = Stream.prototype.on.call(this, ev, fn);
 
   // If listening to data, and it has not explicitly been paused,
@@ -14891,7 +15231,7 @@ Readable.prototype.on = function(ev, fn) {
     this.resume();
   }
 
-  if (ev === 'readable' && this.readable) {
+  if (ev === 'readable' && !this._readableState.endEmitted) {
     var state = this._readableState;
     if (!state.readableListening) {
       state.readableListening = true;
@@ -14916,7 +15256,7 @@ function nReadingNextTick(self) {
 
 // pause() and resume() are remnants of the legacy readable stream API
 // If the user uses them, then switch into old mode.
-Readable.prototype.resume = function() {
+Readable.prototype.resume = function () {
   var state = this._readableState;
   if (!state.flowing) {
     debug('resume');
@@ -14942,11 +15282,10 @@ function resume_(stream, state) {
   state.resumeScheduled = false;
   stream.emit('resume');
   flow(stream);
-  if (state.flowing && !state.reading)
-    stream.read(0);
+  if (state.flowing && !state.reading) stream.read(0);
 }
 
-Readable.prototype.pause = function() {
+Readable.prototype.pause = function () {
   debug('call pause flowing=%j', this._readableState.flowing);
   if (false !== this._readableState.flowing) {
     debug('pause');
@@ -14969,32 +15308,27 @@ function flow(stream) {
 // wrap an old-style stream as the async data source.
 // This is *not* part of the readable stream interface.
 // It is an ugly unfortunate mess of history.
-Readable.prototype.wrap = function(stream) {
+Readable.prototype.wrap = function (stream) {
   var state = this._readableState;
   var paused = false;
 
   var self = this;
-  stream.on('end', function() {
+  stream.on('end', function () {
     debug('wrapped end');
     if (state.decoder && !state.ended) {
       var chunk = state.decoder.end();
-      if (chunk && chunk.length)
-        self.push(chunk);
+      if (chunk && chunk.length) self.push(chunk);
     }
 
     self.push(null);
   });
 
-  stream.on('data', function(chunk) {
+  stream.on('data', function (chunk) {
     debug('wrapped data');
-    if (state.decoder)
-      chunk = state.decoder.write(chunk);
+    if (state.decoder) chunk = state.decoder.write(chunk);
 
     // don't skip over falsy values in objectMode
-    if (state.objectMode && (chunk === null || chunk === undefined))
-      return;
-    else if (!state.objectMode && (!chunk || !chunk.length))
-      return;
+    if (state.objectMode && (chunk === null || chunk === undefined)) return;else if (!state.objectMode && (!chunk || !chunk.length)) return;
 
     var ret = self.push(chunk);
     if (!ret) {
@@ -15007,21 +15341,23 @@ Readable.prototype.wrap = function(stream) {
   // important when wrapping filters and duplexes.
   for (var i in stream) {
     if (this[i] === undefined && typeof stream[i] === 'function') {
-      this[i] = function(method) { return function() {
-        return stream[method].apply(stream, arguments);
-      }; }(i);
+      this[i] = function (method) {
+        return function () {
+          return stream[method].apply(stream, arguments);
+        };
+      }(i);
     }
   }
 
   // proxy certain important events.
   var events = ['error', 'close', 'destroy', 'pause', 'resume'];
-  forEach(events, function(ev) {
+  forEach(events, function (ev) {
     stream.on(ev, self.emit.bind(self, ev));
   });
 
   // when we try to consume some more bytes, simply unpause the
   // underlying stream.
-  self._read = function(n) {
+  self._read = function (n) {
     debug('wrapped _read', n);
     if (paused) {
       paused = false;
@@ -15031,7 +15367,6 @@ Readable.prototype.wrap = function(stream) {
 
   return self;
 };
-
 
 // exposed for testing purposes only.
 Readable._fromList = fromList;
@@ -15046,21 +15381,11 @@ function fromList(n, state) {
   var ret;
 
   // nothing in the list, definitely empty.
-  if (list.length === 0)
-    return null;
+  if (list.length === 0) return null;
 
-  if (length === 0)
-    ret = null;
-  else if (objectMode)
-    ret = list.shift();
-  else if (!n || n >= length) {
+  if (length === 0) ret = null;else if (objectMode) ret = list.shift();else if (!n || n >= length) {
     // read it all, truncate the array.
-    if (stringMode)
-      ret = list.join('');
-    else if (list.length === 1)
-      ret = list[0];
-    else
-      ret = Buffer.concat(list, length);
+    if (stringMode) ret = list.join('');else if (list.length === 1) ret = list[0];else ret = Buffer.concat(list, length);
     list.length = 0;
   } else {
     // read just some of it.
@@ -15076,25 +15401,16 @@ function fromList(n, state) {
     } else {
       // complex case.
       // we have enough to cover it, but it spans past the first buffer.
-      if (stringMode)
-        ret = '';
-      else
-        ret = new Buffer(n);
+      if (stringMode) ret = '';else ret = new Buffer(n);
 
       var c = 0;
       for (var i = 0, l = list.length; i < l && c < n; i++) {
         var buf = list[0];
         var cpy = Math.min(n - c, buf.length);
 
-        if (stringMode)
-          ret += buf.slice(0, cpy);
-        else
-          buf.copy(ret, c, 0, cpy);
+        if (stringMode) ret += buf.slice(0, cpy);else buf.copy(ret, c, 0, cpy);
 
-        if (cpy < buf.length)
-          list[0] = buf.slice(cpy);
-        else
-          list.shift();
+        if (cpy < buf.length) list[0] = buf.slice(cpy);else list.shift();
 
         c += cpy;
       }
@@ -15109,8 +15425,7 @@ function endReadable(stream) {
 
   // If we get here before consuming all the bytes, then that is a
   // bug in node.  Should never happen.
-  if (state.length > 0)
-    throw new Error('endReadable called on non-empty stream');
+  if (state.length > 0) throw new Error('endReadable called on non-empty stream');
 
   if (!state.endEmitted) {
     state.ended = true;
@@ -15127,21 +15442,20 @@ function endReadableNT(state, stream) {
   }
 }
 
-function forEach (xs, f) {
+function forEach(xs, f) {
   for (var i = 0, l = xs.length; i < l; i++) {
     f(xs[i], i);
   }
 }
 
-function indexOf (xs, x) {
+function indexOf(xs, x) {
   for (var i = 0, l = xs.length; i < l; i++) {
     if (xs[i] === x) return i;
   }
   return -1;
 }
-
-}).call(this,require('_process'))
-},{"./_stream_duplex":70,"_process":62,"buffer":43,"core-util-is":46,"events":49,"inherits":52,"isarray":54,"process-nextick-args":61,"string_decoder/":83,"util":41}],73:[function(require,module,exports){
+}).call(this,_dereq_('_process'))
+},{"./_stream_duplex":75,"_process":66,"buffer":48,"core-util-is":51,"events":54,"inherits":57,"isarray":73,"process-nextick-args":65,"string_decoder/":88,"util":46}],78:[function(_dereq_,module,exports){
 // a transform stream is a readable/writable stream where you do
 // something with the data.  Sometimes it's called a "filter",
 // but that's not a great name for it, since that implies a thing where
@@ -15188,18 +15502,17 @@ function indexOf (xs, x) {
 
 module.exports = Transform;
 
-var Duplex = require('./_stream_duplex');
+var Duplex = _dereq_('./_stream_duplex');
 
 /*<replacement>*/
-var util = require('core-util-is');
-util.inherits = require('inherits');
+var util = _dereq_('core-util-is');
+util.inherits = _dereq_('inherits');
 /*</replacement>*/
 
 util.inherits(Transform, Duplex);
 
-
 function TransformState(stream) {
-  this.afterTransform = function(er, data) {
+  this.afterTransform = function (er, data) {
     return afterTransform(stream, er, data);
   };
 
@@ -15207,6 +15520,7 @@ function TransformState(stream) {
   this.transforming = false;
   this.writecb = null;
   this.writechunk = null;
+  this.writeencoding = null;
 }
 
 function afterTransform(stream, er, data) {
@@ -15215,17 +15529,14 @@ function afterTransform(stream, er, data) {
 
   var cb = ts.writecb;
 
-  if (!cb)
-    return stream.emit('error', new Error('no writecb in Transform class'));
+  if (!cb) return stream.emit('error', new Error('no writecb in Transform class'));
 
   ts.writechunk = null;
   ts.writecb = null;
 
-  if (data !== null && data !== undefined)
-    stream.push(data);
+  if (data !== null && data !== undefined) stream.push(data);
 
-  if (cb)
-    cb(er);
+  cb(er);
 
   var rs = stream._readableState;
   rs.reading = false;
@@ -15234,10 +15545,8 @@ function afterTransform(stream, er, data) {
   }
 }
 
-
 function Transform(options) {
-  if (!(this instanceof Transform))
-    return new Transform(options);
+  if (!(this instanceof Transform)) return new Transform(options);
 
   Duplex.call(this, options);
 
@@ -15255,24 +15564,19 @@ function Transform(options) {
   this._readableState.sync = false;
 
   if (options) {
-    if (typeof options.transform === 'function')
-      this._transform = options.transform;
+    if (typeof options.transform === 'function') this._transform = options.transform;
 
-    if (typeof options.flush === 'function')
-      this._flush = options.flush;
+    if (typeof options.flush === 'function') this._flush = options.flush;
   }
 
-  this.once('prefinish', function() {
-    if (typeof this._flush === 'function')
-      this._flush(function(er) {
-        done(stream, er);
-      });
-    else
-      done(stream);
+  this.once('prefinish', function () {
+    if (typeof this._flush === 'function') this._flush(function (er) {
+      done(stream, er);
+    });else done(stream);
   });
 }
 
-Transform.prototype.push = function(chunk, encoding) {
+Transform.prototype.push = function (chunk, encoding) {
   this._transformState.needTransform = false;
   return Duplex.prototype.push.call(this, chunk, encoding);
 };
@@ -15287,28 +15591,25 @@ Transform.prototype.push = function(chunk, encoding) {
 // Call `cb(err)` when you are done with this chunk.  If you pass
 // an error, then that'll put the hurt on the whole operation.  If you
 // never call cb(), then you'll never get another chunk.
-Transform.prototype._transform = function(chunk, encoding, cb) {
+Transform.prototype._transform = function (chunk, encoding, cb) {
   throw new Error('not implemented');
 };
 
-Transform.prototype._write = function(chunk, encoding, cb) {
+Transform.prototype._write = function (chunk, encoding, cb) {
   var ts = this._transformState;
   ts.writecb = cb;
   ts.writechunk = chunk;
   ts.writeencoding = encoding;
   if (!ts.transforming) {
     var rs = this._readableState;
-    if (ts.needTransform ||
-        rs.needReadable ||
-        rs.length < rs.highWaterMark)
-      this._read(rs.highWaterMark);
+    if (ts.needTransform || rs.needReadable || rs.length < rs.highWaterMark) this._read(rs.highWaterMark);
   }
 };
 
 // Doesn't matter what the args are here.
 // _transform does all the work.
 // That we got here means that the readable side wants more data.
-Transform.prototype._read = function(n) {
+Transform.prototype._read = function (n) {
   var ts = this._transformState;
 
   if (ts.writechunk !== null && ts.writecb && !ts.transforming) {
@@ -15321,26 +15622,22 @@ Transform.prototype._read = function(n) {
   }
 };
 
-
 function done(stream, er) {
-  if (er)
-    return stream.emit('error', er);
+  if (er) return stream.emit('error', er);
 
   // if there's nothing in the write buffer, then that means
   // that nothing more will ever be provided
   var ws = stream._writableState;
   var ts = stream._transformState;
 
-  if (ws.length)
-    throw new Error('calling transform done when ws.length != 0');
+  if (ws.length) throw new Error('calling transform done when ws.length != 0');
 
-  if (ts.transforming)
-    throw new Error('calling transform done when still transforming');
+  if (ts.transforming) throw new Error('calling transform done when still transforming');
 
   return stream.push(null);
 }
-
-},{"./_stream_duplex":70,"core-util-is":46,"inherits":52}],74:[function(require,module,exports){
+},{"./_stream_duplex":75,"core-util-is":51,"inherits":57}],79:[function(_dereq_,module,exports){
+(function (process){
 // A bit simpler than readable streams.
 // Implement an async ._write(chunk, encoding, cb), and it'll handle all
 // the drain event emission and buffering.
@@ -15350,42 +15647,42 @@ function done(stream, er) {
 module.exports = Writable;
 
 /*<replacement>*/
-var processNextTick = require('process-nextick-args');
+var processNextTick = _dereq_('process-nextick-args');
 /*</replacement>*/
 
+/*<replacement>*/
+var asyncWrite = !process.browser && ['v0.10', 'v0.9.'].indexOf(process.version.slice(0, 5)) > -1 ? setImmediate : processNextTick;
+/*</replacement>*/
 
 /*<replacement>*/
-var Buffer = require('buffer').Buffer;
+var Buffer = _dereq_('buffer').Buffer;
 /*</replacement>*/
 
 Writable.WritableState = WritableState;
 
-
 /*<replacement>*/
-var util = require('core-util-is');
-util.inherits = require('inherits');
+var util = _dereq_('core-util-is');
+util.inherits = _dereq_('inherits');
 /*</replacement>*/
-
 
 /*<replacement>*/
 var internalUtil = {
-  deprecate: require('util-deprecate')
+  deprecate: _dereq_('util-deprecate')
 };
 /*</replacement>*/
 
-
-
 /*<replacement>*/
 var Stream;
-(function (){try{
-  Stream = require('st' + 'ream');
-}catch(_){}finally{
-  if (!Stream)
-    Stream = require('events').EventEmitter;
-}}())
+(function () {
+  try {
+    Stream = _dereq_('st' + 'ream');
+  } catch (_) {} finally {
+    if (!Stream) Stream = _dereq_('events').EventEmitter;
+  }
+})();
 /*</replacement>*/
 
-var Buffer = require('buffer').Buffer;
+var Buffer = _dereq_('buffer').Buffer;
 
 util.inherits(Writable, Stream);
 
@@ -15400,7 +15697,7 @@ function WriteReq(chunk, encoding, cb) {
 
 var Duplex;
 function WritableState(options, stream) {
-  Duplex = Duplex || require('./_stream_duplex');
+  Duplex = Duplex || _dereq_('./_stream_duplex');
 
   options = options || {};
 
@@ -15408,18 +15705,17 @@ function WritableState(options, stream) {
   // contains buffers or objects.
   this.objectMode = !!options.objectMode;
 
-  if (stream instanceof Duplex)
-    this.objectMode = this.objectMode || !!options.writableObjectMode;
+  if (stream instanceof Duplex) this.objectMode = this.objectMode || !!options.writableObjectMode;
 
   // the point at which write() starts returning false
   // Note: 0 is a valid value, means that we always return false if
   // the entire buffer is not flushed immediately on write()
   var hwm = options.highWaterMark;
   var defaultHwm = this.objectMode ? 16 : 16 * 1024;
-  this.highWaterMark = (hwm || hwm === 0) ? hwm : defaultHwm;
+  this.highWaterMark = hwm || hwm === 0 ? hwm : defaultHwm;
 
   // cast to ints.
-  this.highWaterMark = ~~this.highWaterMark;
+  this.highWaterMark = ~ ~this.highWaterMark;
 
   this.needDrain = false;
   // at the start of calling end()
@@ -15463,7 +15759,7 @@ function WritableState(options, stream) {
   this.bufferProcessing = false;
 
   // the callback that's passed to _write(chunk,cb)
-  this.onwrite = function(er) {
+  this.onwrite = function (er) {
     onwrite(stream, er);
   };
 
@@ -15486,6 +15782,14 @@ function WritableState(options, stream) {
 
   // True if the error was already emitted and should not be thrown again
   this.errorEmitted = false;
+
+  // count buffered requests
+  this.bufferedRequestCount = 0;
+
+  // create the two objects needed to store the corked requests
+  // they are not a linked list, as no new elements are inserted in there
+  this.corkedRequestsFree = new CorkedRequest(this);
+  this.corkedRequestsFree.next = new CorkedRequest(this);
 }
 
 WritableState.prototype.getBuffer = function writableStateGetBuffer() {
@@ -15498,24 +15802,23 @@ WritableState.prototype.getBuffer = function writableStateGetBuffer() {
   return out;
 };
 
-(function (){try {
-Object.defineProperty(WritableState.prototype, 'buffer', {
-  get: internalUtil.deprecate(function() {
-    return this.getBuffer();
-  }, '_writableState.buffer is deprecated. Use _writableState.getBuffer ' +
-     'instead.')
-});
-}catch(_){}}());
-
+(function () {
+  try {
+    Object.defineProperty(WritableState.prototype, 'buffer', {
+      get: internalUtil.deprecate(function () {
+        return this.getBuffer();
+      }, '_writableState.buffer is deprecated. Use _writableState.getBuffer ' + 'instead.')
+    });
+  } catch (_) {}
+})();
 
 var Duplex;
 function Writable(options) {
-  Duplex = Duplex || require('./_stream_duplex');
+  Duplex = Duplex || _dereq_('./_stream_duplex');
 
   // Writable ctor is applied to Duplexes, though they're not
   // instanceof Writable, they're instanceof Readable.
-  if (!(this instanceof Writable) && !(this instanceof Duplex))
-    return new Writable(options);
+  if (!(this instanceof Writable) && !(this instanceof Duplex)) return new Writable(options);
 
   this._writableState = new WritableState(options, this);
 
@@ -15523,21 +15826,18 @@ function Writable(options) {
   this.writable = true;
 
   if (options) {
-    if (typeof options.write === 'function')
-      this._write = options.write;
+    if (typeof options.write === 'function') this._write = options.write;
 
-    if (typeof options.writev === 'function')
-      this._writev = options.writev;
+    if (typeof options.writev === 'function') this._writev = options.writev;
   }
 
   Stream.call(this);
 }
 
 // Otherwise people can pipe Writable streams, which is just wrong.
-Writable.prototype.pipe = function() {
+Writable.prototype.pipe = function () {
   this.emit('error', new Error('Cannot pipe. Not readable.'));
 };
-
 
 function writeAfterEnd(stream, cb) {
   var er = new Error('write after end');
@@ -15554,11 +15854,7 @@ function writeAfterEnd(stream, cb) {
 function validChunk(stream, state, chunk, cb) {
   var valid = true;
 
-  if (!(Buffer.isBuffer(chunk)) &&
-      typeof chunk !== 'string' &&
-      chunk !== null &&
-      chunk !== undefined &&
-      !state.objectMode) {
+  if (!Buffer.isBuffer(chunk) && typeof chunk !== 'string' && chunk !== null && chunk !== undefined && !state.objectMode) {
     var er = new TypeError('Invalid non-string/buffer chunk');
     stream.emit('error', er);
     processNextTick(cb, er);
@@ -15567,7 +15863,7 @@ function validChunk(stream, state, chunk, cb) {
   return valid;
 }
 
-Writable.prototype.write = function(chunk, encoding, cb) {
+Writable.prototype.write = function (chunk, encoding, cb) {
   var state = this._writableState;
   var ret = false;
 
@@ -15576,17 +15872,11 @@ Writable.prototype.write = function(chunk, encoding, cb) {
     encoding = null;
   }
 
-  if (Buffer.isBuffer(chunk))
-    encoding = 'buffer';
-  else if (!encoding)
-    encoding = state.defaultEncoding;
+  if (Buffer.isBuffer(chunk)) encoding = 'buffer';else if (!encoding) encoding = state.defaultEncoding;
 
-  if (typeof cb !== 'function')
-    cb = nop;
+  if (typeof cb !== 'function') cb = nop;
 
-  if (state.ended)
-    writeAfterEnd(this, cb);
-  else if (validChunk(this, state, chunk, cb)) {
+  if (state.ended) writeAfterEnd(this, cb);else if (validChunk(this, state, chunk, cb)) {
     state.pendingcb++;
     ret = writeOrBuffer(this, state, chunk, encoding, cb);
   }
@@ -15594,42 +15884,31 @@ Writable.prototype.write = function(chunk, encoding, cb) {
   return ret;
 };
 
-Writable.prototype.cork = function() {
+Writable.prototype.cork = function () {
   var state = this._writableState;
 
   state.corked++;
 };
 
-Writable.prototype.uncork = function() {
+Writable.prototype.uncork = function () {
   var state = this._writableState;
 
   if (state.corked) {
     state.corked--;
 
-    if (!state.writing &&
-        !state.corked &&
-        !state.finished &&
-        !state.bufferProcessing &&
-        state.bufferedRequest)
-      clearBuffer(this, state);
+    if (!state.writing && !state.corked && !state.finished && !state.bufferProcessing && state.bufferedRequest) clearBuffer(this, state);
   }
 };
 
 Writable.prototype.setDefaultEncoding = function setDefaultEncoding(encoding) {
   // node::ParseEncoding() requires lower case.
-  if (typeof encoding === 'string')
-    encoding = encoding.toLowerCase();
-  if (!(['hex', 'utf8', 'utf-8', 'ascii', 'binary', 'base64',
-'ucs2', 'ucs-2','utf16le', 'utf-16le', 'raw']
-.indexOf((encoding + '').toLowerCase()) > -1))
-    throw new TypeError('Unknown encoding: ' + encoding);
+  if (typeof encoding === 'string') encoding = encoding.toLowerCase();
+  if (!(['hex', 'utf8', 'utf-8', 'ascii', 'binary', 'base64', 'ucs2', 'ucs-2', 'utf16le', 'utf-16le', 'raw'].indexOf((encoding + '').toLowerCase()) > -1)) throw new TypeError('Unknown encoding: ' + encoding);
   this._writableState.defaultEncoding = encoding;
 };
 
 function decodeChunk(state, chunk, encoding) {
-  if (!state.objectMode &&
-      state.decodeStrings !== false &&
-      typeof chunk === 'string') {
+  if (!state.objectMode && state.decodeStrings !== false && typeof chunk === 'string') {
     chunk = new Buffer(chunk, encoding);
   }
   return chunk;
@@ -15641,16 +15920,14 @@ function decodeChunk(state, chunk, encoding) {
 function writeOrBuffer(stream, state, chunk, encoding, cb) {
   chunk = decodeChunk(state, chunk, encoding);
 
-  if (Buffer.isBuffer(chunk))
-    encoding = 'buffer';
+  if (Buffer.isBuffer(chunk)) encoding = 'buffer';
   var len = state.objectMode ? 1 : chunk.length;
 
   state.length += len;
 
   var ret = state.length < state.highWaterMark;
   // we must ensure that previous needDrain will not be reset to false.
-  if (!ret)
-    state.needDrain = true;
+  if (!ret) state.needDrain = true;
 
   if (state.writing || state.corked) {
     var last = state.lastBufferedRequest;
@@ -15660,6 +15937,7 @@ function writeOrBuffer(stream, state, chunk, encoding, cb) {
     } else {
       state.bufferedRequest = state.lastBufferedRequest;
     }
+    state.bufferedRequestCount += 1;
   } else {
     doWrite(stream, state, false, len, chunk, encoding, cb);
   }
@@ -15672,19 +15950,13 @@ function doWrite(stream, state, writev, len, chunk, encoding, cb) {
   state.writecb = cb;
   state.writing = true;
   state.sync = true;
-  if (writev)
-    stream._writev(chunk, state.onwrite);
-  else
-    stream._write(chunk, encoding, state.onwrite);
+  if (writev) stream._writev(chunk, state.onwrite);else stream._write(chunk, encoding, state.onwrite);
   state.sync = false;
 }
 
 function onwriteError(stream, state, sync, er, cb) {
   --state.pendingcb;
-  if (sync)
-    processNextTick(cb, er);
-  else
-    cb(er);
+  if (sync) processNextTick(cb, er);else cb(er);
 
   stream._writableState.errorEmitted = true;
   stream.emit('error', er);
@@ -15704,30 +15976,26 @@ function onwrite(stream, er) {
 
   onwriteStateUpdate(state);
 
-  if (er)
-    onwriteError(stream, state, sync, er, cb);
-  else {
+  if (er) onwriteError(stream, state, sync, er, cb);else {
     // Check if we're actually ready to finish, but don't emit yet
     var finished = needFinish(state);
 
-    if (!finished &&
-        !state.corked &&
-        !state.bufferProcessing &&
-        state.bufferedRequest) {
+    if (!finished && !state.corked && !state.bufferProcessing && state.bufferedRequest) {
       clearBuffer(stream, state);
     }
 
     if (sync) {
-      processNextTick(afterWrite, stream, state, finished, cb);
+      /*<replacement>*/
+      asyncWrite(afterWrite, stream, state, finished, cb);
+      /*</replacement>*/
     } else {
-      afterWrite(stream, state, finished, cb);
-    }
+        afterWrite(stream, state, finished, cb);
+      }
   }
 }
 
 function afterWrite(stream, state, finished, cb) {
-  if (!finished)
-    onwriteDrain(stream, state);
+  if (!finished) onwriteDrain(stream, state);
   state.pendingcb--;
   cb();
   finishMaybe(stream, state);
@@ -15743,7 +16011,6 @@ function onwriteDrain(stream, state) {
   }
 }
 
-
 // if there's something in the buffer waiting, then process it
 function clearBuffer(stream, state) {
   state.bufferProcessing = true;
@@ -15751,26 +16018,26 @@ function clearBuffer(stream, state) {
 
   if (stream._writev && entry && entry.next) {
     // Fast case, write everything using _writev()
-    var buffer = [];
-    var cbs = [];
+    var l = state.bufferedRequestCount;
+    var buffer = new Array(l);
+    var holder = state.corkedRequestsFree;
+    holder.entry = entry;
+
+    var count = 0;
     while (entry) {
-      cbs.push(entry.callback);
-      buffer.push(entry);
+      buffer[count] = entry;
       entry = entry.next;
+      count += 1;
     }
 
-    // count the one we are adding, as well.
-    // TODO(isaacs) clean this up
+    doWrite(stream, state, true, state.length, buffer, '', holder.finish);
+
+    // doWrite is always async, defer these to save a bit of time
+    // as the hot path ends with doWrite
     state.pendingcb++;
     state.lastBufferedRequest = null;
-    doWrite(stream, state, true, state.length, buffer, '', function(err) {
-      for (var i = 0; i < cbs.length; i++) {
-        state.pendingcb--;
-        cbs[i](err);
-      }
-    });
-
-    // Clear buffer
+    state.corkedRequestsFree = holder.next;
+    holder.next = null;
   } else {
     // Slow case, write chunks one-by-one
     while (entry) {
@@ -15790,20 +16057,21 @@ function clearBuffer(stream, state) {
       }
     }
 
-    if (entry === null)
-      state.lastBufferedRequest = null;
+    if (entry === null) state.lastBufferedRequest = null;
   }
+
+  state.bufferedRequestCount = 0;
   state.bufferedRequest = entry;
   state.bufferProcessing = false;
 }
 
-Writable.prototype._write = function(chunk, encoding, cb) {
+Writable.prototype._write = function (chunk, encoding, cb) {
   cb(new Error('not implemented'));
 };
 
 Writable.prototype._writev = null;
 
-Writable.prototype.end = function(chunk, encoding, cb) {
+Writable.prototype.end = function (chunk, encoding, cb) {
   var state = this._writableState;
 
   if (typeof chunk === 'function') {
@@ -15815,8 +16083,7 @@ Writable.prototype.end = function(chunk, encoding, cb) {
     encoding = null;
   }
 
-  if (chunk !== null && chunk !== undefined)
-    this.write(chunk, encoding);
+  if (chunk !== null && chunk !== undefined) this.write(chunk, encoding);
 
   // .end() fully uncorks
   if (state.corked) {
@@ -15825,17 +16092,11 @@ Writable.prototype.end = function(chunk, encoding, cb) {
   }
 
   // ignore unnecessary end() calls.
-  if (!state.ending && !state.finished)
-    endWritable(this, state, cb);
+  if (!state.ending && !state.finished) endWritable(this, state, cb);
 };
 
-
 function needFinish(state) {
-  return (state.ending &&
-          state.length === 0 &&
-          state.bufferedRequest === null &&
-          !state.finished &&
-          !state.writing);
+  return state.ending && state.length === 0 && state.bufferedRequest === null && !state.finished && !state.writing;
 }
 
 function prefinish(stream, state) {
@@ -15863,43 +16124,66 @@ function endWritable(stream, state, cb) {
   state.ending = true;
   finishMaybe(stream, state);
   if (cb) {
-    if (state.finished)
-      processNextTick(cb);
-    else
-      stream.once('finish', cb);
+    if (state.finished) processNextTick(cb);else stream.once('finish', cb);
   }
   state.ended = true;
+  stream.writable = false;
 }
 
-},{"./_stream_duplex":70,"buffer":43,"core-util-is":46,"events":49,"inherits":52,"process-nextick-args":61,"util-deprecate":89}],75:[function(require,module,exports){
-module.exports = require("./lib/_stream_passthrough.js")
+// It seems a linked list but it is not
+// there will be only 2 of these for each stream
+function CorkedRequest(state) {
+  var _this = this;
 
-},{"./lib/_stream_passthrough.js":71}],76:[function(require,module,exports){
+  this.next = null;
+  this.entry = null;
+
+  this.finish = function (err) {
+    var entry = _this.entry;
+    _this.entry = null;
+    while (entry) {
+      var cb = entry.callback;
+      state.pendingcb--;
+      cb(err);
+      entry = entry.next;
+    }
+    if (state.corkedRequestsFree) {
+      state.corkedRequestsFree.next = _this;
+    } else {
+      state.corkedRequestsFree = _this;
+    }
+  };
+}
+}).call(this,_dereq_('_process'))
+},{"./_stream_duplex":75,"_process":66,"buffer":48,"core-util-is":51,"events":54,"inherits":57,"process-nextick-args":65,"util-deprecate":92}],80:[function(_dereq_,module,exports){
+module.exports = _dereq_("./lib/_stream_passthrough.js")
+
+},{"./lib/_stream_passthrough.js":76}],81:[function(_dereq_,module,exports){
 var Stream = (function (){
   try {
-    return require('st' + 'ream'); // hack to fix a circular dependency issue when used with browserify
+    return _dereq_('st' + 'ream'); // hack to fix a circular dependency issue when used with browserify
   } catch(_){}
 }());
-exports = module.exports = require('./lib/_stream_readable.js');
+exports = module.exports = _dereq_('./lib/_stream_readable.js');
 exports.Stream = Stream || exports;
 exports.Readable = exports;
-exports.Writable = require('./lib/_stream_writable.js');
-exports.Duplex = require('./lib/_stream_duplex.js');
-exports.Transform = require('./lib/_stream_transform.js');
-exports.PassThrough = require('./lib/_stream_passthrough.js');
+exports.Writable = _dereq_('./lib/_stream_writable.js');
+exports.Duplex = _dereq_('./lib/_stream_duplex.js');
+exports.Transform = _dereq_('./lib/_stream_transform.js');
+exports.PassThrough = _dereq_('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":70,"./lib/_stream_passthrough.js":71,"./lib/_stream_readable.js":72,"./lib/_stream_transform.js":73,"./lib/_stream_writable.js":74}],77:[function(require,module,exports){
-module.exports = require("./lib/_stream_transform.js")
+},{"./lib/_stream_duplex.js":75,"./lib/_stream_passthrough.js":76,"./lib/_stream_readable.js":77,"./lib/_stream_transform.js":78,"./lib/_stream_writable.js":79}],82:[function(_dereq_,module,exports){
+module.exports = _dereq_("./lib/_stream_transform.js")
 
-},{"./lib/_stream_transform.js":73}],78:[function(require,module,exports){
-module.exports = require("./lib/_stream_writable.js")
+},{"./lib/_stream_transform.js":78}],83:[function(_dereq_,module,exports){
+module.exports = _dereq_("./lib/_stream_writable.js")
 
-},{"./lib/_stream_writable.js":74}],79:[function(require,module,exports){
+},{"./lib/_stream_writable.js":79}],84:[function(_dereq_,module,exports){
 (function (global){
-var ClientRequest = require('./lib/request')
-var extend = require('xtend')
-var statusCodes = require('builtin-status-codes')
-var url = require('url')
+var ClientRequest = _dereq_('./lib/request')
+var extend = _dereq_('xtend')
+var statusCodes = _dereq_('builtin-status-codes')
+var url = _dereq_('url')
 
 var http = exports
 
@@ -15976,7 +16260,7 @@ http.METHODS = [
 	'UNSUBSCRIBE'
 ]
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./lib/request":81,"builtin-status-codes":45,"url":87,"xtend":94}],80:[function(require,module,exports){
+},{"./lib/request":86,"builtin-status-codes":50,"url":90,"xtend":97}],85:[function(_dereq_,module,exports){
 (function (global){
 exports.fetch = isFunction(global.fetch) && isFunction(global.ReadableByteStream)
 
@@ -16020,14 +16304,14 @@ function isFunction (value) {
 xhr = null // Help gc
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],81:[function(require,module,exports){
+},{}],86:[function(_dereq_,module,exports){
 (function (process,global,Buffer){
 // var Base64 = require('Base64')
-var capability = require('./capability')
-var inherits = require('inherits')
-var response = require('./response')
-var stream = require('stream')
-var toArrayBuffer = require('to-arraybuffer')
+var capability = _dereq_('./capability')
+var inherits = _dereq_('inherits')
+var response = _dereq_('./response')
+var stream = _dereq_('stream')
+var toArrayBuffer = _dereq_('to-arraybuffer')
 
 var IncomingMessage = response.IncomingMessage
 var rStates = response.readyStates
@@ -16301,12 +16585,12 @@ var unsafeHeaders = [
 	'via'
 ]
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"./capability":80,"./response":82,"_process":62,"buffer":43,"inherits":52,"stream":68,"to-arraybuffer":84}],82:[function(require,module,exports){
+}).call(this,_dereq_('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},_dereq_("buffer").Buffer)
+},{"./capability":85,"./response":87,"_process":66,"buffer":48,"inherits":57,"stream":72,"to-arraybuffer":89}],87:[function(_dereq_,module,exports){
 (function (process,global,Buffer){
-var capability = require('./capability')
-var inherits = require('inherits')
-var stream = require('stream')
+var capability = _dereq_('./capability')
+var inherits = _dereq_('inherits')
+var stream = _dereq_('stream')
 
 var rStates = exports.readyStates = {
 	UNSENT: 0,
@@ -16373,10 +16657,16 @@ var IncomingMessage = exports.IncomingMessage = function (xhr, response, mode) {
 			var matches = header.match(/^([^:]+):\s*(.*)/)
 			if (matches) {
 				var key = matches[1].toLowerCase()
-				if (self.headers[key] !== undefined)
+				if (key === 'set-cookie') {
+					if (self.headers[key] === undefined) {
+						self.headers[key] = []
+					}
+					self.headers[key].push(matches[2])
+				} else if (self.headers[key] !== undefined) {
 					self.headers[key] += ', ' + matches[2]
-				else
+				} else {
 					self.headers[key] = matches[2]
+				}
 				self.rawHeaders.push(matches[1], matches[2])
 			}
 		})
@@ -16477,8 +16767,8 @@ IncomingMessage.prototype._onXHRProgress = function () {
 	}
 }
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"./capability":80,"_process":62,"buffer":43,"inherits":52,"stream":68}],83:[function(require,module,exports){
+}).call(this,_dereq_('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},_dereq_("buffer").Buffer)
+},{"./capability":85,"_process":66,"buffer":48,"inherits":57,"stream":72}],88:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -16500,7 +16790,7 @@ IncomingMessage.prototype._onXHRProgress = function () {
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-var Buffer = require('buffer').Buffer;
+var Buffer = _dereq_('buffer').Buffer;
 
 var isBufferEncoding = Buffer.isEncoding
   || function(encoding) {
@@ -16701,8 +16991,8 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":43}],84:[function(require,module,exports){
-var Buffer = require('buffer').Buffer
+},{"buffer":48}],89:[function(_dereq_,module,exports){
+var Buffer = _dereq_('buffer').Buffer
 
 module.exports = function (buf) {
 	// If the buffer is backed by a Uint8Array, a faster version will work
@@ -16730,323 +17020,7 @@ module.exports = function (buf) {
 	}
 }
 
-},{"buffer":43}],85:[function(require,module,exports){
-(function (Buffer){
-'use strict';
-
-var EventEmitter = require('events').EventEmitter;
-var inherits = require('util').inherits;
-
-/**
- * Construct an {@link AccessManager} from an initial Access Token.
- * @class
- * @classdesc An {@link AccessManager} manages everything necessary for a
- *   Twilio Client to access Twilio. Namely, the {@link AccessManager} manages
- *   Access Tokens, and raises Access Token expiration events in the form of
- *   {@link AccessManager#event:tokenExpired}.
- * @param {string} initialToken - The initial Access Token
- * @property {?string} identity - The identity granted by the current Access
- *   Token; this value is populated asynchronously and is initially null
- * @property {string} token - The current Access Token
- * @property {boolean} isExpired - Whether or not the current Access Token is
- *   expired
- * @property {?Date} expires - The time at which he current Access Token
- *   expires; this value is populated asynchronously and is initially null
- * @fires AccessManager#error
- * @fires AccessManager#tokenExpired
- * @fires AccessManager#tokenUpdated
- */
-function AccessManager(initialToken) {
-  if (!(this instanceof AccessManager)) {
-    return new AccessManager(initialToken);
-  }
-  EventEmitter.call(this);
-  var expires = null;
-  var identity = null;
-  var isExpired = false;
-  var pendingUpdate = null;
-  var token = initialToken;
-  var tokenExpiredTimer = null;
-  var tokenUpdatedTimer = null;
-  var tokenPayload = null;
-  Object.defineProperties(this, {
-    _expires: {
-      get: function() {
-        return expires;
-      },
-      set: function(_expires) {
-        expires = _expires;
-      }
-    },
-    _identity: {
-      get: function() {
-        return identity;
-      },
-      set: function(_identity) {
-        identity = _identity;
-      }
-    },
-    _isExpired: {
-      get: function() {
-        return isExpired;
-      },
-      set: function(_isExpired) {
-        isExpired = _isExpired;
-      }
-    },
-    _pendingUpdate: {
-      get: function() {
-        return pendingUpdate;
-      },
-      set: function(_pendingUpdate) {
-        pendingUpdate = _pendingUpdate;
-      }
-    },
-    _token: {
-      get: function() {
-        return token;
-      },
-      set: function(_token) {
-        token = _token;
-      }
-    },
-    _tokenExpiredTimer: {
-      get: function() {
-        return tokenExpiredTimer;
-      },
-      set: function(_tokenExpiredTimer) {
-        tokenExpiredTimer = _tokenExpiredTimer;
-      }
-    },
-    _tokenUpdatedTimer: {
-      get: function() {
-        return tokenUpdatedTimer;
-      },
-      set: function(_tokenUpdatedTimer) {
-        tokenUpdatedTimer = _tokenUpdatedTimer;
-      }
-    },
-    _tokenPayload: {
-      get: function() {
-        return tokenPayload;
-      },
-      set: function(_tokenPayload) {
-        tokenPayload = _tokenPayload;
-      }
-    },
-    expires: {
-      enumerable: true,
-      get: function() {
-        return expires;
-      }
-    },
-    identity: {
-      enumerable: true,
-      get: function() {
-        return identity;
-      }
-    },
-    isExpired: {
-      enumerable: true,
-      get: function() {
-        return isExpired;
-      }
-    },
-    token: {
-      enumerable: true,
-      get: function() {
-        return token;
-      }
-    }
-  });
-  var _pendingUpdate = this.updateToken(initialToken);
-  _pendingUpdate.catch(function(error) {
-    if (this._pendingUpdate === _pendingUpdate) {
-      this.emit('error', error);
-    }
-  }.bind(this));
-}
-
-inherits(AccessManager, EventEmitter);
-
-/**
- * Update the {@link AccessManager}'s current Access Token.
- * @param {string} newToken - A new Access Token
- * @returns {Promise<this>}
- * @fires AccessManager#tokenUpdated
- */
-AccessManager.prototype.updateToken = function updateToken(newToken) {
-  var self = this;
-
-  var pendingUpdate = new Promise(function(resolve) {
-
-    var payload = parsePayload(newToken);
-
-    // Set the identity.
-    self._identity = getIdentity(payload);
-
-    // Emit the tokenUpdated event after the Promise resolves.
-    clearTimeout(self._tokenUpdatedTimer);
-    self._tokenUpdatedTimer = setTimeout(function tokenUpdated() {
-      self._tokenUpdatedTimer = null;
-      self.emit('tokenUpdated', self);
-    });
-
-    // Set expires, isExpired, and tokenExpired timer.
-    self._expires = new Date(payload.exp * 1000);
-    self._isExpired = Date.now() >= self.expires;
-    clearTimeout(self._tokenExpiredTimer);
-    self._tokenExpiredTimer = setTimeout(function tokenExpiredTimer() {
-      self._isExpired = true;
-      self._tokenExpiredTimer = null;
-      self.emit('tokenExpired', self);
-    }, self.expires - Date.now());
-
-    // Update the token and tokenPayload.
-    self._token = newToken;
-    self._tokenPayload = payload;
-
-    resolve(self);
-  });
-
-  this._pendingUpdate = pendingUpdate;
-
-  return pendingUpdate;
-};
-
-/**
- * Parse the payload of a JSON Web Token (JWT).
- * @private
- * @param {string} jwt
- * @returns {object}
- */
-function parsePayload(jwt) {
-  var segments = jwt.split('.');
-  if (segments.length !== 3) {
-    throw new Error('Token is invalid or malformed');
-  }
-  var encodedPayloadString = segments[1];
-  var payloadString = decodeBase64URL(encodedPayloadString);
-  var payload = JSON.parse(payloadString);
-  return payload;
-}
-
-/**
- * Decode a base64url-encoded string.
- * @private
- * @param {string} encoded
- * @returns {string}
- */
-function decodeBase64URL(encoded) {
-  var remainder = encoded.length % 4;
-  if (remainder > 0) {
-    var padlen = 4 - remainder;
-    encoded += new Array(padlen + 1).join('=');
-  }
-  encoded = encoded.replace(/-/g, '+')
-                   .replace(/_/g, '/');
-  return decodeBase64(encoded);
-}
-
-/**
- * Decode a base64-encoded string.
- * @private
- * @param {string} encoded
- * @returns {string}
- */
-function decodeBase64(encoded) {
-  return new Buffer(encoded, 'base64').toString();
-}
-
-/**
- * Get the identity from the payload of an Access Token.
- * @private
- * @param {object} payload
- * @returns {?string}
- */
-function getIdentity(payload) {
-  var identity = null;
-  if (!payload.grants && payload.scope) {
-    identity = getIdentityFromCapabilityTokenScope(payload.scope);
-  } else if (payload.grants instanceof Array) {
-    identity = getIdentityFromSATGrants(payload.grants);
-  } else if (typeof payload.grants === 'object') {
-    identity = getIdentityFromFPAGrants(payload.grants);
-  }
-  return identity;
-}
-
-/**
- * Get the identity from a Capability Token's Scope.
- * @private
- * @param {String} scope
- * @returns {?string}
- */
-// TODO(rrowland): Remove this function as soon as we move to FPA.
-function getIdentityFromCapabilityTokenScope(scope) {
-  var match = decodeURIComponent(scope).match(/identity=(.*?)(&|$)/i);
-  return match && decodeURIComponent(match[1]);
-}
-
-/**
- * Get the identity from Scoped Access Token (SAT) grants.
- * @private
- * @param {Array<Object>} grants
- * @returns {?string}
- */
-// TODO(mroberts): Remove this function as soon as we move to FPA.
-function getIdentityFromSATGrants(grants) {
-  var identity = null;
-  for (var i = 0; i < grants.length; i++) {
-    var grant = grants[i];
-    if (grant && typeof grant.res === 'string') {
-      var match = grant.res.match(/^sip:(.*)@/);
-      if (match) {
-        identity = decodeURIComponent(match[1]);
-        break;
-      }
-    }
-  }
-  return identity;
-}
-
-/**
- * Get the identity from First-Person Access Token (FPA) grants.
- * @private
- * @param {object} grants
- * @returns {?string}
- */
-function getIdentityFromFPAGrants(grants) {
-  return grants.identity || null;
-}
-
-/**
- * An error occurred.
- * @param {Error} error
- * @event AccessManager#error
- */
-
-/**
- * The Access Token expired.
- * @param {AccessManager} manager
- * @event AccessManager#tokenExpired
- */
-
-/**
- * The Access Token was updated.
- * @param {AccessManager} manager
- * @event AccessManager#tokenUpdated
- */
-
-module.exports = AccessManager;
-
-}).call(this,require("buffer").Buffer)
-},{"buffer":43,"events":49,"util":91}],86:[function(require,module,exports){
-'use strict';
-
-module.exports.AccessManager = require('./accessmanager');
-
-},{"./accessmanager":85}],87:[function(require,module,exports){
+},{"buffer":48}],90:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -17070,8 +17044,8 @@ module.exports.AccessManager = require('./accessmanager');
 
 'use strict';
 
-var punycode = require('punycode');
-var util = require('./util');
+var punycode = _dereq_('punycode');
+var util = _dereq_('./util');
 
 exports.parse = urlParse;
 exports.resolve = urlResolve;
@@ -17146,7 +17120,7 @@ var protocolPattern = /^([a-z0-9.+-]+:)/i,
       'gopher:': true,
       'file:': true
     },
-    querystring = require('querystring');
+    querystring = _dereq_('querystring');
 
 function urlParse(url, parseQueryString, slashesDenoteHost) {
   if (url && util.isObject(url) && url instanceof Url) return url;
@@ -17780,7 +17754,7 @@ Url.prototype.parseHost = function() {
   if (host) this.hostname = host;
 };
 
-},{"./util":88,"punycode":63,"querystring":67}],88:[function(require,module,exports){
+},{"./util":91,"punycode":67,"querystring":71}],91:[function(_dereq_,module,exports){
 'use strict';
 
 module.exports = {
@@ -17798,7 +17772,7 @@ module.exports = {
   }
 };
 
-},{}],89:[function(require,module,exports){
+},{}],92:[function(_dereq_,module,exports){
 (function (global){
 
 /**
@@ -17869,14 +17843,14 @@ function config (name) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],90:[function(require,module,exports){
+},{}],93:[function(_dereq_,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],91:[function(require,module,exports){
+},{}],94:[function(_dereq_,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -18403,7 +18377,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = require('./support/isBuffer');
+exports.isBuffer = _dereq_('./support/isBuffer');
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -18447,7 +18421,7 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = require('inherits');
+exports.inherits = _dereq_('inherits');
 
 exports._extend = function(origin, add) {
   // Don't do anything if add isn't an object
@@ -18465,8 +18439,8 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":90,"_process":62,"inherits":52}],92:[function(require,module,exports){
+}).call(this,_dereq_('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./support/isBuffer":93,"_process":66,"inherits":57}],95:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -18511,7 +18485,7 @@ function ws(uri, protocols, opts) {
 
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
-},{}],93:[function(require,module,exports){
+},{}],96:[function(_dereq_,module,exports){
 (function (process,Buffer){
 /**
  * Wrapper for built-in http.js to emulate the browser XMLHttpRequest object.
@@ -18526,9 +18500,9 @@ if (WebSocket) ws.prototype = WebSocket.prototype;
  * @license MIT
  */
 
-var Url = require("url");
-var spawn = require("child_process").spawn;
-var fs = require("fs");
+var Url = _dereq_("url");
+var spawn = _dereq_("child_process").spawn;
+var fs = _dereq_("fs");
 
 exports.XMLHttpRequest = function() {
   "use strict";
@@ -18537,8 +18511,8 @@ exports.XMLHttpRequest = function() {
    * Private variables
    */
   var self = this;
-  var http = require("http");
-  var https = require("https");
+  var http = _dereq_("http");
+  var https = _dereq_("https");
 
   // Holds http.js objects
   var request;
@@ -19134,8 +19108,8 @@ exports.XMLHttpRequest = function() {
   };
 };
 
-}).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":62,"buffer":43,"child_process":42,"fs":42,"http":79,"https":50,"url":87}],94:[function(require,module,exports){
+}).call(this,_dereq_('_process'),_dereq_("buffer").Buffer)
+},{"_process":66,"buffer":48,"child_process":47,"fs":47,"http":84,"https":55,"url":90}],97:[function(_dereq_,module,exports){
 module.exports = extend
 
 var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -19156,10 +19130,10 @@ function extend() {
     return target
 }
 
-},{}],95:[function(require,module,exports){
+},{}],98:[function(_dereq_,module,exports){
 module.exports={
   "name": "twilio-ip-messaging",
-  "version": "0.9.4",
+  "version": "0.10.0",
   "description": "A library for Twilio IP messaging",
   "main": "lib/index.js",
   "repository": {
@@ -19169,7 +19143,7 @@ module.exports={
   "scripts": {
     "postinstall": "node ./scripts/postinstall.js"
   },
-  "author": "aivanovs",
+  "author": "Twilio",
   "license": "MIT",
   "dependencies": {
     "backoff": "^2.4.1",
@@ -19179,11 +19153,11 @@ module.exports={
     "platform": "^1.3.0",
     "q": "^1.4.1",
     "twilio": "^2.5.1",
-    "twilio-common": "^0.1.4",
     "ws": "^0.8.0",
     "xmlhttprequest": "^1.7.0"
   },
   "devDependencies": {
+    "async": "^2.0.0-rc.1",
     "babel-eslint": "^4.1.3",
     "babel-preset-es2015": "^6.3.13",
     "babelify": "^7.2.0",
@@ -19195,6 +19169,7 @@ module.exports={
     "event-to-promise": "^0.6.0",
     "express": "^4.13.3",
     "gulp": "^3.9.0",
+    "gulp-derequire": "^2.1.0",
     "gulp-eslint": "^1.0.0",
     "gulp-exit": "0.0.2",
     "gulp-insert": "^0.5.0",
@@ -19220,24 +19195,24 @@ module.exports={
   }
 }
 
-},{}],96:[function(require,module,exports){
+},{}]},{},[38])(38)
+});
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],2:[function(require,module,exports){
 (function (global){
-'use strict';
-
 /* eslint strict:0 */
-(function (root) {
-  var IPMessaging = require('../lib');
+(function(root) {
   /* globals define */
   if (typeof define === 'function' && define.amd) {
-    define([], function () {
-      return IPMessaging;
+    define([], function() {
+      return require('./twilio-ip-messaging-bundle.js');
     });
   } else {
     var Twilio = root.Twilio = root.Twilio || {};
-    Twilio.AccessManager = Twilio.AccessManager || require('twilio-common').AccessManager;
-    Twilio.IPMessaging = Twilio.IPMessaging || IPMessaging;
+    Twilio.IPMessaging = Twilio.IPMessaging || require('./twilio-ip-messaging-bundle.js');
   }
-})(typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : undefined);
+})(typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : this);
+
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../lib":29,"twilio-common":86}]},{},[96]);
+},{"./twilio-ip-messaging-bundle.js":1}]},{},[2]);
