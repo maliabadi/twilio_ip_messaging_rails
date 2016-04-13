@@ -1,4 +1,4 @@
-/* twilio-ip-messaging.js 0.10.0
+/* twilio-ip-messaging.js 0.10.1
 The following license applies to all parts of this software except as
 documented below.
 
@@ -4633,6 +4633,7 @@ function UserInfo(identity, uri, datasync, session) {
   });
 
   EventEmitter.call(this);
+  this.setMaxListeners(0);
 }
 
 inherits(UserInfo, EventEmitter);
@@ -11569,7 +11570,7 @@ process.umask = function() { return 0; };
 
 },{}],67:[function(_dereq_,module,exports){
 (function (global){
-/*! https://mths.be/punycode v1.4.0 by @mathias */
+/*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
 
 	/** Detect free variables */
@@ -12057,7 +12058,7 @@ process.umask = function() { return 0; };
 		 * @memberOf punycode
 		 * @type String
 		 */
-		'version': '1.3.2',
+		'version': '1.4.1',
 		/**
 		 * An object of methods to convert from JavaScript's internal character
 		 * representation (UCS-2) to Unicode code points, and back.
@@ -19133,7 +19134,7 @@ function extend() {
 },{}],98:[function(_dereq_,module,exports){
 module.exports={
   "name": "twilio-ip-messaging",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "A library for Twilio IP messaging",
   "main": "lib/index.js",
   "repository": {
