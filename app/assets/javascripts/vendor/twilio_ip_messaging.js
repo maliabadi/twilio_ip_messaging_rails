@@ -1,4 +1,4 @@
-/* twilio-ip-messaging.js 0.10.1
+/* twilio-ip-messaging.js 0.10.2
 The following license applies to all parts of this software except as
 documented below.
 
@@ -152,6 +152,16 @@ This software includes platform.js under the following license.
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}(g.Twilio || (g.Twilio = {})).IPMessaging = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 'use strict';
 
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var log = _dereq_('loglevel');
 
 var DataSyncConfig = _dereq_('./configuration.js');
@@ -181,7 +191,7 @@ function DataSyncClient(token, notification, transport, options) {
   var network = new Network(config, transport);
   var subscriptions = new Subscriptions(config, network);
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _notification: { value: notification },
     _config: { value: config },
 
@@ -332,11 +342,11 @@ DataSyncClient.prototype.setAuthToken = function (token) {
   this._config.updateToken(token);
 };
 
-Object.freeze(DataSyncClient);
+(0, _freeze2.default)(DataSyncClient);
 
 module.exports = DataSyncClient;
 
-},{"./configuration.js":3,"./dataentity.js":4,"./datamap.js":5,"./datastream.js":6,"./network.js":7,"./router.js":8,"./subscriptions.js":9,"loglevel":60}],2:[function(_dereq_,module,exports){
+},{"./configuration.js":3,"./dataentity.js":4,"./datamap.js":5,"./datastream.js":6,"./network.js":7,"./router.js":8,"./subscriptions.js":9,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"loglevel":169}],2:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -344,10 +354,20 @@ module.exports = DataSyncClient;
  * @classdesc Entity of event stream collection
  */
 
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function CollectionEntity(data) {
   var _this = this;
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _id: { value: data.id, writable: false },
     _uri: { value: data.uri, writable: false },
     _value: { value: data.value, writable: true },
@@ -371,12 +391,18 @@ CollectionEntity.prototype._update = function (value) {
   this._value = value;
 };
 
-Object.freeze(CollectionEntity);
+(0, _freeze2.default)(CollectionEntity);
 
 module.exports = CollectionEntity;
 
-},{}],3:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42}],3:[function(_dereq_,module,exports){
 'use strict';
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var CDS_URI = 'https://cds.twilio.com';
 var SUBSCRIPTIONS_PATH = '/v1/subscriptions';
@@ -403,7 +429,7 @@ function DataSyncConfig(token, options) {
     mapsUri: baseUri + ENTITIES_PATH
   };
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _token: { value: token, writable: true },
 
     token: { enumerable: true, get: function get() {
@@ -430,10 +456,26 @@ DataSyncConfig.prototype.updateToken = function (token) {
 
 module.exports = DataSyncConfig;
 
-},{}],4:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/object/define-properties":41}],4:[function(_dereq_,module,exports){
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _typeof2 = _dereq_('babel-runtime/helpers/typeof');
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
@@ -449,7 +491,7 @@ var log = _dereq_('loglevel');
 function DataEntity(params, descriptor) {
   var _this = this;
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _config: { value: params.config },
     _datasync: { value: params.datasync },
     _network: { value: params.network },
@@ -545,10 +587,10 @@ DataEntity.prototype._resolveConflict = function (conflictResolver) {
   var _this4 = this;
 
   if (!(conflictResolver && typeof conflictResolver === 'function')) {
-    return Promise.reject(new Error('Can\'t resolve conflict'));
+    return _promise2.default.reject(new Error('Can\'t resolve conflict'));
   }
 
-  return new Promise(function (resolve, reject) {
+  return new _promise2.default(function (resolve, reject) {
     var revision = _this4._revision;
     var localData = _this4._data;
 
@@ -616,7 +658,7 @@ DataEntity.prototype._pushChangesInternal = function (resolve, reject) {
 DataEntity.prototype.pushChanges = function (conflictResolver) {
   var _this6 = this;
 
-  return new Promise(function (resolve, reject) {
+  return new _promise2.default(function (resolve, reject) {
 
     var handleError = function handleError(err) {
       if (err.status === 412) {
@@ -722,12 +764,12 @@ DataEntity.prototype.update = function (path, value) {
   }
 
   if (found) {
-    if ((typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) !== (typeof value === 'undefined' ? 'undefined' : _typeof(value))) {
+    if ((typeof obj === 'undefined' ? 'undefined' : (0, _typeof3.default)(obj)) !== (typeof value === 'undefined' ? 'undefined' : (0, _typeof3.default)(value))) {
       log.error('Can\'t have different type when updating the value!');
       return false;
     }
 
-    switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
+    switch (typeof value === 'undefined' ? 'undefined' : (0, _typeof3.default)(value)) {
       case 'object':
         for (var key in value) {
           obj[key] = value[key];
@@ -744,14 +786,34 @@ DataEntity.prototype.update = function (path, value) {
   return false;
 };
 
-Object.freeze(DataEntity);
+(0, _freeze2.default)(DataEntity);
 
 module.exports = DataEntity;
 
-},{"../../util/jsondiff":37,"events":54,"loglevel":60,"util":94}],5:[function(_dereq_,module,exports){
+},{"../../util/jsondiff":37,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"babel-runtime/helpers/typeof":47,"events":163,"loglevel":169,"util":198}],5:[function(_dereq_,module,exports){
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _typeof2 = _dereq_('babel-runtime/helpers/typeof');
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _map = _dereq_('babel-runtime/core-js/map');
+
+var _map2 = _interopRequireDefault(_map);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
@@ -770,7 +832,7 @@ function DataMap(deps, descriptor) {
     ensured: false
   };
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _deps: { value: deps },
     _descriptor: { value: descriptor },
     _cacheState: { value: cacheState },
@@ -780,7 +842,7 @@ function DataMap(deps, descriptor) {
       } },
     _revision: { value: descriptor.revision, writable: true },
     _context: { writable: true },
-    _entities: { value: new Map() },
+    _entities: { value: new _map2.default() },
 
     uri: { enumerable: true,
       get: function get() {
@@ -807,7 +869,7 @@ DataMap.prototype._uriForKey = function (key) {
 DataMap.prototype._tryPostOrUpdate = function (uri, data) {
   var _this2 = this;
 
-  return new Promise(function (resolve, reject) {
+  return new _promise2.default(function (resolve, reject) {
     _this2._deps.network.post(uri, data).then(function (response) {
       return resolve({ uri: response.body.links.entity });
     }).catch(function (err) {
@@ -828,7 +890,7 @@ DataMap.prototype._tryPostOrUpdate = function (uri, data) {
           };
         }();
 
-        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+        if ((typeof _ret === 'undefined' ? 'undefined' : (0, _typeof3.default)(_ret)) === "object") return _ret.v;
       }
 
       reject(err);
@@ -858,7 +920,7 @@ DataMap.prototype.getContext = function () {
   var _this4 = this;
 
   if (typeof this._context !== 'undefined') {
-    return Promise.resolve(this._context);
+    return _promise2.default.resolve(this._context);
   }
 
   return this._deps.network.get(this._links.context).then(function (response) {
@@ -911,16 +973,15 @@ DataMap.prototype.set = function (key, value) {
 DataMap.prototype.get = function (key) {
   var _this7 = this;
 
-  return new Promise(function (resolve, reject) {
+  return new _promise2.default(function (resolve, reject) {
     if (_this7._entities.has(key)) {
       resolve(_this7._entities.get(key));
     } else {
       var uri = _this7._uriForKey(key);
       _this7._deps.network.get(uri).then(function (response) {
-        var entityData = response.body.results.find(function (el) {
-          return el.entity_id === key;
-        });
-        if (entityData) {
+        // let entityData = response.body.results.find((el) => el.entity_id === key);
+        var entityData = response.body.results.length > 0 ? response.body.results[0] : null;
+        if (entityData && entityData.entity_id === key) {
           var entity = new Entity({ id: entityData.entity_id,
             uri: entityData.links.entity,
             value: entityData.data });
@@ -993,7 +1054,7 @@ DataMap.prototype.forEach = function (handler) {
   var _this10 = this;
 
   var pageSize = 50;
-  return new Promise(function (resolve, reject) {
+  return new _promise2.default(function (resolve, reject) {
     if (_this10._cacheState.ensured) {
       _this10._entities.forEach(handler);
       resolve();
@@ -1120,12 +1181,30 @@ DataMap.prototype._handleContextUpdate = function (data) {
   this.emit('contextUpdated', data);
 };
 
-Object.freeze(DataMap);
+(0, _freeze2.default)(DataMap);
 
 module.exports = DataMap;
 
-},{"../../util":36,"./collectionentity":2,"events":54,"util":94}],6:[function(_dereq_,module,exports){
+},{"../../util":36,"./collectionentity":2,"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"babel-runtime/helpers/typeof":47,"events":163,"util":198}],6:[function(_dereq_,module,exports){
 'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _map = _dereq_('babel-runtime/core-js/map');
+
+var _map2 = _interopRequireDefault(_map);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
@@ -1141,7 +1220,7 @@ var Entity = _dereq_('./collectionentity');
 function EventStream(deps, descriptor) {
   var _this = this;
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _config: { value: deps.config, writable: false },
     _deps: { value: deps, writable: false },
     _descriptor: { value: descriptor },
@@ -1151,7 +1230,7 @@ function EventStream(deps, descriptor) {
       } },
     _context: { writable: true },
     _revision: { value: descriptor.revision, writable: true },
-    _entities: { value: new Map(), writable: false },
+    _entities: { value: new _map2.default(), writable: false },
 
     uri: { enumerable: true,
       get: function get() {
@@ -1235,7 +1314,7 @@ EventStream.prototype.get = function (entityId) {
   var _this3 = this;
 
   if (this._entities.has(entityId)) {
-    return Promise.resolve(this._entities.get(entityId));
+    return _promise2.default.resolve(this._entities.get(entityId));
   }
 
   var uri = this._uriForKey(entityId);
@@ -1319,7 +1398,7 @@ EventStream.prototype.getContext = function () {
   var _this6 = this;
 
   if (typeof this._context !== 'undefined') {
-    return Promise.resolve(this._context);
+    return _promise2.default.resolve(this._context);
   }
 
   return this._deps.network.get(this._links.context).then(function (response) {
@@ -1429,11 +1508,11 @@ EventStream.prototype._handleContextUpdate = function (data) {
   this.emit('contextUpdated', data);
 };
 
-Object.freeze(EventStream);
+(0, _freeze2.default)(EventStream);
 
 module.exports = EventStream;
 
-},{"../../util":36,"./collectionentity":2,"events":54,"loglevel":60,"util":94}],7:[function(_dereq_,module,exports){
+},{"../../util":36,"./collectionentity":2,"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"events":163,"loglevel":169,"util":198}],7:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -1441,10 +1520,20 @@ module.exports = EventStream;
  * @classdesc Separates network operations to make it possible to add some optimization/caching strategies
  */
 
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function Network(config, transport) {
   var _this = this;
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _config: { value: config },
     _transport: { value: transport },
     _headers: { get: function get() {
@@ -1497,12 +1586,22 @@ Network.prototype.delete = function (uri) {
   return this._transport.delete(uri, this._headers);
 };
 
-Object.freeze(Network);
+(0, _freeze2.default)(Network);
 
 module.exports = Network;
 
-},{}],8:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42}],8:[function(_dereq_,module,exports){
 'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var util = _dereq_('../../util');
 var log = _dereq_('loglevel');
@@ -1516,7 +1615,7 @@ var COREDATA_MAP_NOTIFICATION_TYPE = 'com.twilio.rtd.cds.map';
  * @classdesc Routes all incoming messages to the consumers
  */
 function Router(params) {
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _config: { value: params.config },
     _subscriptions: { value: params.subscriptions }
   });
@@ -1586,12 +1685,34 @@ Router.prototype.onConnected = function () {
   });
 };
 
-Object.freeze(Router);
+(0, _freeze2.default)(Router);
 
 module.exports = Router;
 
-},{"../../util":36,"loglevel":60}],9:[function(_dereq_,module,exports){
+},{"../../util":36,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"loglevel":169}],9:[function(_dereq_,module,exports){
 'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _set = _dereq_('babel-runtime/core-js/set');
+
+var _set2 = _interopRequireDefault(_set);
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _map = _dereq_('babel-runtime/core-js/map');
+
+var _map2 = _interopRequireDefault(_map);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var log = _dereq_('loglevel');
 
@@ -1602,11 +1723,11 @@ var log = _dereq_('loglevel');
  * @constructor
  */
 function Subscriptions(config, network) {
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _config: { value: config },
     _network: { value: network },
-    _subscriptions: { value: new Map() },
-    _serverSubscriptions: { value: new Map() }
+    _subscriptions: { value: new _map2.default() },
+    _serverSubscriptions: { value: new _map2.default() }
   });
 }
 
@@ -1672,10 +1793,10 @@ Subscriptions.prototype.add = function (entityUri, entity) {
   if (this._subscriptions.has(entityUri)) {
     var _subscribers = this._subscriptions.get(entityUri);
     _subscribers.add(entity);
-    return Promise.resolve(false);
+    return _promise2.default.resolve(false);
   }
 
-  var subscribers = new Set();
+  var subscribers = new _set2.default();
   subscribers.add(entity);
 
   return this._subscribeOnServer(entityUri).then(function () {
@@ -1691,11 +1812,11 @@ Subscriptions.prototype.add = function (entityUri, entity) {
  */
 Subscriptions.prototype.remove = function (entityUri, entity) {
   if (!this._subscriptions.has(entityUri)) {
-    return Promise.resolve(true);
+    return _promise2.default.resolve(true);
   }
 
   if (!this._subscriptions.get(entityUri).has(entity)) {
-    return Promise.resolve(false);
+    return _promise2.default.resolve(false);
   }
 
   var subscribers = this._subscriptions.get(entityUri);
@@ -1703,7 +1824,7 @@ Subscriptions.prototype.remove = function (entityUri, entity) {
 
   if (subscribers.size > 0) {
     this._subscriptions.set(entityUri, subscribers);
-    return Promise.resolve(false);
+    return _promise2.default.resolve(false);
   }
 
   this._subscriptions.delete(entityUri);
@@ -1720,7 +1841,7 @@ Subscriptions.prototype.getSubscribers = function (entityUri) {
     return subscribers;
   }
 
-  return new Set();
+  return new _set2.default();
 };
 
 /**
@@ -1735,12 +1856,34 @@ Subscriptions.prototype.forEach = function (handler) {
   });
 };
 
-Object.freeze(Subscriptions);
+(0, _freeze2.default)(Subscriptions);
 
 module.exports = Subscriptions;
 
-},{"loglevel":60}],10:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"babel-runtime/core-js/set":44,"loglevel":169}],10:[function(_dereq_,module,exports){
 'use strict';
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+var _map = _dereq_('babel-runtime/core-js/map');
+
+var _map2 = _interopRequireDefault(_map);
+
+var _stringify = _dereq_('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
@@ -1826,12 +1969,12 @@ function Channel(services, data, sid) {
   }
 
   try {
-    JSON.stringify(attributes);
+    (0, _stringify2.default)(attributes);
   } catch (e) {
     throw new Error('Attributes must be a valid JSON object.');
   }
 
-  var members = new Map();
+  var members = new _map2.default();
   var membersEntity = new MembersEntity(this, services.session, services.userInfos, members);
   membersEntity.on('memberJoined', this.emit.bind(this, 'memberJoined'));
   membersEntity.on('memberLeft', this.emit.bind(this, 'memberLeft'));
@@ -1844,7 +1987,7 @@ function Channel(services, data, sid) {
   messagesEntity.on('messageUpdated', this.emit.bind(this, 'messageUpdated'));
   messagesEntity.on('messageRemoved', this.emit.bind(this, 'messageRemoved'));
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _attributes: {
       get: function get() {
         return attributes;
@@ -2042,8 +2185,8 @@ Channel.status = {
   FAILED: 'failed'
 };
 
-Object.freeze(Channel.type);
-Object.freeze(Channel.status);
+(0, _freeze2.default)(Channel.type);
+(0, _freeze2.default)(Channel.status);
 
 /**
  * Load and Subscribe to this Channel and do not subscribe to its Members and Messages.
@@ -2083,7 +2226,7 @@ Channel.prototype._subscribeStreams = function _subscribeStreams() {
   this._subscribePromise = this._subscribePromise || this._subscribe().then(function (entity) {
     var messagesUri = entity.value('/messagesUrl');
     var rosterUri = entity.value('/rosterUrl');
-    return Promise.all([_this3._messagesEntity.subscribe(messagesUri).then(function () {
+    return _promise2.default.all([_this3._messagesEntity.subscribe(messagesUri).then(function () {
       return _this3._messagesEntity.getMessages();
     }), _this3._membersEntity.subscribe(rosterUri)]);
   }).then(function () {
@@ -2118,7 +2261,7 @@ Channel.prototype._unsubscribe = function () {
   promises.push(this._messagesEntity.unsubscribe());
   this._entityPromise = null;
   this._subscribePromise = null;
-  return Promise.all(promises);
+  return _promise2.default.all(promises);
 };
 
 /**
@@ -2146,7 +2289,7 @@ function preprocessUpdate(update, channelSid) {
     if (typeof update.attributes === 'string') {
       update.attributes = JSON.parse(update.attributes);
     } else if (update.attributes) {
-      JSON.stringify(update.attributes);
+      (0, _stringify2.default)(update.attributes);
     }
   } catch (e) {
     log.warn('Retrieved malformed attributes from the server for channel: ' + channelSid);
@@ -2242,7 +2385,7 @@ Channel.prototype.advanceLastConsumedMessageIndex = function advanceLastConsumed
   }
 
   if (this.lastConsumedMessageIndex !== null && index <= this.lastConsumedMessageIndex || 0) {
-    return Promise.resolve();
+    return _promise2.default.resolve();
   }
 
   return this._subscribeStreams().then(function () {
@@ -2362,7 +2505,7 @@ Channel.prototype.leave = function leaveChannel() {
   var _this11 = this;
 
   if (this._status !== Channel.status.JOINED) {
-    return Promise.resolve(this);
+    return _promise2.default.resolve(this);
   }
 
   return this._session.addCommand('leaveChannel', {
@@ -2434,7 +2577,7 @@ Channel.prototype.updateAttributes = function updateAttributes(attributes) {
 
   return this._session.addCommand('editAttributes', {
     channelSid: this._sid,
-    attributes: JSON.stringify(attributes)
+    attributes: (0, _stringify2.default)(attributes)
   }).then(function () {
     return _this13;
   });
@@ -2449,7 +2592,7 @@ Channel.prototype.updateFriendlyName = function updateFriendlyName(name) {
   var _this14 = this;
 
   if (this._friendlyName === name) {
-    return Promise.resolve(this);
+    return _promise2.default.resolve(this);
   }
 
   return this._session.addCommand('editFriendlyName', {
@@ -2495,7 +2638,7 @@ Channel.prototype.updateType = function (type) {
     throw new Error('Changing of channel type isn\'t supported');
   }
 
-  return Promise.resolve(this);
+  return _promise2.default.resolve(this);
 };
 
 /**
@@ -2507,7 +2650,7 @@ Channel.prototype.updateUniqueName = function updateUniqueName(uniqueName) {
   var _this16 = this;
 
   if (this._uniqueName === uniqueName) {
-    return Promise.resolve(this);
+    return _promise2.default.resolve(this);
   }
 
   return this._session.addCommand('editUniqueName', {
@@ -2518,7 +2661,7 @@ Channel.prototype.updateUniqueName = function updateUniqueName(uniqueName) {
   });
 };
 
-Object.freeze(Channel);
+(0, _freeze2.default)(Channel);
 
 /**
  * Fired when a Member has joined the Channel.
@@ -2573,8 +2716,26 @@ Object.freeze(Channel);
 
 module.exports = Channel;
 
-},{"../../util/jsondiff":37,"./data/members":14,"./data/messages":15,"./member":17,"events":54,"loglevel":60,"util":94}],11:[function(_dereq_,module,exports){
+},{"../../util/jsondiff":37,"./data/members":14,"./data/messages":15,"./member":17,"babel-runtime/core-js/json/stringify":39,"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"events":163,"loglevel":169,"util":198}],11:[function(_dereq_,module,exports){
 'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+var _map = _dereq_('babel-runtime/core-js/map');
+
+var _map2 = _interopRequireDefault(_map);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
@@ -2633,7 +2794,6 @@ function Client(accessManager, options) {
   options = options || {};
   options.logLevel = options.logLevel || 'error';
 
-  log.setDefaultLevel(options.logLevel);
   log.setLevel(options.logLevel);
   var config = new Configuration(options);
 
@@ -2656,7 +2816,7 @@ function Client(accessManager, options) {
   var consumptionHorizon = new ConsumptionHorizon(config, session);
   var typingIndicator = new TypingIndicator(config, accessManager, transport, notification, this.getChannelBySid.bind(this));
 
-  var channels = new Map();
+  var channels = new _map2.default();
   var channelsEntity = new ChannelsEntity({ session: session, userInfos: userInfos, typingIndicator: typingIndicator, consumptionHorizon: consumptionHorizon }, channels);
   var channelsPromise = sessionPromise.then(function () {
     channelsEntity.on('channelAdded', _this.emit.bind(_this, 'channelAdded'));
@@ -2687,7 +2847,7 @@ function Client(accessManager, options) {
     return _this._updateToken(accessManager.token);
   });
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _channelsPromise: { value: channelsPromise },
     _datasync: { value: datasync },
     _notification: { value: notification },
@@ -2731,7 +2891,7 @@ function Client(accessManager, options) {
  * @type String
  * @readonly
  */
-Object.defineProperties(Client, {
+(0, _defineProperties2.default)(Client, {
   version: {
     enumerable: true,
     value: SDK_VERSION
@@ -2785,13 +2945,13 @@ Client.prototype._updateToken = function _updateToken(token) {
   }
 
   if (token === this._token) {
-    return Promise.resolve(this);
+    return _promise2.default.resolve(this);
   }
 
   this._token = token;
   log.info('IPMSG I: authTokenUpdated');
 
-  return Promise.all([this._twilsock.setAuthToken(token), this._notification.setAuthToken(token), this._datasync.setAuthToken(token), this._sessionPromise.then(function () {
+  return _promise2.default.all([this._twilsock.setAuthToken(token), this._notification.setAuthToken(token), this._datasync.setAuthToken(token), this._sessionPromise.then(function () {
     return _this4._session.updateToken(token);
   })]).then(function () {
     return _this4;
@@ -2867,7 +3027,7 @@ Client.prototype.createChannel = function createChannel(options) {
   });
 };
 
-Object.freeze(Client);
+(0, _freeze2.default)(Client);
 
 /**
  * These options can be passed to Client.createChannel
@@ -2969,8 +3129,14 @@ Object.freeze(Client);
 
 module.exports = Client;
 
-},{"../../../package.json":98,"../datasync/client":1,"../notification/client":24,"../transport":28,"../twilsock/client":30,"./configuration":12,"./data/channels.js":13,"./data/userinfos.js":16,"./services/consumptionhorizon":19,"./services/typingindicator":20,"./session.js":21,"events":54,"loglevel":60,"util":94}],12:[function(_dereq_,module,exports){
+},{"../../../package.json":202,"../datasync/client":1,"../notification/client":24,"../transport":28,"../twilsock/client":30,"./configuration":12,"./data/channels.js":13,"./data/userinfos.js":16,"./services/consumptionhorizon":19,"./services/typingindicator":20,"./session.js":21,"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"events":163,"loglevel":169,"util":198}],12:[function(_dereq_,module,exports){
 'use strict';
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var TYPING_URI = 'https://aim.twilio.com';
 var TYPING_PATH = '/v1/typing';
@@ -2982,7 +3148,7 @@ function IPMessagingConfig(options) {
   var _options = options.IPMessaging || {};
   var baseUri = _options.typingUri || TYPING_URI;
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     typingIndicatorUri: { enumerable: true,
       value: baseUri + TYPING_PATH },
     typingIndicatorTimeout: { enumerable: true,
@@ -2994,8 +3160,22 @@ function IPMessagingConfig(options) {
 
 module.exports = IPMessagingConfig;
 
-},{}],13:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/object/define-properties":41}],13:[function(_dereq_,module,exports){
 'use strict';
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _stringify = _dereq_('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
@@ -3009,7 +3189,7 @@ var Channel = _dereq_('../channel');
  * @classdesc Provides an access to the channels collection
  */
 function ChannelsEntity(services, channels) {
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _services: { value: services },
     _userInfos: { value: services.userInfos },
     _typingIndicator: { value: services.typingIndicator },
@@ -3037,7 +3217,7 @@ ChannelsEntity.prototype.addChannel = function addChannel(options) {
     friendlyName: options.friendlyName,
     uniqueName: options.uniqueName,
     type: options.isPrivate ? 'private' : 'public',
-    attributes: JSON.stringify(options.attributes)
+    attributes: (0, _stringify2.default)(options.attributes)
   }).then(function (response) {
     var existingChannel = _this.channels.get(response.channelSid);
     if (existingChannel) {
@@ -3059,7 +3239,7 @@ ChannelsEntity.prototype.addChannel = function addChannel(options) {
 ChannelsEntity.prototype.fetchChannels = function fetchChannels(session) {
   var self = this;
 
-  return new Promise(function (resolve, reject) {
+  return new _promise2.default(function (resolve, reject) {
     var myUrl = session.getMyChannelsUrl();
     var publicUrl = session.getChannelsUrl();
     var called = false;
@@ -3132,7 +3312,7 @@ ChannelsEntity.prototype._fetchMyChannels = function (url) {
       var sid = entity.id;
       upserts.push(_this2._upsertChannel(sid, channelData));
     }).then(function () {
-      return Promise.all(upserts);
+      return _promise2.default.all(upserts);
     }).then(function () {
       return _this2;
     });
@@ -3222,7 +3402,7 @@ ChannelsEntity.prototype._upsertChannel = function (sid, data) {
       channel._update(data);
     }
 
-    return Promise.resolve(channel);
+    return _promise2.default.resolve(channel);
   }
 
   // Fetch the Channel if we don't know about it
@@ -3261,8 +3441,18 @@ ChannelsEntity.prototype._registerForEvents = function (channel) {
 
 module.exports = ChannelsEntity;
 
-},{"../channel":10,"events":54,"util":94}],14:[function(_dereq_,module,exports){
+},{"../channel":10,"babel-runtime/core-js/json/stringify":39,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/promise":43,"events":163,"util":198}],14:[function(_dereq_,module,exports){
 'use strict';
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
@@ -3281,7 +3471,7 @@ var Member = _dereq_('../member');
  */
 function Members(channel, session, userInfos, members) {
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _datasync: { value: session.datasync },
     _userInfos: { value: userInfos },
     _session: { value: session },
@@ -3307,7 +3497,7 @@ inherits(Members, EventEmitter);
 Members.prototype.unsubscribe = function unsubscribe() {
   return this._rosterStreamPromise ? this._rosterStreamPromise.then(function (entity) {
     return entity.unsubscribe();
-  }) : Promise.resolve();
+  }) : _promise2.default.resolve();
 };
 
 Members.prototype.subscribe = function (rosterUri) {
@@ -3339,7 +3529,7 @@ Members.prototype.subscribe = function (rosterUri) {
     return rosterMap.forEach(function (entity) {
       membersPromises.push(_this.upsertMember(entity.id, entity.value));
     }).then(function () {
-      return Promise.all(membersPromises);
+      return _promise2.default.all(membersPromises);
     }).then(function () {
       return rosterMap;
     });
@@ -3353,7 +3543,7 @@ Members.prototype.upsertMember = function upsertMember(memberSid, data) {
   var member = this.members.get(memberSid);
   if (member) {
     member._update(data);
-    return Promise.resolve(member);
+    return _promise2.default.resolve(member);
   }
 
   return this._userInfos.getUserInfo(data.identity, data.userInfo).then(function (userInfo) {
@@ -3457,8 +3647,22 @@ module.exports = Members;
  * @type {Member}
  */
 
-},{"../member":17,"events":54,"util":94}],15:[function(_dereq_,module,exports){
+},{"../member":17,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/promise":43,"events":163,"util":198}],15:[function(_dereq_,module,exports){
 'use strict';
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _map = _dereq_('babel-runtime/core-js/map');
+
+var _map2 = _interopRequireDefault(_map);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
@@ -3475,12 +3679,12 @@ var Q = _dereq_('q');
 function Messages(channel, session, messages) {
   var deferred = Q.defer();
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _datasync: { value: session.datasync },
     _deferred: { value: deferred },
     _eventStreamPromise: { value: null, writable: true },
     _sortedMessages: { value: messages },
-    _messagesByIndex: { value: new Map() },
+    _messagesByIndex: { value: new _map2.default() },
     _session: { value: session },
     _waitForURI: { value: deferred.promise },
     channel: {
@@ -3552,7 +3756,7 @@ Messages.prototype.subscribe = function subscribe(uri) {
 Messages.prototype.unsubscribe = function unsubscribe() {
   return this._eventStreamPromise ? this._eventStreamPromise.then(function (entity) {
     return entity.unsubscribe();
-  }) : Promise.resolve();
+  }) : _promise2.default.resolve();
 };
 
 /**
@@ -3612,7 +3816,7 @@ Messages.prototype.getMessages = function getMessages(count, anchor) {
     });
 
     if (!isKnown) {
-      return Promise.reject(new Error('Unknown anchor'));
+      return _promise2.default.reject(new Error('Unknown anchor'));
     }
   }
 
@@ -3659,8 +3863,22 @@ Messages.prototype._updateSortedMessages = function _updateSortedMessages() {
 
 module.exports = Messages;
 
-},{"../message":18,"events":54,"q":68,"util":94}],16:[function(_dereq_,module,exports){
+},{"../message":18,"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/promise":43,"events":163,"q":177,"util":198}],16:[function(_dereq_,module,exports){
 'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _map = _dereq_('babel-runtime/core-js/map');
+
+var _map2 = _interopRequireDefault(_map);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
@@ -3678,11 +3896,11 @@ var UserInfo = _dereq_('../userinfo');
 function UserInfos(session, datasync, myIdentity) {
   var _this = this;
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _session: { value: session },
     _datasync: { value: datasync },
     _mapsUrl: { value: '', writable: true },
-    _infos: { value: new Map() },
+    _infos: { value: new _map2.default() },
 
     myUserInfo: { enumerable: true, get: function get() {
         return _this._infos.get(myIdentity);
@@ -3743,12 +3961,22 @@ UserInfos.prototype.getUserInfo = function (identity, id) {
   return userInfo._ensureFetched();
 };
 
-Object.freeze(UserInfos);
+(0, _freeze2.default)(UserInfos);
 
 module.exports = UserInfos;
 
-},{"../userinfo":23,"events":54,"util":94}],17:[function(_dereq_,module,exports){
+},{"../userinfo":23,"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"events":163,"util":198}],17:[function(_dereq_,module,exports){
 'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
@@ -3787,7 +4015,7 @@ function Member(channel, data, sid, userInfo) {
     throw new Error('Received invalid Member object from server: Missing identity.');
   }
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _identity: {
       get: function get() {
         return identity;
@@ -3887,7 +4115,7 @@ function Member(channel, data, sid, userInfo) {
 
 inherits(Member, EventEmitter);
 
-Object.freeze(Member);
+(0, _freeze2.default)(Member);
 
 /**
  * Private method used to start or reset the typing indicator timeout (with event emitting)
@@ -3989,8 +4217,14 @@ module.exports = Member;
  * @type {Member}
  */
 
-},{"events":54,"util":94}],18:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"events":163,"util":198}],18:[function(_dereq_,module,exports){
 'use strict';
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
@@ -4018,7 +4252,7 @@ function Message(channel, entityId, data) {
   var dateUpdated = data.dateUpdated ? new Date(data.dateUpdated) : null;
   var lastUpdatedBy = data.lastUpdatedBy ? data.lastUpdatedBy : null;
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _body: {
       get: function get() {
         return body;
@@ -4154,7 +4388,7 @@ Message.prototype.updateBody = function updateMessageBody(body) {
 
 module.exports = Message;
 
-},{"events":54,"util":94}],19:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/object/define-properties":41,"events":163,"util":198}],19:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -4164,10 +4398,24 @@ module.exports = Message;
  * @private
  */
 
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _map = _dereq_('babel-runtime/core-js/map');
+
+var _map2 = _interopRequireDefault(_map);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function ConsumptionHorizon(config, session) {
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _session: { value: session },
-    _consumptionHorizonReports: { value: new Map() },
+    _consumptionHorizonReports: { value: new _map2.default() },
     _consumptionHorizonUpdateTimer: { value: null, writable: true }
   });
 }
@@ -4235,12 +4483,30 @@ ConsumptionHorizon.prototype._delayedSendConsumptionHorizon = function (delay) {
   }, delay);
 };
 
-Object.freeze(ConsumptionHorizon);
+(0, _freeze2.default)(ConsumptionHorizon);
 
 module.exports = ConsumptionHorizon;
 
-},{}],20:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42}],20:[function(_dereq_,module,exports){
 'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _map = _dereq_('babel-runtime/core-js/map');
+
+var _map2 = _interopRequireDefault(_map);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var log = _dereq_('loglevel');
 
@@ -4255,12 +4521,12 @@ var TYPING_INDICATOR_MESSAGE_TYPE = 'twilio.ipmsg.typing_indicator';
 function TypingIndicator(config, accessManager, transport, notifications, getChannel) {
   var _this = this;
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _transport: { value: transport },
     _notifications: { value: notifications },
     _config: { value: config },
     _typingTimeout: { value: null, writable: true },
-    _sentUpdates: { value: new Map() },
+    _sentUpdates: { value: new _map2.default() },
     _getChannel: { value: getChannel },
     token: { get: function get() {
         return accessManager.token;
@@ -4310,7 +4576,7 @@ TypingIndicator.prototype._handleRemoteTyping = function (message) {
 TypingIndicator.prototype.send = function (channelSid) {
   var lastUpdate = this._sentUpdates.get(channelSid);
   if (lastUpdate && lastUpdate > Date.now() - this.typingTimeout) {
-    return Promise.resolve();
+    return _promise2.default.resolve();
   }
 
   this._sentUpdates.set(channelSid, Date.now());
@@ -4339,12 +4605,26 @@ TypingIndicator.prototype._send = function (channelSid) {
   });
 };
 
-Object.freeze(TypingIndicator);
+(0, _freeze2.default)(TypingIndicator);
 
 module.exports = TypingIndicator;
 
-},{"loglevel":60}],21:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"loglevel":169}],21:[function(_dereq_,module,exports){
 'use strict';
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _map = _dereq_('babel-runtime/core-js/map');
+
+var _map2 = _interopRequireDefault(_map);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var guid = _dereq_('../../util/guid');
 var platform = _dereq_('platform');
@@ -4371,12 +4651,12 @@ function Session(datasync, transport, token, config) {
 
   var platformInfo = typeof navigator !== 'undefined' ? platform.parse(navigator.userAgent) : platform;
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _purpose: { value: 'com.twilio.rtd.ipmsg' },
     _endpointPlatform: {
       value: ['js', SDK_VERSION, platformInfo.os, platformInfo.name, platformInfo.version].join('|')
     },
-    _pendingCommands: { value: new Map() },
+    _pendingCommands: { value: new _map2.default() },
     _sessionContextChangeTracker: { value: new ChangeTracker() },
     _sessionStreamPromise: { value: null, writable: true },
     _config: { value: config },
@@ -4402,7 +4682,7 @@ Session.prototype.initialize = function (token) {
   };
 
   this._sessionStreamPromise = this.datasync.createStream(this._purpose, context).then(function (stream) {
-    log.trace('IPMSG: session created');
+    log.info('IPMSG: session created', stream.uri);
 
     stream.on('entityAdded', function (entity) {
       return _this2._processCommandResponse(entity);
@@ -4411,7 +4691,9 @@ Session.prototype.initialize = function (token) {
       return _this2._processCommandResponse(entity);
     });
     stream.on('contextUpdated', function (updatedContext) {
-      return _this2._sessionContextChangeTracker.update(updatedContext);
+      log.info('IPMSG: session context updated');
+      log.debug('IPMSG: ', updatedContext);
+      _this2._sessionContextChangeTracker.update(updatedContext);
     });
 
     stream.subscribe();
@@ -4442,15 +4724,21 @@ Session.prototype._processCommand = function (action, params) {
   command.request.action = action;
   command.commandId = guid();
 
-  return new Promise(function (resolve, reject) {
+  log.info('IPMSG: Adding command: ', action, command.commandId);
+  log.debug('IPMSG: ', params);
+
+  return new _promise2.default(function (resolve, reject) {
     _this3._sessionStreamPromise.then(function (stream) {
       _this3._pendingCommands.set(command.commandId, {
         resolve: resolve,
         reject: reject
       });
 
-      stream.add(command);
+      stream.add(command).then(function () {
+        return log.debug('IPMSG: Command accepted by server', command.commandId);
+      });
     }).catch(function (err) {
+      log.error('IPMSG: Failed to add a command to the session', err);
       reject(new Error('Can\'t add command: ' + err.message));
     });
   });
@@ -4464,12 +4752,12 @@ Session.prototype._processCommandResponse = function (entity) {
     var value = entity.value;
     var commandId = entity.value.commandId;
     if (value.response.status === 200) {
-      log.trace('Command succeeded: ', value);
+      log.debug('IPMSG: Command succeeded: ', value);
       var resolve = this._pendingCommands.get(commandId).resolve;
       this._pendingCommands.delete(commandId);
       resolve(value.response);
     } else {
-      log.error('Command failed: ', value);
+      log.error('IPMSG: Command failed: ', value);
       var reject = this._pendingCommands.get(commandId).reject;
       this._pendingCommands.delete(commandId);
       reject(new SessionError(value.response.statusText, value.response.status));
@@ -4484,7 +4772,7 @@ Session.prototype.updateToken = function (token) {
       return stream.updateContext(context);
     });
   }).catch(function (err) {
-    log.error('Couldn\'t update the token in session context', err);
+    log.error('IPMSG: Couldn\'t update the token in session context', err);
     throw new Error(err);
   });
 };
@@ -4497,7 +4785,7 @@ Session.prototype.onKeyUpdated = function (path, handler) {
 Session.prototype.getChannelsUrl = function () {
   var _this4 = this;
 
-  return new Promise(function (resolve) {
+  return new _promise2.default(function (resolve) {
     _this4._sessionStreamPromise.then(function (stream) {
       return stream.getContext();
     }).then(function (context) {
@@ -4513,7 +4801,7 @@ Session.prototype.getChannelsUrl = function () {
 Session.prototype.getMyChannelsUrl = function () {
   var _this5 = this;
 
-  return new Promise(function (resolve) {
+  return new _promise2.default(function (resolve) {
     _this5._sessionStreamPromise.then(function (stream) {
       return stream.getContext();
     }).then(function (context) {
@@ -4529,7 +4817,7 @@ Session.prototype.getMyChannelsUrl = function () {
 Session.prototype.getUserInfosData = function () {
   var _this6 = this;
 
-  return new Promise(function (resolve) {
+  return new _promise2.default(function (resolve) {
     function resolveWithData(context) {
       resolve({
         mapsUrl: context.mapsUrl,
@@ -4568,7 +4856,7 @@ Session.prototype.getConsumptionReportInterval = function () {
 
 module.exports = Session;
 
-},{"../../../package.json":98,"../../util/changetracker":34,"../../util/guid":35,"./sessionerror":22,"durational":52,"loglevel":60,"platform":61}],22:[function(_dereq_,module,exports){
+},{"../../../package.json":202,"../../util/changetracker":34,"../../util/guid":35,"./sessionerror":22,"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/promise":43,"durational":161,"loglevel":169,"platform":170}],22:[function(_dereq_,module,exports){
 'use strict';
 
 var inherits = _dereq_('util').inherits;
@@ -4581,18 +4869,41 @@ var inherits = _dereq_('util').inherits;
  * @property {String} message - Error description
  */
 function SessionError(message, code) {
-  Error.captureStackTrace(this, this.constructor);
   this.name = this.constructor.name;
   this.message = message;
   this.code = code;
+
+  if (Error.captureStackTrace) {
+    Error.captureStackTrace(this, this.constructor);
+  } else {
+    this.stack = new Error().stack;
+  }
 }
 
 inherits(SessionError, Error);
 
 module.exports = SessionError;
 
-},{"util":94}],23:[function(_dereq_,module,exports){
+},{"util":198}],23:[function(_dereq_,module,exports){
 'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _stringify = _dereq_('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
@@ -4613,7 +4924,7 @@ var inherits = _dereq_('util').inherits;
 function UserInfo(identity, uri, datasync, session) {
   var _this = this;
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _datasync: { value: datasync },
     _session: { value: session },
     _identity: { value: identity },
@@ -4660,7 +4971,7 @@ UserInfo.prototype._fetch = function () {
   var _this2 = this;
 
   if (!this._uri) {
-    return Promise.resolve(this);
+    return _promise2.default.resolve(this);
   }
 
   var update = function update(item) {
@@ -4669,7 +4980,7 @@ UserInfo.prototype._fetch = function () {
   this._promiseToFetch = this._datasync.openMap(this._uri).then(function (map) {
     map.subscribe();
     map.on('entityUpdated', update);
-    return Promise.all([map.get('friendlyName').then(update), map.get('attributes').then(update)]);
+    return _promise2.default.all([map.get('friendlyName').then(update), map.get('attributes').then(update)]);
   }).then(function () {
     return _this2;
   }).catch(function (err) {
@@ -4697,7 +5008,7 @@ UserInfo.prototype.updateAttributes = function (attributes) {
 
   return this._session.addCommand('editUserAttributes', {
     username: this._identity,
-    attributes: JSON.stringify(attributes)
+    attributes: (0, _stringify2.default)(attributes)
   }).then(function () {
     return _this3;
   });
@@ -4719,7 +5030,7 @@ UserInfo.prototype.updateFriendlyName = function (friendlyName) {
   });
 };
 
-Object.freeze(UserInfo);
+(0, _freeze2.default)(UserInfo);
 
 /**
  * Fired when the UserInfo's fields have been updated.
@@ -4728,8 +5039,18 @@ Object.freeze(UserInfo);
 
 module.exports = UserInfo;
 
-},{"events":54,"util":94}],24:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/json/stringify":39,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"events":163,"util":198}],24:[function(_dereq_,module,exports){
 'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
@@ -4762,7 +5083,7 @@ function NotificationClient(productId, token, transport, twilsock, options) {
   };
 
   var config = new NotificationConfig(token, options);
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _config: { value: config },
     _registrar: { value: new Registrar(productId, transport, config) },
     _twilsock: { value: twilsock },
@@ -4879,7 +5200,7 @@ NotificationClient.prototype.setAuthToken = function (authToken) {
   // Reconnection of twilsock automatically triggers re-registration
 };
 
-Object.freeze(NotificationClient);
+(0, _freeze2.default)(NotificationClient);
 
 /**
  * Fired when new message arrived.
@@ -4894,8 +5215,14 @@ Object.freeze(NotificationClient);
 
 module.exports = NotificationClient;
 
-},{"./configuration":25,"./registrar":27,"events":54,"loglevel":60,"util":94}],25:[function(_dereq_,module,exports){
+},{"./configuration":25,"./registrar":27,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"events":163,"loglevel":169,"util":198}],25:[function(_dereq_,module,exports){
 'use strict';
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var ERS_URI = 'https://ers.twilio.com';
 var ERS_PATH = '/v1/registrations';
@@ -4909,7 +5236,7 @@ function NotificationConfig(token, options) {
   options = (options || {}).Notification || {};
   var uri = options.ersUri || ERS_URI;
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _registrarUri: { value: uri + ERS_PATH },
     _token: { value: token, writable: true },
 
@@ -4928,8 +5255,22 @@ NotificationConfig.prototype.updateToken = function (token) {
 
 module.exports = NotificationConfig;
 
-},{}],26:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/object/define-properties":41}],26:[function(_dereq_,module,exports){
 'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
@@ -4991,7 +5332,7 @@ function RegistrarClient(productId, transport, config, channelType) {
 
   var platform = (typeof navigator !== 'undefined' ? navigator.userAgent : 'web').substring(0, 128);
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _transport: { value: transport },
     _url: { value: config.registrarUri, writable: false },
     _config: { value: config },
@@ -5122,7 +5463,7 @@ RegistrarClient.prototype._unregister = function () {
   var _this3 = this;
 
   if (!this._registrationId) {
-    return Promise.resolve();
+    return _promise2.default.resolve();
   }
 
   var uri = this._url + '/' + this._registrationId + '?productId=' + this._productId;
@@ -5145,12 +5486,26 @@ RegistrarClient.prototype._unregister = function () {
   });
 };
 
-Object.freeze(RegistrarClient);
+(0, _freeze2.default)(RegistrarClient);
 
 module.exports = RegistrarClient;
 
-},{"backoff":39,"events":54,"javascript-state-machine":59,"loglevel":60,"util":94}],27:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"backoff":148,"events":163,"javascript-state-machine":168,"loglevel":169,"util":198}],27:[function(_dereq_,module,exports){
 'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+var _set = _dereq_('babel-runtime/core-js/set');
+
+var _set2 = _interopRequireDefault(_set);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
@@ -5168,8 +5523,8 @@ function Registrar(productId, transport, config) {
   var _this = this;
 
   var subscriptions = {
-    twilsock: new Set(),
-    gcm: new Set()
+    twilsock: new _set2.default(),
+    gcm: new _set2.default()
   };
 
   var notificationIds = {
@@ -5180,7 +5535,7 @@ function Registrar(productId, transport, config) {
   var twilsockRegistrarClient = new RegistrarClient(productId, transport, config, 'twilsock');
   var gcmRegistrarClient = new RegistrarClient(productId, transport, config, 'gcm');
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _conf: { value: config },
     _subscriptions: { value: subscriptions },
     _notificationIds: { value: notificationIds },
@@ -5332,12 +5687,26 @@ Registrar.prototype._updateGcmRegistration = function () {
   this._gcmRegistrar.update(notificationId, activeSubscriptions);
 };
 
-Object.freeze(Registrar);
+(0, _freeze2.default)(Registrar);
 
 module.exports = Registrar;
 
-},{"./registrar.connector":26,"events":54,"loglevel":60,"util":94}],28:[function(_dereq_,module,exports){
+},{"./registrar.connector":26,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/set":44,"events":163,"loglevel":169,"util":198}],28:[function(_dereq_,module,exports){
 'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _map = _dereq_('babel-runtime/core-js/map');
+
+var _map2 = _interopRequireDefault(_map);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var request = _dereq_('./request');
 
@@ -5415,8 +5784,8 @@ function adaptHttpResponse(response) {
  * @classdesc Provides network interface
  */
 function Transport(twilsock) {
-  Object.defineProperties(this, {
-    _activeGetRequests: { value: new Map() },
+  (0, _defineProperties2.default)(this, {
+    _activeGetRequests: { value: new _map2.default() },
     _twilsock: { value: twilsock },
     _http: { value: request }
   });
@@ -5505,12 +5874,22 @@ Transport.prototype.delete = function (uri, headers) {
   return this._http.delete(httpParams(uri, headers)).then(adaptHttpResponse);
 };
 
-Object.freeze(Transport);
+(0, _freeze2.default)(Transport);
 
 module.exports = Transport;
 
-},{"./request":29}],29:[function(_dereq_,module,exports){
+},{"./request":29,"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42}],29:[function(_dereq_,module,exports){
 'use strict';
+
+var _stringify = _dereq_('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var XHR = typeof XMLHttpRequest === 'undefined' ? _dereq_('xmlhttprequest').XMLHttpRequest : XMLHttpRequest;
 
@@ -5525,7 +5904,7 @@ function parseResponseHeaders(headerString) {
 }
 
 function request(method, params) {
-  var promise = new Promise(function (resolve, reject) {
+  var promise = new _promise2.default(function (resolve, reject) {
 
     var xhr = new XHR();
     xhr.open(method, params.url, true);
@@ -5546,7 +5925,7 @@ function request(method, params) {
     for (var headerName in params.headers) {
       xhr.setRequestHeader(headerName, params.headers[headerName]);
       if (headerName === 'Content-Type' && params.headers[headerName] === 'application/json') {
-        params.body = JSON.stringify(params.body);
+        params.body = (0, _stringify2.default)(params.body);
       }
     }
 
@@ -5605,8 +5984,18 @@ Request.delete = function (params) {
 
 module.exports = Request;
 
-},{"xmlhttprequest":96}],30:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/json/stringify":39,"babel-runtime/core-js/promise":43,"xmlhttprequest":200}],30:[function(_dereq_,module,exports){
 'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
@@ -5626,7 +6015,7 @@ function TwilsockClient(token, options) {
   var twilsock = new TwilsockChannel(config);
   var packetInterface = new PacketInterface(twilsock);
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _config: { value: config },
     _socket: { value: twilsock },
     _network: { value: packetInterface },
@@ -5694,7 +6083,7 @@ TwilsockClient.prototype.disconnect = function () {
   return this._socket.disconnect();
 };
 
-Object.freeze(TwilsockClient);
+(0, _freeze2.default)(TwilsockClient);
 
 /**
  * Fired when new message received
@@ -5715,8 +6104,14 @@ Object.freeze(TwilsockClient);
 
 module.exports = TwilsockClient;
 
-},{"./configuration.js":31,"./packetinterface.js":32,"./twilsock.js":33,"events":54,"loglevel":60,"util":94}],31:[function(_dereq_,module,exports){
+},{"./configuration.js":31,"./packetinterface.js":32,"./twilsock.js":33,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"events":163,"loglevel":169,"util":198}],31:[function(_dereq_,module,exports){
 'use strict';
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var TWILSOCK_URI = 'wss://tsock.twilio.com';
 var TWILSOCK_PATH = '/v2/wsconnect';
@@ -5735,7 +6130,7 @@ function TwilsockConfig(token, options) {
   var _options = options.Twilsock || {};
   var twilsockUri = _options.uri || options.wsServer || TWILSOCK_URI;
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _twilsockWsHost: { value: twilsockUri + TWILSOCK_PATH },
     _token: { value: token, writable: true },
 
@@ -5754,16 +6149,30 @@ TwilsockConfig.prototype.updateToken = function (token) {
 
 module.exports = TwilsockConfig;
 
-},{}],32:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/object/define-properties":41}],32:[function(_dereq_,module,exports){
 'use strict';
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _map = _dereq_('babel-runtime/core-js/map');
+
+var _map2 = _interopRequireDefault(_map);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var log = _dereq_('loglevel');
 
 var TIMEOUT = 30000;
 
 function PacketInterface(socket) {
-  Object.defineProperties(this, {
-    _activeRequests: { value: new Map() },
+  (0, _defineProperties2.default)(this, {
+    _activeRequests: { value: new _map2.default() },
     _socket: { value: socket }
   });
 
@@ -5795,7 +6204,7 @@ PacketInterface.prototype._processReply = function (reply) {
 PacketInterface.prototype.send = function (address, headers, body) {
   var _this = this;
 
-  return new Promise(function (resolve, reject) {
+  return new _promise2.default(function (resolve, reject) {
     var id = _this._socket.send(address, headers, body);
     log.trace('Twilsock: message sent: ', { id: id, address: address, headers: headers, body: body });
     var requestDescriptor = { resolve: resolve,
@@ -5818,11 +6227,31 @@ PacketInterface.prototype.shutdown = function () {
 
 module.exports = PacketInterface;
 
-},{"loglevel":60}],33:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/promise":43,"loglevel":169}],33:[function(_dereq_,module,exports){
 (function (Buffer){
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _stringify = _dereq_('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+var _typeof2 = _dereq_('babel-runtime/helpers/typeof');
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var util = _dereq_('../../util');
@@ -5893,7 +6322,7 @@ function TwilsockChannel(config) {
     _this._retry();
   });
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _config: { value: config },
     _transportReady: { value: false, writable: true },
     _disconnectedPromiseResolve: { value: null, writable: true },
@@ -6054,11 +6483,11 @@ TwilsockChannel.prototype._confirmReceiving = function (messageHeader) {
  * Makes sure that body is properly stringified
  */
 function preparePayload(payload) {
-  switch (typeof payload === 'undefined' ? 'undefined' : _typeof(payload)) {
+  switch (typeof payload === 'undefined' ? 'undefined' : (0, _typeof3.default)(payload)) {
     case 'undefined':
       return '';
     case 'object':
-      return JSON.stringify(payload);
+      return (0, _stringify2.default)(payload);
     default:
       return payload;
   }
@@ -6072,7 +6501,7 @@ TwilsockChannel.prototype._sendPacket = function (header, payload) {
   var payloadString = preparePayload(payload);
 
   header.payload_size = Buffer.byteLength(payloadString);
-  var headerString = JSON.stringify(header) + '\r\n';
+  var headerString = (0, _stringify2.default)(header) + '\r\n';
   var magicString = 'TWILSOCK V1.0 ' + (Buffer.byteLength(headerString) - 2) + '\r\n';
   var message = new Uint8Array(new Buffer(magicString + headerString + payloadString));
   this._socket.send(message.buffer);
@@ -6114,10 +6543,10 @@ TwilsockChannel.prototype.disconnect = function () {
   var _this2 = this;
 
   if (this._fsm.is('disconnected')) {
-    return Promise.resolve();
+    return _promise2.default.resolve();
   }
 
-  return new Promise(function (resolve) {
+  return new _promise2.default(function (resolve) {
     _this2._fsm.userDisconnect();
     _this2._disconnectedPromiseResolve = resolve;
   });
@@ -6204,13 +6633,19 @@ TwilsockChannel.prototype._updateActivityTimestamp = function () {
   this._timestamp = Date.now();
 };
 
-Object.freeze(TwilsockChannel);
+(0, _freeze2.default)(TwilsockChannel);
 
 module.exports = TwilsockChannel;
 
 }).call(this,_dereq_("buffer").Buffer)
-},{"../../util":36,"backoff":39,"buffer":48,"events":54,"javascript-state-machine":59,"loglevel":60,"util":94,"ws":95}],34:[function(_dereq_,module,exports){
+},{"../../util":36,"babel-runtime/core-js/json/stringify":39,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"babel-runtime/helpers/typeof":47,"backoff":148,"buffer":157,"events":163,"javascript-state-machine":168,"loglevel":169,"util":198,"ws":199}],34:[function(_dereq_,module,exports){
 'use strict';
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
@@ -6222,7 +6657,7 @@ var JsonDiff = _dereq_('./jsondiff');
 function ChangeTracker(data) {
   var _this = this;
 
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     _pendingListeners: { value: {} },
     _data: { value: data || {}, writable: true }
   });
@@ -6279,7 +6714,7 @@ ChangeTracker.prototype.addEventHandler = function (eventName, path, handler) {
 
 module.exports = ChangeTracker;
 
-},{"./jsondiff":37,"events":54,"util":94}],35:[function(_dereq_,module,exports){
+},{"./jsondiff":37,"babel-runtime/core-js/object/define-properties":41,"events":163,"util":198}],35:[function(_dereq_,module,exports){
 'use strict';
 
 function guid() {
@@ -6300,6 +6735,20 @@ module.exports = guid;
  * @param {string} encoded - the base64-encoded string
  * @returns {string}
  */
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _stringify = _dereq_('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var decodeBase64 = typeof atob === 'function' ? atob : function (encoded) {
   return new Buffer(encoded, 'base64').toString('ascii');
@@ -6358,7 +6807,7 @@ var base64URL = {
  * @returns {object}
  */
 function deepClone(obj) {
-  return JSON.parse(JSON.stringify(obj));
+  return JSON.parse((0, _stringify2.default)(obj));
 }
 
 /**
@@ -6494,7 +6943,7 @@ function _return(value) {
 }
 
 function faultTolerantWait(promises) {
-  return new Promise(function (resolve) {
+  return new _promise2.default(function (resolve) {
     var totalCount = promises.length;
     var failuresCount = 0;
 
@@ -6589,7 +7038,7 @@ function overwriteArray(oldArray, newArray) {
  * Construct URI with query parameters
  */
 function UriBuilder(base) {
-  Object.defineProperties(this, {
+  (0, _defineProperties2.default)(this, {
     base: { value: base },
     args: { value: [] }
   });
@@ -6626,7 +7075,7 @@ module.exports.faultTolerantWait = faultTolerantWait;
 module.exports.UriBuilder = UriBuilder;
 
 }).call(this,_dereq_("buffer").Buffer)
-},{"buffer":48}],37:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/json/stringify":39,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/promise":43,"buffer":157}],37:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -6636,7 +7085,11 @@ module.exports.UriBuilder = UriBuilder;
  * Should return to the using of original module when situation will change
  */
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof2 = _dereq_('babel-runtime/helpers/typeof');
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function JsonDiff() {}
 
@@ -6699,7 +7152,7 @@ JsonDiff.prototype.eq = function (a, b, aStack, bStack) {
     case '[object RegExp]':
       return a.source === b.source && a.global === b.global && a.multiline === b.multiline && a.ignoreCase === b.ignoreCase;
   }
-  if ((typeof a === 'undefined' ? 'undefined' : _typeof(a)) !== 'object' || (typeof b === 'undefined' ? 'undefined' : _typeof(b)) !== 'object') {
+  if ((typeof a === 'undefined' ? 'undefined' : (0, _typeof3.default)(a)) !== 'object' || (typeof b === 'undefined' ? 'undefined' : (0, _typeof3.default)(b)) !== 'object') {
     return false;
   }
   length = aStack.length;
@@ -6880,7 +7333,7 @@ JsonDiff.isDeepEqual = function (o1, o2) {
 
 module.exports = JsonDiff;
 
-},{}],38:[function(_dereq_,module,exports){
+},{"babel-runtime/helpers/typeof":47}],38:[function(_dereq_,module,exports){
 'use strict';
 
 function IPMessaging(token, options) {
@@ -6896,6 +7349,2037 @@ IPMessaging.TwilsockClient = _dereq_('./clients/twilsock/client');
 module.exports = IPMessaging;
 
 },{"./clients/datasync/client":1,"./clients/ipmessaging/client":11,"./clients/notification/client":24,"./clients/transport":28,"./clients/twilsock/client":30}],39:[function(_dereq_,module,exports){
+module.exports = { "default": _dereq_("core-js/library/fn/json/stringify"), __esModule: true };
+},{"core-js/library/fn/json/stringify":48}],40:[function(_dereq_,module,exports){
+module.exports = { "default": _dereq_("core-js/library/fn/map"), __esModule: true };
+},{"core-js/library/fn/map":49}],41:[function(_dereq_,module,exports){
+module.exports = { "default": _dereq_("core-js/library/fn/object/define-properties"), __esModule: true };
+},{"core-js/library/fn/object/define-properties":50}],42:[function(_dereq_,module,exports){
+module.exports = { "default": _dereq_("core-js/library/fn/object/freeze"), __esModule: true };
+},{"core-js/library/fn/object/freeze":51}],43:[function(_dereq_,module,exports){
+module.exports = { "default": _dereq_("core-js/library/fn/promise"), __esModule: true };
+},{"core-js/library/fn/promise":52}],44:[function(_dereq_,module,exports){
+module.exports = { "default": _dereq_("core-js/library/fn/set"), __esModule: true };
+},{"core-js/library/fn/set":53}],45:[function(_dereq_,module,exports){
+module.exports = { "default": _dereq_("core-js/library/fn/symbol"), __esModule: true };
+},{"core-js/library/fn/symbol":54}],46:[function(_dereq_,module,exports){
+module.exports = { "default": _dereq_("core-js/library/fn/symbol/iterator"), __esModule: true };
+},{"core-js/library/fn/symbol/iterator":55}],47:[function(_dereq_,module,exports){
+"use strict";
+
+exports.__esModule = true;
+
+var _iterator = _dereq_("babel-runtime/core-js/symbol/iterator");
+
+var _iterator2 = _interopRequireDefault(_iterator);
+
+var _symbol = _dereq_("babel-runtime/core-js/symbol");
+
+var _symbol2 = _interopRequireDefault(_symbol);
+
+var _typeof = typeof _symbol2.default === "function" && typeof _iterator2.default === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default ? "symbol" : typeof obj; };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.default) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof(obj);
+} : function (obj) {
+  return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
+};
+},{"babel-runtime/core-js/symbol":45,"babel-runtime/core-js/symbol/iterator":46}],48:[function(_dereq_,module,exports){
+var core  = _dereq_('../../modules/_core')
+  , $JSON = core.JSON || (core.JSON = {stringify: JSON.stringify});
+module.exports = function stringify(it){ // eslint-disable-line no-unused-vars
+  return $JSON.stringify.apply($JSON, arguments);
+};
+},{"../../modules/_core":70}],49:[function(_dereq_,module,exports){
+_dereq_('../modules/es6.object.to-string');
+_dereq_('../modules/es6.string.iterator');
+_dereq_('../modules/web.dom.iterable');
+_dereq_('../modules/es6.map');
+_dereq_('../modules/es7.map.to-json');
+module.exports = _dereq_('../modules/_core').Map;
+},{"../modules/_core":70,"../modules/es6.map":135,"../modules/es6.object.to-string":138,"../modules/es6.string.iterator":141,"../modules/es7.map.to-json":143,"../modules/web.dom.iterable":147}],50:[function(_dereq_,module,exports){
+_dereq_('../../modules/es6.object.define-properties');
+var $Object = _dereq_('../../modules/_core').Object;
+module.exports = function defineProperties(T, D){
+  return $Object.defineProperties(T, D);
+};
+},{"../../modules/_core":70,"../../modules/es6.object.define-properties":136}],51:[function(_dereq_,module,exports){
+_dereq_('../../modules/es6.object.freeze');
+module.exports = _dereq_('../../modules/_core').Object.freeze;
+},{"../../modules/_core":70,"../../modules/es6.object.freeze":137}],52:[function(_dereq_,module,exports){
+_dereq_('../modules/es6.object.to-string');
+_dereq_('../modules/es6.string.iterator');
+_dereq_('../modules/web.dom.iterable');
+_dereq_('../modules/es6.promise');
+module.exports = _dereq_('../modules/_core').Promise;
+},{"../modules/_core":70,"../modules/es6.object.to-string":138,"../modules/es6.promise":139,"../modules/es6.string.iterator":141,"../modules/web.dom.iterable":147}],53:[function(_dereq_,module,exports){
+_dereq_('../modules/es6.object.to-string');
+_dereq_('../modules/es6.string.iterator');
+_dereq_('../modules/web.dom.iterable');
+_dereq_('../modules/es6.set');
+_dereq_('../modules/es7.set.to-json');
+module.exports = _dereq_('../modules/_core').Set;
+},{"../modules/_core":70,"../modules/es6.object.to-string":138,"../modules/es6.set":140,"../modules/es6.string.iterator":141,"../modules/es7.set.to-json":144,"../modules/web.dom.iterable":147}],54:[function(_dereq_,module,exports){
+_dereq_('../../modules/es6.symbol');
+_dereq_('../../modules/es6.object.to-string');
+_dereq_('../../modules/es7.symbol.async-iterator');
+_dereq_('../../modules/es7.symbol.observable');
+module.exports = _dereq_('../../modules/_core').Symbol;
+},{"../../modules/_core":70,"../../modules/es6.object.to-string":138,"../../modules/es6.symbol":142,"../../modules/es7.symbol.async-iterator":145,"../../modules/es7.symbol.observable":146}],55:[function(_dereq_,module,exports){
+_dereq_('../../modules/es6.string.iterator');
+_dereq_('../../modules/web.dom.iterable');
+module.exports = _dereq_('../../modules/_wks-ext').f('iterator');
+},{"../../modules/_wks-ext":131,"../../modules/es6.string.iterator":141,"../../modules/web.dom.iterable":147}],56:[function(_dereq_,module,exports){
+module.exports = function(it){
+  if(typeof it != 'function')throw TypeError(it + ' is not a function!');
+  return it;
+};
+},{}],57:[function(_dereq_,module,exports){
+module.exports = function(){ /* empty */ };
+},{}],58:[function(_dereq_,module,exports){
+module.exports = function(it, Constructor, name, forbiddenField){
+  if(!(it instanceof Constructor) || (forbiddenField !== undefined && forbiddenField in it)){
+    throw TypeError(name + ': incorrect invocation!');
+  } return it;
+};
+},{}],59:[function(_dereq_,module,exports){
+var isObject = _dereq_('./_is-object');
+module.exports = function(it){
+  if(!isObject(it))throw TypeError(it + ' is not an object!');
+  return it;
+};
+},{"./_is-object":89}],60:[function(_dereq_,module,exports){
+var forOf = _dereq_('./_for-of');
+
+module.exports = function(iter, ITERATOR){
+  var result = [];
+  forOf(iter, false, result.push, result, ITERATOR);
+  return result;
+};
+
+},{"./_for-of":79}],61:[function(_dereq_,module,exports){
+// false -> Array#indexOf
+// true  -> Array#includes
+var toIObject = _dereq_('./_to-iobject')
+  , toLength  = _dereq_('./_to-length')
+  , toIndex   = _dereq_('./_to-index');
+module.exports = function(IS_INCLUDES){
+  return function($this, el, fromIndex){
+    var O      = toIObject($this)
+      , length = toLength(O.length)
+      , index  = toIndex(fromIndex, length)
+      , value;
+    // Array#includes uses SameValueZero equality algorithm
+    if(IS_INCLUDES && el != el)while(length > index){
+      value = O[index++];
+      if(value != value)return true;
+    // Array#toIndex ignores holes, Array#includes - not
+    } else for(;length > index; index++)if(IS_INCLUDES || index in O){
+      if(O[index] === el)return IS_INCLUDES || index || 0;
+    } return !IS_INCLUDES && -1;
+  };
+};
+},{"./_to-index":123,"./_to-iobject":125,"./_to-length":126}],62:[function(_dereq_,module,exports){
+// 0 -> Array#forEach
+// 1 -> Array#map
+// 2 -> Array#filter
+// 3 -> Array#some
+// 4 -> Array#every
+// 5 -> Array#find
+// 6 -> Array#findIndex
+var ctx      = _dereq_('./_ctx')
+  , IObject  = _dereq_('./_iobject')
+  , toObject = _dereq_('./_to-object')
+  , toLength = _dereq_('./_to-length')
+  , asc      = _dereq_('./_array-species-create');
+module.exports = function(TYPE, $create){
+  var IS_MAP        = TYPE == 1
+    , IS_FILTER     = TYPE == 2
+    , IS_SOME       = TYPE == 3
+    , IS_EVERY      = TYPE == 4
+    , IS_FIND_INDEX = TYPE == 6
+    , NO_HOLES      = TYPE == 5 || IS_FIND_INDEX
+    , create        = $create || asc;
+  return function($this, callbackfn, that){
+    var O      = toObject($this)
+      , self   = IObject(O)
+      , f      = ctx(callbackfn, that, 3)
+      , length = toLength(self.length)
+      , index  = 0
+      , result = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined
+      , val, res;
+    for(;length > index; index++)if(NO_HOLES || index in self){
+      val = self[index];
+      res = f(val, index, O);
+      if(TYPE){
+        if(IS_MAP)result[index] = res;            // map
+        else if(res)switch(TYPE){
+          case 3: return true;                    // some
+          case 5: return val;                     // find
+          case 6: return index;                   // findIndex
+          case 2: result.push(val);               // filter
+        } else if(IS_EVERY)return false;          // every
+      }
+    }
+    return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : result;
+  };
+};
+},{"./_array-species-create":64,"./_ctx":71,"./_iobject":86,"./_to-length":126,"./_to-object":127}],63:[function(_dereq_,module,exports){
+var isObject = _dereq_('./_is-object')
+  , isArray  = _dereq_('./_is-array')
+  , SPECIES  = _dereq_('./_wks')('species');
+
+module.exports = function(original){
+  var C;
+  if(isArray(original)){
+    C = original.constructor;
+    // cross-realm fallback
+    if(typeof C == 'function' && (C === Array || isArray(C.prototype)))C = undefined;
+    if(isObject(C)){
+      C = C[SPECIES];
+      if(C === null)C = undefined;
+    }
+  } return C === undefined ? Array : C;
+};
+},{"./_is-array":88,"./_is-object":89,"./_wks":132}],64:[function(_dereq_,module,exports){
+// 9.4.2.3 ArraySpeciesCreate(originalArray, length)
+var speciesConstructor = _dereq_('./_array-species-constructor');
+
+module.exports = function(original, length){
+  return new (speciesConstructor(original))(length);
+};
+},{"./_array-species-constructor":63}],65:[function(_dereq_,module,exports){
+// getting tag from 19.1.3.6 Object.prototype.toString()
+var cof = _dereq_('./_cof')
+  , TAG = _dereq_('./_wks')('toStringTag')
+  // ES3 wrong here
+  , ARG = cof(function(){ return arguments; }()) == 'Arguments';
+
+// fallback for IE11 Script Access Denied error
+var tryGet = function(it, key){
+  try {
+    return it[key];
+  } catch(e){ /* empty */ }
+};
+
+module.exports = function(it){
+  var O, T, B;
+  return it === undefined ? 'Undefined' : it === null ? 'Null'
+    // @@toStringTag case
+    : typeof (T = tryGet(O = Object(it), TAG)) == 'string' ? T
+    // builtinTag case
+    : ARG ? cof(O)
+    // ES3 arguments fallback
+    : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
+};
+},{"./_cof":66,"./_wks":132}],66:[function(_dereq_,module,exports){
+var toString = {}.toString;
+
+module.exports = function(it){
+  return toString.call(it).slice(8, -1);
+};
+},{}],67:[function(_dereq_,module,exports){
+'use strict';
+var dP          = _dereq_('./_object-dp').f
+  , create      = _dereq_('./_object-create')
+  , hide        = _dereq_('./_hide')
+  , redefineAll = _dereq_('./_redefine-all')
+  , ctx         = _dereq_('./_ctx')
+  , anInstance  = _dereq_('./_an-instance')
+  , defined     = _dereq_('./_defined')
+  , forOf       = _dereq_('./_for-of')
+  , $iterDefine = _dereq_('./_iter-define')
+  , step        = _dereq_('./_iter-step')
+  , setSpecies  = _dereq_('./_set-species')
+  , DESCRIPTORS = _dereq_('./_descriptors')
+  , fastKey     = _dereq_('./_meta').fastKey
+  , SIZE        = DESCRIPTORS ? '_s' : 'size';
+
+var getEntry = function(that, key){
+  // fast case
+  var index = fastKey(key), entry;
+  if(index !== 'F')return that._i[index];
+  // frozen object case
+  for(entry = that._f; entry; entry = entry.n){
+    if(entry.k == key)return entry;
+  }
+};
+
+module.exports = {
+  getConstructor: function(wrapper, NAME, IS_MAP, ADDER){
+    var C = wrapper(function(that, iterable){
+      anInstance(that, C, NAME, '_i');
+      that._i = create(null); // index
+      that._f = undefined;    // first entry
+      that._l = undefined;    // last entry
+      that[SIZE] = 0;         // size
+      if(iterable != undefined)forOf(iterable, IS_MAP, that[ADDER], that);
+    });
+    redefineAll(C.prototype, {
+      // 23.1.3.1 Map.prototype.clear()
+      // 23.2.3.2 Set.prototype.clear()
+      clear: function clear(){
+        for(var that = this, data = that._i, entry = that._f; entry; entry = entry.n){
+          entry.r = true;
+          if(entry.p)entry.p = entry.p.n = undefined;
+          delete data[entry.i];
+        }
+        that._f = that._l = undefined;
+        that[SIZE] = 0;
+      },
+      // 23.1.3.3 Map.prototype.delete(key)
+      // 23.2.3.4 Set.prototype.delete(value)
+      'delete': function(key){
+        var that  = this
+          , entry = getEntry(that, key);
+        if(entry){
+          var next = entry.n
+            , prev = entry.p;
+          delete that._i[entry.i];
+          entry.r = true;
+          if(prev)prev.n = next;
+          if(next)next.p = prev;
+          if(that._f == entry)that._f = next;
+          if(that._l == entry)that._l = prev;
+          that[SIZE]--;
+        } return !!entry;
+      },
+      // 23.2.3.6 Set.prototype.forEach(callbackfn, thisArg = undefined)
+      // 23.1.3.5 Map.prototype.forEach(callbackfn, thisArg = undefined)
+      forEach: function forEach(callbackfn /*, that = undefined */){
+        anInstance(this, C, 'forEach');
+        var f = ctx(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3)
+          , entry;
+        while(entry = entry ? entry.n : this._f){
+          f(entry.v, entry.k, this);
+          // revert to the last existing entry
+          while(entry && entry.r)entry = entry.p;
+        }
+      },
+      // 23.1.3.7 Map.prototype.has(key)
+      // 23.2.3.7 Set.prototype.has(value)
+      has: function has(key){
+        return !!getEntry(this, key);
+      }
+    });
+    if(DESCRIPTORS)dP(C.prototype, 'size', {
+      get: function(){
+        return defined(this[SIZE]);
+      }
+    });
+    return C;
+  },
+  def: function(that, key, value){
+    var entry = getEntry(that, key)
+      , prev, index;
+    // change existing entry
+    if(entry){
+      entry.v = value;
+    // create new entry
+    } else {
+      that._l = entry = {
+        i: index = fastKey(key, true), // <- index
+        k: key,                        // <- key
+        v: value,                      // <- value
+        p: prev = that._l,             // <- previous entry
+        n: undefined,                  // <- next entry
+        r: false                       // <- removed
+      };
+      if(!that._f)that._f = entry;
+      if(prev)prev.n = entry;
+      that[SIZE]++;
+      // add to index
+      if(index !== 'F')that._i[index] = entry;
+    } return that;
+  },
+  getEntry: getEntry,
+  setStrong: function(C, NAME, IS_MAP){
+    // add .keys, .values, .entries, [@@iterator]
+    // 23.1.3.4, 23.1.3.8, 23.1.3.11, 23.1.3.12, 23.2.3.5, 23.2.3.8, 23.2.3.10, 23.2.3.11
+    $iterDefine(C, NAME, function(iterated, kind){
+      this._t = iterated;  // target
+      this._k = kind;      // kind
+      this._l = undefined; // previous
+    }, function(){
+      var that  = this
+        , kind  = that._k
+        , entry = that._l;
+      // revert to the last existing entry
+      while(entry && entry.r)entry = entry.p;
+      // get next entry
+      if(!that._t || !(that._l = entry = entry ? entry.n : that._t._f)){
+        // or finish the iteration
+        that._t = undefined;
+        return step(1);
+      }
+      // return step by kind
+      if(kind == 'keys'  )return step(0, entry.k);
+      if(kind == 'values')return step(0, entry.v);
+      return step(0, [entry.k, entry.v]);
+    }, IS_MAP ? 'entries' : 'values' , !IS_MAP, true);
+
+    // add [@@species], 23.1.2.2, 23.2.2.2
+    setSpecies(NAME);
+  }
+};
+},{"./_an-instance":58,"./_ctx":71,"./_defined":72,"./_descriptors":73,"./_for-of":79,"./_hide":82,"./_iter-define":92,"./_iter-step":94,"./_meta":98,"./_object-create":100,"./_object-dp":101,"./_redefine-all":113,"./_set-species":116}],68:[function(_dereq_,module,exports){
+// https://github.com/DavidBruant/Map-Set.prototype.toJSON
+var classof = _dereq_('./_classof')
+  , from    = _dereq_('./_array-from-iterable');
+module.exports = function(NAME){
+  return function toJSON(){
+    if(classof(this) != NAME)throw TypeError(NAME + "#toJSON isn't generic");
+    return from(this);
+  };
+};
+},{"./_array-from-iterable":60,"./_classof":65}],69:[function(_dereq_,module,exports){
+'use strict';
+var global         = _dereq_('./_global')
+  , $export        = _dereq_('./_export')
+  , meta           = _dereq_('./_meta')
+  , fails          = _dereq_('./_fails')
+  , hide           = _dereq_('./_hide')
+  , redefineAll    = _dereq_('./_redefine-all')
+  , forOf          = _dereq_('./_for-of')
+  , anInstance     = _dereq_('./_an-instance')
+  , isObject       = _dereq_('./_is-object')
+  , setToStringTag = _dereq_('./_set-to-string-tag')
+  , dP             = _dereq_('./_object-dp').f
+  , each           = _dereq_('./_array-methods')(0)
+  , DESCRIPTORS    = _dereq_('./_descriptors');
+
+module.exports = function(NAME, wrapper, methods, common, IS_MAP, IS_WEAK){
+  var Base  = global[NAME]
+    , C     = Base
+    , ADDER = IS_MAP ? 'set' : 'add'
+    , proto = C && C.prototype
+    , O     = {};
+  if(!DESCRIPTORS || typeof C != 'function' || !(IS_WEAK || proto.forEach && !fails(function(){
+    new C().entries().next();
+  }))){
+    // create collection constructor
+    C = common.getConstructor(wrapper, NAME, IS_MAP, ADDER);
+    redefineAll(C.prototype, methods);
+    meta.NEED = true;
+  } else {
+    C = wrapper(function(target, iterable){
+      anInstance(target, C, NAME, '_c');
+      target._c = new Base;
+      if(iterable != undefined)forOf(iterable, IS_MAP, target[ADDER], target);
+    });
+    each('add,clear,delete,forEach,get,has,set,keys,values,entries,toJSON'.split(','),function(KEY){
+      var IS_ADDER = KEY == 'add' || KEY == 'set';
+      if(KEY in proto && !(IS_WEAK && KEY == 'clear'))hide(C.prototype, KEY, function(a, b){
+        anInstance(this, C, KEY);
+        if(!IS_ADDER && IS_WEAK && !isObject(a))return KEY == 'get' ? undefined : false;
+        var result = this._c[KEY](a === 0 ? 0 : a, b);
+        return IS_ADDER ? this : result;
+      });
+    });
+    if('size' in proto)dP(C.prototype, 'size', {
+      get: function(){
+        return this._c.size;
+      }
+    });
+  }
+
+  setToStringTag(C, NAME);
+
+  O[NAME] = C;
+  $export($export.G + $export.W + $export.F, O);
+
+  if(!IS_WEAK)common.setStrong(C, NAME, IS_MAP);
+
+  return C;
+};
+},{"./_an-instance":58,"./_array-methods":62,"./_descriptors":73,"./_export":77,"./_fails":78,"./_for-of":79,"./_global":80,"./_hide":82,"./_is-object":89,"./_meta":98,"./_object-dp":101,"./_redefine-all":113,"./_set-to-string-tag":117}],70:[function(_dereq_,module,exports){
+var core = module.exports = {version: '2.3.0'};
+if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
+},{}],71:[function(_dereq_,module,exports){
+// optional / simple context binding
+var aFunction = _dereq_('./_a-function');
+module.exports = function(fn, that, length){
+  aFunction(fn);
+  if(that === undefined)return fn;
+  switch(length){
+    case 1: return function(a){
+      return fn.call(that, a);
+    };
+    case 2: return function(a, b){
+      return fn.call(that, a, b);
+    };
+    case 3: return function(a, b, c){
+      return fn.call(that, a, b, c);
+    };
+  }
+  return function(/* ...args */){
+    return fn.apply(that, arguments);
+  };
+};
+},{"./_a-function":56}],72:[function(_dereq_,module,exports){
+// 7.2.1 RequireObjectCoercible(argument)
+module.exports = function(it){
+  if(it == undefined)throw TypeError("Can't call method on  " + it);
+  return it;
+};
+},{}],73:[function(_dereq_,module,exports){
+// Thank's IE8 for his funny defineProperty
+module.exports = !_dereq_('./_fails')(function(){
+  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
+});
+},{"./_fails":78}],74:[function(_dereq_,module,exports){
+var isObject = _dereq_('./_is-object')
+  , document = _dereq_('./_global').document
+  // in old IE typeof document.createElement is 'object'
+  , is = isObject(document) && isObject(document.createElement);
+module.exports = function(it){
+  return is ? document.createElement(it) : {};
+};
+},{"./_global":80,"./_is-object":89}],75:[function(_dereq_,module,exports){
+// IE 8- don't enum bug keys
+module.exports = (
+  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
+).split(',');
+},{}],76:[function(_dereq_,module,exports){
+// all enumerable object keys, includes symbols
+var getKeys = _dereq_('./_object-keys')
+  , gOPS    = _dereq_('./_object-gops')
+  , pIE     = _dereq_('./_object-pie');
+module.exports = function(it){
+  var result     = getKeys(it)
+    , getSymbols = gOPS.f;
+  if(getSymbols){
+    var symbols = getSymbols(it)
+      , isEnum  = pIE.f
+      , i       = 0
+      , key;
+    while(symbols.length > i)if(isEnum.call(it, key = symbols[i++]))result.push(key);
+  } return result;
+};
+},{"./_object-gops":106,"./_object-keys":109,"./_object-pie":110}],77:[function(_dereq_,module,exports){
+var global    = _dereq_('./_global')
+  , core      = _dereq_('./_core')
+  , ctx       = _dereq_('./_ctx')
+  , hide      = _dereq_('./_hide')
+  , PROTOTYPE = 'prototype';
+
+var $export = function(type, name, source){
+  var IS_FORCED = type & $export.F
+    , IS_GLOBAL = type & $export.G
+    , IS_STATIC = type & $export.S
+    , IS_PROTO  = type & $export.P
+    , IS_BIND   = type & $export.B
+    , IS_WRAP   = type & $export.W
+    , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
+    , expProto  = exports[PROTOTYPE]
+    , target    = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE]
+    , key, own, out;
+  if(IS_GLOBAL)source = name;
+  for(key in source){
+    // contains in native
+    own = !IS_FORCED && target && target[key] !== undefined;
+    if(own && key in exports)continue;
+    // export native or passed
+    out = own ? target[key] : source[key];
+    // prevent global pollution for namespaces
+    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
+    // bind timers to global for call from export context
+    : IS_BIND && own ? ctx(out, global)
+    // wrap global constructors for prevent change them in library
+    : IS_WRAP && target[key] == out ? (function(C){
+      var F = function(a, b, c){
+        if(this instanceof C){
+          switch(arguments.length){
+            case 0: return new C;
+            case 1: return new C(a);
+            case 2: return new C(a, b);
+          } return new C(a, b, c);
+        } return C.apply(this, arguments);
+      };
+      F[PROTOTYPE] = C[PROTOTYPE];
+      return F;
+    // make static versions for prototype methods
+    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
+    // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
+    if(IS_PROTO){
+      (exports.virtual || (exports.virtual = {}))[key] = out;
+      // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
+      if(type & $export.R && expProto && !expProto[key])hide(expProto, key, out);
+    }
+  }
+};
+// type bitmap
+$export.F = 1;   // forced
+$export.G = 2;   // global
+$export.S = 4;   // static
+$export.P = 8;   // proto
+$export.B = 16;  // bind
+$export.W = 32;  // wrap
+$export.U = 64;  // safe
+$export.R = 128; // real proto method for `library` 
+module.exports = $export;
+},{"./_core":70,"./_ctx":71,"./_global":80,"./_hide":82}],78:[function(_dereq_,module,exports){
+module.exports = function(exec){
+  try {
+    return !!exec();
+  } catch(e){
+    return true;
+  }
+};
+},{}],79:[function(_dereq_,module,exports){
+var ctx         = _dereq_('./_ctx')
+  , call        = _dereq_('./_iter-call')
+  , isArrayIter = _dereq_('./_is-array-iter')
+  , anObject    = _dereq_('./_an-object')
+  , toLength    = _dereq_('./_to-length')
+  , getIterFn   = _dereq_('./core.get-iterator-method');
+module.exports = function(iterable, entries, fn, that, ITERATOR){
+  var iterFn = ITERATOR ? function(){ return iterable; } : getIterFn(iterable)
+    , f      = ctx(fn, that, entries ? 2 : 1)
+    , index  = 0
+    , length, step, iterator;
+  if(typeof iterFn != 'function')throw TypeError(iterable + ' is not iterable!');
+  // fast case for arrays with default iterator
+  if(isArrayIter(iterFn))for(length = toLength(iterable.length); length > index; index++){
+    entries ? f(anObject(step = iterable[index])[0], step[1]) : f(iterable[index]);
+  } else for(iterator = iterFn.call(iterable); !(step = iterator.next()).done; ){
+    call(iterator, f, step.value, entries);
+  }
+};
+},{"./_an-object":59,"./_ctx":71,"./_is-array-iter":87,"./_iter-call":90,"./_to-length":126,"./core.get-iterator-method":133}],80:[function(_dereq_,module,exports){
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+var global = module.exports = typeof window != 'undefined' && window.Math == Math
+  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
+if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
+},{}],81:[function(_dereq_,module,exports){
+var hasOwnProperty = {}.hasOwnProperty;
+module.exports = function(it, key){
+  return hasOwnProperty.call(it, key);
+};
+},{}],82:[function(_dereq_,module,exports){
+var dP         = _dereq_('./_object-dp')
+  , createDesc = _dereq_('./_property-desc');
+module.exports = _dereq_('./_descriptors') ? function(object, key, value){
+  return dP.f(object, key, createDesc(1, value));
+} : function(object, key, value){
+  object[key] = value;
+  return object;
+};
+},{"./_descriptors":73,"./_object-dp":101,"./_property-desc":112}],83:[function(_dereq_,module,exports){
+module.exports = _dereq_('./_global').document && document.documentElement;
+},{"./_global":80}],84:[function(_dereq_,module,exports){
+module.exports = !_dereq_('./_descriptors') && !_dereq_('./_fails')(function(){
+  return Object.defineProperty(_dereq_('./_dom-create')('div'), 'a', {get: function(){ return 7; }}).a != 7;
+});
+},{"./_descriptors":73,"./_dom-create":74,"./_fails":78}],85:[function(_dereq_,module,exports){
+// fast apply, http://jsperf.lnkit.com/fast-apply/5
+module.exports = function(fn, args, that){
+  var un = that === undefined;
+  switch(args.length){
+    case 0: return un ? fn()
+                      : fn.call(that);
+    case 1: return un ? fn(args[0])
+                      : fn.call(that, args[0]);
+    case 2: return un ? fn(args[0], args[1])
+                      : fn.call(that, args[0], args[1]);
+    case 3: return un ? fn(args[0], args[1], args[2])
+                      : fn.call(that, args[0], args[1], args[2]);
+    case 4: return un ? fn(args[0], args[1], args[2], args[3])
+                      : fn.call(that, args[0], args[1], args[2], args[3]);
+  } return              fn.apply(that, args);
+};
+},{}],86:[function(_dereq_,module,exports){
+// fallback for non-array-like ES3 and non-enumerable old V8 strings
+var cof = _dereq_('./_cof');
+module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
+  return cof(it) == 'String' ? it.split('') : Object(it);
+};
+},{"./_cof":66}],87:[function(_dereq_,module,exports){
+// check on default Array iterator
+var Iterators  = _dereq_('./_iterators')
+  , ITERATOR   = _dereq_('./_wks')('iterator')
+  , ArrayProto = Array.prototype;
+
+module.exports = function(it){
+  return it !== undefined && (Iterators.Array === it || ArrayProto[ITERATOR] === it);
+};
+},{"./_iterators":95,"./_wks":132}],88:[function(_dereq_,module,exports){
+// 7.2.2 IsArray(argument)
+var cof = _dereq_('./_cof');
+module.exports = Array.isArray || function isArray(arg){
+  return cof(arg) == 'Array';
+};
+},{"./_cof":66}],89:[function(_dereq_,module,exports){
+module.exports = function(it){
+  return typeof it === 'object' ? it !== null : typeof it === 'function';
+};
+},{}],90:[function(_dereq_,module,exports){
+// call something on iterator step with safe closing on error
+var anObject = _dereq_('./_an-object');
+module.exports = function(iterator, fn, value, entries){
+  try {
+    return entries ? fn(anObject(value)[0], value[1]) : fn(value);
+  // 7.4.6 IteratorClose(iterator, completion)
+  } catch(e){
+    var ret = iterator['return'];
+    if(ret !== undefined)anObject(ret.call(iterator));
+    throw e;
+  }
+};
+},{"./_an-object":59}],91:[function(_dereq_,module,exports){
+'use strict';
+var create         = _dereq_('./_object-create')
+  , descriptor     = _dereq_('./_property-desc')
+  , setToStringTag = _dereq_('./_set-to-string-tag')
+  , IteratorPrototype = {};
+
+// 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
+_dereq_('./_hide')(IteratorPrototype, _dereq_('./_wks')('iterator'), function(){ return this; });
+
+module.exports = function(Constructor, NAME, next){
+  Constructor.prototype = create(IteratorPrototype, {next: descriptor(1, next)});
+  setToStringTag(Constructor, NAME + ' Iterator');
+};
+},{"./_hide":82,"./_object-create":100,"./_property-desc":112,"./_set-to-string-tag":117,"./_wks":132}],92:[function(_dereq_,module,exports){
+'use strict';
+var LIBRARY        = _dereq_('./_library')
+  , $export        = _dereq_('./_export')
+  , redefine       = _dereq_('./_redefine')
+  , hide           = _dereq_('./_hide')
+  , has            = _dereq_('./_has')
+  , Iterators      = _dereq_('./_iterators')
+  , $iterCreate    = _dereq_('./_iter-create')
+  , setToStringTag = _dereq_('./_set-to-string-tag')
+  , getPrototypeOf = _dereq_('./_object-gpo')
+  , ITERATOR       = _dereq_('./_wks')('iterator')
+  , BUGGY          = !([].keys && 'next' in [].keys()) // Safari has buggy iterators w/o `next`
+  , FF_ITERATOR    = '@@iterator'
+  , KEYS           = 'keys'
+  , VALUES         = 'values';
+
+var returnThis = function(){ return this; };
+
+module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED){
+  $iterCreate(Constructor, NAME, next);
+  var getMethod = function(kind){
+    if(!BUGGY && kind in proto)return proto[kind];
+    switch(kind){
+      case KEYS: return function keys(){ return new Constructor(this, kind); };
+      case VALUES: return function values(){ return new Constructor(this, kind); };
+    } return function entries(){ return new Constructor(this, kind); };
+  };
+  var TAG        = NAME + ' Iterator'
+    , DEF_VALUES = DEFAULT == VALUES
+    , VALUES_BUG = false
+    , proto      = Base.prototype
+    , $native    = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT]
+    , $default   = $native || getMethod(DEFAULT)
+    , $entries   = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined
+    , $anyNative = NAME == 'Array' ? proto.entries || $native : $native
+    , methods, key, IteratorPrototype;
+  // Fix native
+  if($anyNative){
+    IteratorPrototype = getPrototypeOf($anyNative.call(new Base));
+    if(IteratorPrototype !== Object.prototype){
+      // Set @@toStringTag to native iterators
+      setToStringTag(IteratorPrototype, TAG, true);
+      // fix for some old engines
+      if(!LIBRARY && !has(IteratorPrototype, ITERATOR))hide(IteratorPrototype, ITERATOR, returnThis);
+    }
+  }
+  // fix Array#{values, @@iterator}.name in V8 / FF
+  if(DEF_VALUES && $native && $native.name !== VALUES){
+    VALUES_BUG = true;
+    $default = function values(){ return $native.call(this); };
+  }
+  // Define iterator
+  if((!LIBRARY || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])){
+    hide(proto, ITERATOR, $default);
+  }
+  // Plug for library
+  Iterators[NAME] = $default;
+  Iterators[TAG]  = returnThis;
+  if(DEFAULT){
+    methods = {
+      values:  DEF_VALUES ? $default : getMethod(VALUES),
+      keys:    IS_SET     ? $default : getMethod(KEYS),
+      entries: $entries
+    };
+    if(FORCED)for(key in methods){
+      if(!(key in proto))redefine(proto, key, methods[key]);
+    } else $export($export.P + $export.F * (BUGGY || VALUES_BUG), NAME, methods);
+  }
+  return methods;
+};
+},{"./_export":77,"./_has":81,"./_hide":82,"./_iter-create":91,"./_iterators":95,"./_library":97,"./_object-gpo":107,"./_redefine":114,"./_set-to-string-tag":117,"./_wks":132}],93:[function(_dereq_,module,exports){
+var ITERATOR     = _dereq_('./_wks')('iterator')
+  , SAFE_CLOSING = false;
+
+try {
+  var riter = [7][ITERATOR]();
+  riter['return'] = function(){ SAFE_CLOSING = true; };
+  Array.from(riter, function(){ throw 2; });
+} catch(e){ /* empty */ }
+
+module.exports = function(exec, skipClosing){
+  if(!skipClosing && !SAFE_CLOSING)return false;
+  var safe = false;
+  try {
+    var arr  = [7]
+      , iter = arr[ITERATOR]();
+    iter.next = function(){ return {done: safe = true}; };
+    arr[ITERATOR] = function(){ return iter; };
+    exec(arr);
+  } catch(e){ /* empty */ }
+  return safe;
+};
+},{"./_wks":132}],94:[function(_dereq_,module,exports){
+module.exports = function(done, value){
+  return {value: value, done: !!done};
+};
+},{}],95:[function(_dereq_,module,exports){
+module.exports = {};
+},{}],96:[function(_dereq_,module,exports){
+var getKeys   = _dereq_('./_object-keys')
+  , toIObject = _dereq_('./_to-iobject');
+module.exports = function(object, el){
+  var O      = toIObject(object)
+    , keys   = getKeys(O)
+    , length = keys.length
+    , index  = 0
+    , key;
+  while(length > index)if(O[key = keys[index++]] === el)return key;
+};
+},{"./_object-keys":109,"./_to-iobject":125}],97:[function(_dereq_,module,exports){
+module.exports = true;
+},{}],98:[function(_dereq_,module,exports){
+var META     = _dereq_('./_uid')('meta')
+  , isObject = _dereq_('./_is-object')
+  , has      = _dereq_('./_has')
+  , setDesc  = _dereq_('./_object-dp').f
+  , id       = 0;
+var isExtensible = Object.isExtensible || function(){
+  return true;
+};
+var FREEZE = !_dereq_('./_fails')(function(){
+  return isExtensible(Object.preventExtensions({}));
+});
+var setMeta = function(it){
+  setDesc(it, META, {value: {
+    i: 'O' + ++id, // object ID
+    w: {}          // weak collections IDs
+  }});
+};
+var fastKey = function(it, create){
+  // return primitive with prefix
+  if(!isObject(it))return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
+  if(!has(it, META)){
+    // can't set metadata to uncaught frozen object
+    if(!isExtensible(it))return 'F';
+    // not necessary to add metadata
+    if(!create)return 'E';
+    // add missing metadata
+    setMeta(it);
+  // return object ID
+  } return it[META].i;
+};
+var getWeak = function(it, create){
+  if(!has(it, META)){
+    // can't set metadata to uncaught frozen object
+    if(!isExtensible(it))return true;
+    // not necessary to add metadata
+    if(!create)return false;
+    // add missing metadata
+    setMeta(it);
+  // return hash weak collections IDs
+  } return it[META].w;
+};
+// add metadata on freeze-family methods calling
+var onFreeze = function(it){
+  if(FREEZE && meta.NEED && isExtensible(it) && !has(it, META))setMeta(it);
+  return it;
+};
+var meta = module.exports = {
+  KEY:      META,
+  NEED:     false,
+  fastKey:  fastKey,
+  getWeak:  getWeak,
+  onFreeze: onFreeze
+};
+},{"./_fails":78,"./_has":81,"./_is-object":89,"./_object-dp":101,"./_uid":129}],99:[function(_dereq_,module,exports){
+var global    = _dereq_('./_global')
+  , macrotask = _dereq_('./_task').set
+  , Observer  = global.MutationObserver || global.WebKitMutationObserver
+  , process   = global.process
+  , Promise   = global.Promise
+  , isNode    = _dereq_('./_cof')(process) == 'process';
+
+module.exports = function(){
+  var head, last, notify;
+
+  var flush = function(){
+    var parent, fn;
+    if(isNode && (parent = process.domain))parent.exit();
+    while(head){
+      fn   = head.fn;
+      head = head.next;
+      try {
+        fn();
+      } catch(e){
+        if(head)notify();
+        else last = undefined;
+        throw e;
+      }
+    } last = undefined;
+    if(parent)parent.enter();
+  };
+
+  // Node.js
+  if(isNode){
+    notify = function(){
+      process.nextTick(flush);
+    };
+  // browsers with MutationObserver
+  } else if(Observer){
+    var toggle = true
+      , node   = document.createTextNode('');
+    new Observer(flush).observe(node, {characterData: true}); // eslint-disable-line no-new
+    notify = function(){
+      node.data = toggle = !toggle;
+    };
+  // environments with maybe non-completely correct, but existent Promise
+  } else if(Promise && Promise.resolve){
+    var promise = Promise.resolve();
+    notify = function(){
+      promise.then(flush);
+    };
+  // for other environments - macrotask based on:
+  // - setImmediate
+  // - MessageChannel
+  // - window.postMessag
+  // - onreadystatechange
+  // - setTimeout
+  } else {
+    notify = function(){
+      // strange IE + webpack dev server bug - use .call(global)
+      macrotask.call(global, flush);
+    };
+  }
+
+  return function(fn){
+    var task = {fn: fn, next: undefined};
+    if(last)last.next = task;
+    if(!head){
+      head = task;
+      notify();
+    } last = task;
+  };
+};
+},{"./_cof":66,"./_global":80,"./_task":122}],100:[function(_dereq_,module,exports){
+// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
+var anObject    = _dereq_('./_an-object')
+  , dPs         = _dereq_('./_object-dps')
+  , enumBugKeys = _dereq_('./_enum-bug-keys')
+  , IE_PROTO    = _dereq_('./_shared-key')('IE_PROTO')
+  , Empty       = function(){ /* empty */ }
+  , PROTOTYPE   = 'prototype';
+
+// Create object with fake `null` prototype: use iframe Object with cleared prototype
+var createDict = function(){
+  // Thrash, waste and sodomy: IE GC bug
+  var iframe = _dereq_('./_dom-create')('iframe')
+    , i      = enumBugKeys.length
+    , gt     = '>'
+    , iframeDocument;
+  iframe.style.display = 'none';
+  _dereq_('./_html').appendChild(iframe);
+  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
+  // createDict = iframe.contentWindow.Object;
+  // html.removeChild(iframe);
+  iframeDocument = iframe.contentWindow.document;
+  iframeDocument.open();
+  iframeDocument.write('<script>document.F=Object</script' + gt);
+  iframeDocument.close();
+  createDict = iframeDocument.F;
+  while(i--)delete createDict[PROTOTYPE][enumBugKeys[i]];
+  return createDict();
+};
+
+module.exports = Object.create || function create(O, Properties){
+  var result;
+  if(O !== null){
+    Empty[PROTOTYPE] = anObject(O);
+    result = new Empty;
+    Empty[PROTOTYPE] = null;
+    // add "__proto__" for Object.getPrototypeOf polyfill
+    result[IE_PROTO] = O;
+  } else result = createDict();
+  return Properties === undefined ? result : dPs(result, Properties);
+};
+},{"./_an-object":59,"./_dom-create":74,"./_enum-bug-keys":75,"./_html":83,"./_object-dps":102,"./_shared-key":118}],101:[function(_dereq_,module,exports){
+var anObject       = _dereq_('./_an-object')
+  , IE8_DOM_DEFINE = _dereq_('./_ie8-dom-define')
+  , toPrimitive    = _dereq_('./_to-primitive')
+  , dP             = Object.defineProperty;
+
+exports.f = _dereq_('./_descriptors') ? Object.defineProperty : function defineProperty(O, P, Attributes){
+  anObject(O);
+  P = toPrimitive(P, true);
+  anObject(Attributes);
+  if(IE8_DOM_DEFINE)try {
+    return dP(O, P, Attributes);
+  } catch(e){ /* empty */ }
+  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
+  if('value' in Attributes)O[P] = Attributes.value;
+  return O;
+};
+},{"./_an-object":59,"./_descriptors":73,"./_ie8-dom-define":84,"./_to-primitive":128}],102:[function(_dereq_,module,exports){
+var dP       = _dereq_('./_object-dp')
+  , anObject = _dereq_('./_an-object')
+  , getKeys  = _dereq_('./_object-keys');
+
+module.exports = _dereq_('./_descriptors') ? Object.defineProperties : function defineProperties(O, Properties){
+  anObject(O);
+  var keys   = getKeys(Properties)
+    , length = keys.length
+    , i = 0
+    , P;
+  while(length > i)dP.f(O, P = keys[i++], Properties[P]);
+  return O;
+};
+},{"./_an-object":59,"./_descriptors":73,"./_object-dp":101,"./_object-keys":109}],103:[function(_dereq_,module,exports){
+var pIE            = _dereq_('./_object-pie')
+  , createDesc     = _dereq_('./_property-desc')
+  , toIObject      = _dereq_('./_to-iobject')
+  , toPrimitive    = _dereq_('./_to-primitive')
+  , has            = _dereq_('./_has')
+  , IE8_DOM_DEFINE = _dereq_('./_ie8-dom-define')
+  , gOPD           = Object.getOwnPropertyDescriptor;
+
+exports.f = _dereq_('./_descriptors') ? gOPD : function getOwnPropertyDescriptor(O, P){
+  O = toIObject(O);
+  P = toPrimitive(P, true);
+  if(IE8_DOM_DEFINE)try {
+    return gOPD(O, P);
+  } catch(e){ /* empty */ }
+  if(has(O, P))return createDesc(!pIE.f.call(O, P), O[P]);
+};
+},{"./_descriptors":73,"./_has":81,"./_ie8-dom-define":84,"./_object-pie":110,"./_property-desc":112,"./_to-iobject":125,"./_to-primitive":128}],104:[function(_dereq_,module,exports){
+// fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
+var toIObject = _dereq_('./_to-iobject')
+  , gOPN      = _dereq_('./_object-gopn').f
+  , toString  = {}.toString;
+
+var windowNames = typeof window == 'object' && window && Object.getOwnPropertyNames
+  ? Object.getOwnPropertyNames(window) : [];
+
+var getWindowNames = function(it){
+  try {
+    return gOPN(it);
+  } catch(e){
+    return windowNames.slice();
+  }
+};
+
+module.exports.f = function getOwnPropertyNames(it){
+  return windowNames && toString.call(it) == '[object Window]' ? getWindowNames(it) : gOPN(toIObject(it));
+};
+
+},{"./_object-gopn":105,"./_to-iobject":125}],105:[function(_dereq_,module,exports){
+// 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
+var $keys      = _dereq_('./_object-keys-internal')
+  , hiddenKeys = _dereq_('./_enum-bug-keys').concat('length', 'prototype');
+
+exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O){
+  return $keys(O, hiddenKeys);
+};
+},{"./_enum-bug-keys":75,"./_object-keys-internal":108}],106:[function(_dereq_,module,exports){
+exports.f = Object.getOwnPropertySymbols;
+},{}],107:[function(_dereq_,module,exports){
+// 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
+var has         = _dereq_('./_has')
+  , toObject    = _dereq_('./_to-object')
+  , IE_PROTO    = _dereq_('./_shared-key')('IE_PROTO')
+  , ObjectProto = Object.prototype;
+
+module.exports = Object.getPrototypeOf || function(O){
+  O = toObject(O);
+  if(has(O, IE_PROTO))return O[IE_PROTO];
+  if(typeof O.constructor == 'function' && O instanceof O.constructor){
+    return O.constructor.prototype;
+  } return O instanceof Object ? ObjectProto : null;
+};
+},{"./_has":81,"./_shared-key":118,"./_to-object":127}],108:[function(_dereq_,module,exports){
+var has          = _dereq_('./_has')
+  , toIObject    = _dereq_('./_to-iobject')
+  , arrayIndexOf = _dereq_('./_array-includes')(false)
+  , IE_PROTO     = _dereq_('./_shared-key')('IE_PROTO');
+
+module.exports = function(object, names){
+  var O      = toIObject(object)
+    , i      = 0
+    , result = []
+    , key;
+  for(key in O)if(key != IE_PROTO)has(O, key) && result.push(key);
+  // Don't enum bug & hidden keys
+  while(names.length > i)if(has(O, key = names[i++])){
+    ~arrayIndexOf(result, key) || result.push(key);
+  }
+  return result;
+};
+},{"./_array-includes":61,"./_has":81,"./_shared-key":118,"./_to-iobject":125}],109:[function(_dereq_,module,exports){
+// 19.1.2.14 / 15.2.3.14 Object.keys(O)
+var $keys       = _dereq_('./_object-keys-internal')
+  , enumBugKeys = _dereq_('./_enum-bug-keys');
+
+module.exports = Object.keys || function keys(O){
+  return $keys(O, enumBugKeys);
+};
+},{"./_enum-bug-keys":75,"./_object-keys-internal":108}],110:[function(_dereq_,module,exports){
+exports.f = {}.propertyIsEnumerable;
+},{}],111:[function(_dereq_,module,exports){
+// most Object methods by ES6 should accept primitives
+var $export = _dereq_('./_export')
+  , core    = _dereq_('./_core')
+  , fails   = _dereq_('./_fails');
+module.exports = function(KEY, exec){
+  var fn  = (core.Object || {})[KEY] || Object[KEY]
+    , exp = {};
+  exp[KEY] = exec(fn);
+  $export($export.S + $export.F * fails(function(){ fn(1); }), 'Object', exp);
+};
+},{"./_core":70,"./_export":77,"./_fails":78}],112:[function(_dereq_,module,exports){
+module.exports = function(bitmap, value){
+  return {
+    enumerable  : !(bitmap & 1),
+    configurable: !(bitmap & 2),
+    writable    : !(bitmap & 4),
+    value       : value
+  };
+};
+},{}],113:[function(_dereq_,module,exports){
+var hide = _dereq_('./_hide');
+module.exports = function(target, src, safe){
+  for(var key in src){
+    if(safe && target[key])target[key] = src[key];
+    else hide(target, key, src[key]);
+  } return target;
+};
+},{"./_hide":82}],114:[function(_dereq_,module,exports){
+module.exports = _dereq_('./_hide');
+},{"./_hide":82}],115:[function(_dereq_,module,exports){
+// Works with __proto__ only. Old v8 can't work with null proto objects.
+/* eslint-disable no-proto */
+var isObject = _dereq_('./_is-object')
+  , anObject = _dereq_('./_an-object');
+var check = function(O, proto){
+  anObject(O);
+  if(!isObject(proto) && proto !== null)throw TypeError(proto + ": can't set as prototype!");
+};
+module.exports = {
+  set: Object.setPrototypeOf || ('__proto__' in {} ? // eslint-disable-line
+    function(test, buggy, set){
+      try {
+        set = _dereq_('./_ctx')(Function.call, _dereq_('./_object-gopd').f(Object.prototype, '__proto__').set, 2);
+        set(test, []);
+        buggy = !(test instanceof Array);
+      } catch(e){ buggy = true; }
+      return function setPrototypeOf(O, proto){
+        check(O, proto);
+        if(buggy)O.__proto__ = proto;
+        else set(O, proto);
+        return O;
+      };
+    }({}, false) : undefined),
+  check: check
+};
+},{"./_an-object":59,"./_ctx":71,"./_is-object":89,"./_object-gopd":103}],116:[function(_dereq_,module,exports){
+'use strict';
+var global      = _dereq_('./_global')
+  , core        = _dereq_('./_core')
+  , dP          = _dereq_('./_object-dp')
+  , DESCRIPTORS = _dereq_('./_descriptors')
+  , SPECIES     = _dereq_('./_wks')('species');
+
+module.exports = function(KEY){
+  var C = typeof core[KEY] == 'function' ? core[KEY] : global[KEY];
+  if(DESCRIPTORS && C && !C[SPECIES])dP.f(C, SPECIES, {
+    configurable: true,
+    get: function(){ return this; }
+  });
+};
+},{"./_core":70,"./_descriptors":73,"./_global":80,"./_object-dp":101,"./_wks":132}],117:[function(_dereq_,module,exports){
+var def = _dereq_('./_object-dp').f
+  , has = _dereq_('./_has')
+  , TAG = _dereq_('./_wks')('toStringTag');
+
+module.exports = function(it, tag, stat){
+  if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
+};
+},{"./_has":81,"./_object-dp":101,"./_wks":132}],118:[function(_dereq_,module,exports){
+var shared = _dereq_('./_shared')('keys')
+  , uid    = _dereq_('./_uid');
+module.exports = function(key){
+  return shared[key] || (shared[key] = uid(key));
+};
+},{"./_shared":119,"./_uid":129}],119:[function(_dereq_,module,exports){
+var global = _dereq_('./_global')
+  , SHARED = '__core-js_shared__'
+  , store  = global[SHARED] || (global[SHARED] = {});
+module.exports = function(key){
+  return store[key] || (store[key] = {});
+};
+},{"./_global":80}],120:[function(_dereq_,module,exports){
+// 7.3.20 SpeciesConstructor(O, defaultConstructor)
+var anObject  = _dereq_('./_an-object')
+  , aFunction = _dereq_('./_a-function')
+  , SPECIES   = _dereq_('./_wks')('species');
+module.exports = function(O, D){
+  var C = anObject(O).constructor, S;
+  return C === undefined || (S = anObject(C)[SPECIES]) == undefined ? D : aFunction(S);
+};
+},{"./_a-function":56,"./_an-object":59,"./_wks":132}],121:[function(_dereq_,module,exports){
+var toInteger = _dereq_('./_to-integer')
+  , defined   = _dereq_('./_defined');
+// true  -> String#at
+// false -> String#codePointAt
+module.exports = function(TO_STRING){
+  return function(that, pos){
+    var s = String(defined(that))
+      , i = toInteger(pos)
+      , l = s.length
+      , a, b;
+    if(i < 0 || i >= l)return TO_STRING ? '' : undefined;
+    a = s.charCodeAt(i);
+    return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff
+      ? TO_STRING ? s.charAt(i) : a
+      : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
+  };
+};
+},{"./_defined":72,"./_to-integer":124}],122:[function(_dereq_,module,exports){
+var ctx                = _dereq_('./_ctx')
+  , invoke             = _dereq_('./_invoke')
+  , html               = _dereq_('./_html')
+  , cel                = _dereq_('./_dom-create')
+  , global             = _dereq_('./_global')
+  , process            = global.process
+  , setTask            = global.setImmediate
+  , clearTask          = global.clearImmediate
+  , MessageChannel     = global.MessageChannel
+  , counter            = 0
+  , queue              = {}
+  , ONREADYSTATECHANGE = 'onreadystatechange'
+  , defer, channel, port;
+var run = function(){
+  var id = +this;
+  if(queue.hasOwnProperty(id)){
+    var fn = queue[id];
+    delete queue[id];
+    fn();
+  }
+};
+var listener = function(event){
+  run.call(event.data);
+};
+// Node.js 0.9+ & IE10+ has setImmediate, otherwise:
+if(!setTask || !clearTask){
+  setTask = function setImmediate(fn){
+    var args = [], i = 1;
+    while(arguments.length > i)args.push(arguments[i++]);
+    queue[++counter] = function(){
+      invoke(typeof fn == 'function' ? fn : Function(fn), args);
+    };
+    defer(counter);
+    return counter;
+  };
+  clearTask = function clearImmediate(id){
+    delete queue[id];
+  };
+  // Node.js 0.8-
+  if(_dereq_('./_cof')(process) == 'process'){
+    defer = function(id){
+      process.nextTick(ctx(run, id, 1));
+    };
+  // Browsers with MessageChannel, includes WebWorkers
+  } else if(MessageChannel){
+    channel = new MessageChannel;
+    port    = channel.port2;
+    channel.port1.onmessage = listener;
+    defer = ctx(port.postMessage, port, 1);
+  // Browsers with postMessage, skip WebWorkers
+  // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
+  } else if(global.addEventListener && typeof postMessage == 'function' && !global.importScripts){
+    defer = function(id){
+      global.postMessage(id + '', '*');
+    };
+    global.addEventListener('message', listener, false);
+  // IE8-
+  } else if(ONREADYSTATECHANGE in cel('script')){
+    defer = function(id){
+      html.appendChild(cel('script'))[ONREADYSTATECHANGE] = function(){
+        html.removeChild(this);
+        run.call(id);
+      };
+    };
+  // Rest old browsers
+  } else {
+    defer = function(id){
+      setTimeout(ctx(run, id, 1), 0);
+    };
+  }
+}
+module.exports = {
+  set:   setTask,
+  clear: clearTask
+};
+},{"./_cof":66,"./_ctx":71,"./_dom-create":74,"./_global":80,"./_html":83,"./_invoke":85}],123:[function(_dereq_,module,exports){
+var toInteger = _dereq_('./_to-integer')
+  , max       = Math.max
+  , min       = Math.min;
+module.exports = function(index, length){
+  index = toInteger(index);
+  return index < 0 ? max(index + length, 0) : min(index, length);
+};
+},{"./_to-integer":124}],124:[function(_dereq_,module,exports){
+// 7.1.4 ToInteger
+var ceil  = Math.ceil
+  , floor = Math.floor;
+module.exports = function(it){
+  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
+};
+},{}],125:[function(_dereq_,module,exports){
+// to indexed object, toObject with fallback for non-array-like ES3 strings
+var IObject = _dereq_('./_iobject')
+  , defined = _dereq_('./_defined');
+module.exports = function(it){
+  return IObject(defined(it));
+};
+},{"./_defined":72,"./_iobject":86}],126:[function(_dereq_,module,exports){
+// 7.1.15 ToLength
+var toInteger = _dereq_('./_to-integer')
+  , min       = Math.min;
+module.exports = function(it){
+  return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
+};
+},{"./_to-integer":124}],127:[function(_dereq_,module,exports){
+// 7.1.13 ToObject(argument)
+var defined = _dereq_('./_defined');
+module.exports = function(it){
+  return Object(defined(it));
+};
+},{"./_defined":72}],128:[function(_dereq_,module,exports){
+// 7.1.1 ToPrimitive(input [, PreferredType])
+var isObject = _dereq_('./_is-object');
+// instead of the ES6 spec version, we didn't implement @@toPrimitive case
+// and the second argument - flag - preferred type is a string
+module.exports = function(it, S){
+  if(!isObject(it))return it;
+  var fn, val;
+  if(S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+  if(typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it)))return val;
+  if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+  throw TypeError("Can't convert object to primitive value");
+};
+},{"./_is-object":89}],129:[function(_dereq_,module,exports){
+var id = 0
+  , px = Math.random();
+module.exports = function(key){
+  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
+};
+},{}],130:[function(_dereq_,module,exports){
+var global         = _dereq_('./_global')
+  , core           = _dereq_('./_core')
+  , LIBRARY        = _dereq_('./_library')
+  , wksExt         = _dereq_('./_wks-ext')
+  , defineProperty = _dereq_('./_object-dp').f;
+module.exports = function(name){
+  var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
+  if(name.charAt(0) != '_' && !(name in $Symbol))defineProperty($Symbol, name, {value: wksExt.f(name)});
+};
+},{"./_core":70,"./_global":80,"./_library":97,"./_object-dp":101,"./_wks-ext":131}],131:[function(_dereq_,module,exports){
+exports.f = _dereq_('./_wks');
+},{"./_wks":132}],132:[function(_dereq_,module,exports){
+var store      = _dereq_('./_shared')('wks')
+  , uid        = _dereq_('./_uid')
+  , Symbol     = _dereq_('./_global').Symbol
+  , USE_SYMBOL = typeof Symbol == 'function';
+
+var $exports = module.exports = function(name){
+  return store[name] || (store[name] =
+    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : uid)('Symbol.' + name));
+};
+
+$exports.store = store;
+},{"./_global":80,"./_shared":119,"./_uid":129}],133:[function(_dereq_,module,exports){
+var classof   = _dereq_('./_classof')
+  , ITERATOR  = _dereq_('./_wks')('iterator')
+  , Iterators = _dereq_('./_iterators');
+module.exports = _dereq_('./_core').getIteratorMethod = function(it){
+  if(it != undefined)return it[ITERATOR]
+    || it['@@iterator']
+    || Iterators[classof(it)];
+};
+},{"./_classof":65,"./_core":70,"./_iterators":95,"./_wks":132}],134:[function(_dereq_,module,exports){
+'use strict';
+var addToUnscopables = _dereq_('./_add-to-unscopables')
+  , step             = _dereq_('./_iter-step')
+  , Iterators        = _dereq_('./_iterators')
+  , toIObject        = _dereq_('./_to-iobject');
+
+// 22.1.3.4 Array.prototype.entries()
+// 22.1.3.13 Array.prototype.keys()
+// 22.1.3.29 Array.prototype.values()
+// 22.1.3.30 Array.prototype[@@iterator]()
+module.exports = _dereq_('./_iter-define')(Array, 'Array', function(iterated, kind){
+  this._t = toIObject(iterated); // target
+  this._i = 0;                   // next index
+  this._k = kind;                // kind
+// 22.1.5.2.1 %ArrayIteratorPrototype%.next()
+}, function(){
+  var O     = this._t
+    , kind  = this._k
+    , index = this._i++;
+  if(!O || index >= O.length){
+    this._t = undefined;
+    return step(1);
+  }
+  if(kind == 'keys'  )return step(0, index);
+  if(kind == 'values')return step(0, O[index]);
+  return step(0, [index, O[index]]);
+}, 'values');
+
+// argumentsList[@@iterator] is %ArrayProto_values% (9.4.4.6, 9.4.4.7)
+Iterators.Arguments = Iterators.Array;
+
+addToUnscopables('keys');
+addToUnscopables('values');
+addToUnscopables('entries');
+},{"./_add-to-unscopables":57,"./_iter-define":92,"./_iter-step":94,"./_iterators":95,"./_to-iobject":125}],135:[function(_dereq_,module,exports){
+'use strict';
+var strong = _dereq_('./_collection-strong');
+
+// 23.1 Map Objects
+module.exports = _dereq_('./_collection')('Map', function(get){
+  return function Map(){ return get(this, arguments.length > 0 ? arguments[0] : undefined); };
+}, {
+  // 23.1.3.6 Map.prototype.get(key)
+  get: function get(key){
+    var entry = strong.getEntry(this, key);
+    return entry && entry.v;
+  },
+  // 23.1.3.9 Map.prototype.set(key, value)
+  set: function set(key, value){
+    return strong.def(this, key === 0 ? 0 : key, value);
+  }
+}, strong, true);
+},{"./_collection":69,"./_collection-strong":67}],136:[function(_dereq_,module,exports){
+var $export = _dereq_('./_export');
+// 19.1.2.3 / 15.2.3.7 Object.defineProperties(O, Properties)
+$export($export.S + $export.F * !_dereq_('./_descriptors'), 'Object', {defineProperties: _dereq_('./_object-dps')});
+},{"./_descriptors":73,"./_export":77,"./_object-dps":102}],137:[function(_dereq_,module,exports){
+// 19.1.2.5 Object.freeze(O)
+var isObject = _dereq_('./_is-object')
+  , meta     = _dereq_('./_meta').onFreeze;
+
+_dereq_('./_object-sap')('freeze', function($freeze){
+  return function freeze(it){
+    return $freeze && isObject(it) ? $freeze(meta(it)) : it;
+  };
+});
+},{"./_is-object":89,"./_meta":98,"./_object-sap":111}],138:[function(_dereq_,module,exports){
+
+},{}],139:[function(_dereq_,module,exports){
+'use strict';
+var LIBRARY            = _dereq_('./_library')
+  , global             = _dereq_('./_global')
+  , ctx                = _dereq_('./_ctx')
+  , classof            = _dereq_('./_classof')
+  , $export            = _dereq_('./_export')
+  , isObject           = _dereq_('./_is-object')
+  , anObject           = _dereq_('./_an-object')
+  , aFunction          = _dereq_('./_a-function')
+  , anInstance         = _dereq_('./_an-instance')
+  , forOf              = _dereq_('./_for-of')
+  , setProto           = _dereq_('./_set-proto').set
+  , speciesConstructor = _dereq_('./_species-constructor')
+  , task               = _dereq_('./_task').set
+  , microtask          = _dereq_('./_microtask')()
+  , PROMISE            = 'Promise'
+  , TypeError          = global.TypeError
+  , process            = global.process
+  , $Promise           = global[PROMISE]
+  , process            = global.process
+  , isNode             = classof(process) == 'process'
+  , empty              = function(){ /* empty */ }
+  , Internal, GenericPromiseCapability, Wrapper;
+
+var USE_NATIVE = !!function(){
+  try {
+    // correct subclassing with @@species support
+    var promise     = $Promise.resolve(1)
+      , FakePromise = (promise.constructor = {})[_dereq_('./_wks')('species')] = function(exec){ exec(empty, empty); };
+    // unhandled rejections tracking support, NodeJS Promise without it fails @@species test
+    return (isNode || typeof PromiseRejectionEvent == 'function') && promise.then(empty) instanceof FakePromise;
+  } catch(e){ /* empty */ }
+}();
+
+// helpers
+var sameConstructor = function(a, b){
+  // with library wrapper special case
+  return a === b || a === $Promise && b === Wrapper;
+};
+var isThenable = function(it){
+  var then;
+  return isObject(it) && typeof (then = it.then) == 'function' ? then : false;
+};
+var newPromiseCapability = function(C){
+  return sameConstructor($Promise, C)
+    ? new PromiseCapability(C)
+    : new GenericPromiseCapability(C);
+};
+var PromiseCapability = GenericPromiseCapability = function(C){
+  var resolve, reject;
+  this.promise = new C(function($$resolve, $$reject){
+    if(resolve !== undefined || reject !== undefined)throw TypeError('Bad Promise constructor');
+    resolve = $$resolve;
+    reject  = $$reject;
+  });
+  this.resolve = aFunction(resolve);
+  this.reject  = aFunction(reject);
+};
+var perform = function(exec){
+  try {
+    exec();
+  } catch(e){
+    return {error: e};
+  }
+};
+var notify = function(promise, isReject){
+  if(promise._n)return;
+  promise._n = true;
+  var chain = promise._c;
+  microtask(function(){
+    var value = promise._v
+      , ok    = promise._s == 1
+      , i     = 0;
+    var run = function(reaction){
+      var handler = ok ? reaction.ok : reaction.fail
+        , resolve = reaction.resolve
+        , reject  = reaction.reject
+        , domain  = reaction.domain
+        , result, then;
+      try {
+        if(handler){
+          if(!ok){
+            if(promise._h == 2)onHandleUnhandled(promise);
+            promise._h = 1;
+          }
+          if(handler === true)result = value;
+          else {
+            if(domain)domain.enter();
+            result = handler(value);
+            if(domain)domain.exit();
+          }
+          if(result === reaction.promise){
+            reject(TypeError('Promise-chain cycle'));
+          } else if(then = isThenable(result)){
+            then.call(result, resolve, reject);
+          } else resolve(result);
+        } else reject(value);
+      } catch(e){
+        reject(e);
+      }
+    };
+    while(chain.length > i)run(chain[i++]); // variable length - can't use forEach
+    promise._c = [];
+    promise._n = false;
+    if(isReject && !promise._h)onUnhandled(promise);
+  });
+};
+var onUnhandled = function(promise){
+  task.call(global, function(){
+    var value = promise._v
+      , abrupt, handler, console;
+    if(isUnhandled(promise)){
+      abrupt = perform(function(){
+        if(isNode){
+          process.emit('unhandledRejection', value, promise);
+        } else if(handler = global.onunhandledrejection){
+          handler({promise: promise, reason: value});
+        } else if((console = global.console) && console.error){
+          console.error('Unhandled promise rejection', value);
+        }
+      });
+      // Browsers should not trigger `rejectionHandled` event if it was handled here, NodeJS - should
+      promise._h = isNode || isUnhandled(promise) ? 2 : 1;
+    } promise._a = undefined;
+    if(abrupt)throw abrupt.error;
+  });
+};
+var isUnhandled = function(promise){
+  if(promise._h == 1)return false;
+  var chain = promise._a || promise._c
+    , i     = 0
+    , reaction;
+  while(chain.length > i){
+    reaction = chain[i++];
+    if(reaction.fail || !isUnhandled(reaction.promise))return false;
+  } return true;
+};
+var onHandleUnhandled = function(promise){
+  task.call(global, function(){
+    var handler;
+    if(isNode){
+      process.emit('rejectionHandled', promise);
+    } else if(handler = global.onrejectionhandled){
+      handler({promise: promise, reason: promise._v});
+    }
+  });
+};
+var $reject = function(value){
+  var promise = this;
+  if(promise._d)return;
+  promise._d = true;
+  promise = promise._w || promise; // unwrap
+  promise._v = value;
+  promise._s = 2;
+  if(!promise._a)promise._a = promise._c.slice();
+  notify(promise, true);
+};
+var $resolve = function(value){
+  var promise = this
+    , then;
+  if(promise._d)return;
+  promise._d = true;
+  promise = promise._w || promise; // unwrap
+  try {
+    if(promise === value)throw TypeError("Promise can't be resolved itself");
+    if(then = isThenable(value)){
+      microtask(function(){
+        var wrapper = {_w: promise, _d: false}; // wrap
+        try {
+          then.call(value, ctx($resolve, wrapper, 1), ctx($reject, wrapper, 1));
+        } catch(e){
+          $reject.call(wrapper, e);
+        }
+      });
+    } else {
+      promise._v = value;
+      promise._s = 1;
+      notify(promise, false);
+    }
+  } catch(e){
+    $reject.call({_w: promise, _d: false}, e); // wrap
+  }
+};
+
+// constructor polyfill
+if(!USE_NATIVE){
+  // 25.4.3.1 Promise(executor)
+  $Promise = function Promise(executor){
+    anInstance(this, $Promise, PROMISE, '_h');
+    aFunction(executor);
+    Internal.call(this);
+    try {
+      executor(ctx($resolve, this, 1), ctx($reject, this, 1));
+    } catch(err){
+      $reject.call(this, err);
+    }
+  };
+  Internal = function Promise(executor){
+    this._c = [];             // <- awaiting reactions
+    this._a = undefined;      // <- checked in isUnhandled reactions
+    this._s = 0;              // <- state
+    this._d = false;          // <- done
+    this._v = undefined;      // <- value
+    this._h = 0;              // <- rejection state, 0 - default, 1 - handled, 2 - unhandled
+    this._n = false;          // <- notify
+  };
+  Internal.prototype = _dereq_('./_redefine-all')($Promise.prototype, {
+    // 25.4.5.3 Promise.prototype.then(onFulfilled, onRejected)
+    then: function then(onFulfilled, onRejected){
+      var reaction    = newPromiseCapability(speciesConstructor(this, $Promise));
+      reaction.ok     = typeof onFulfilled == 'function' ? onFulfilled : true;
+      reaction.fail   = typeof onRejected == 'function' && onRejected;
+      reaction.domain = isNode ? process.domain : undefined;
+      this._c.push(reaction);
+      if(this._a)this._a.push(reaction);
+      if(this._s)notify(this, false);
+      return reaction.promise;
+    },
+    // 25.4.5.1 Promise.prototype.catch(onRejected)
+    'catch': function(onRejected){
+      return this.then(undefined, onRejected);
+    }
+  });
+  PromiseCapability = function(){
+    var promise  = new Internal;
+    this.promise = promise;
+    this.resolve = ctx($resolve, promise, 1);
+    this.reject  = ctx($reject, promise, 1);
+  };
+}
+
+$export($export.G + $export.W + $export.F * !USE_NATIVE, {Promise: $Promise});
+_dereq_('./_set-to-string-tag')($Promise, PROMISE);
+_dereq_('./_set-species')(PROMISE);
+Wrapper = _dereq_('./_core')[PROMISE];
+
+// statics
+$export($export.S + $export.F * !USE_NATIVE, PROMISE, {
+  // 25.4.4.5 Promise.reject(r)
+  reject: function reject(r){
+    var capability = newPromiseCapability(this)
+      , $$reject   = capability.reject;
+    $$reject(r);
+    return capability.promise;
+  }
+});
+$export($export.S + $export.F * (LIBRARY || !USE_NATIVE), PROMISE, {
+  // 25.4.4.6 Promise.resolve(x)
+  resolve: function resolve(x){
+    // instanceof instead of internal slot check because we should fix it without replacement native Promise core
+    if(x instanceof $Promise && sameConstructor(x.constructor, this))return x;
+    var capability = newPromiseCapability(this)
+      , $$resolve  = capability.resolve;
+    $$resolve(x);
+    return capability.promise;
+  }
+});
+$export($export.S + $export.F * !(USE_NATIVE && _dereq_('./_iter-detect')(function(iter){
+  $Promise.all(iter)['catch'](empty);
+})), PROMISE, {
+  // 25.4.4.1 Promise.all(iterable)
+  all: function all(iterable){
+    var C          = this
+      , capability = newPromiseCapability(C)
+      , resolve    = capability.resolve
+      , reject     = capability.reject;
+    var abrupt = perform(function(){
+      var values    = []
+        , index     = 0
+        , remaining = 1;
+      forOf(iterable, false, function(promise){
+        var $index        = index++
+          , alreadyCalled = false;
+        values.push(undefined);
+        remaining++;
+        C.resolve(promise).then(function(value){
+          if(alreadyCalled)return;
+          alreadyCalled  = true;
+          values[$index] = value;
+          --remaining || resolve(values);
+        }, reject);
+      });
+      --remaining || resolve(values);
+    });
+    if(abrupt)reject(abrupt.error);
+    return capability.promise;
+  },
+  // 25.4.4.4 Promise.race(iterable)
+  race: function race(iterable){
+    var C          = this
+      , capability = newPromiseCapability(C)
+      , reject     = capability.reject;
+    var abrupt = perform(function(){
+      forOf(iterable, false, function(promise){
+        C.resolve(promise).then(capability.resolve, reject);
+      });
+    });
+    if(abrupt)reject(abrupt.error);
+    return capability.promise;
+  }
+});
+},{"./_a-function":56,"./_an-instance":58,"./_an-object":59,"./_classof":65,"./_core":70,"./_ctx":71,"./_export":77,"./_for-of":79,"./_global":80,"./_is-object":89,"./_iter-detect":93,"./_library":97,"./_microtask":99,"./_redefine-all":113,"./_set-proto":115,"./_set-species":116,"./_set-to-string-tag":117,"./_species-constructor":120,"./_task":122,"./_wks":132}],140:[function(_dereq_,module,exports){
+'use strict';
+var strong = _dereq_('./_collection-strong');
+
+// 23.2 Set Objects
+module.exports = _dereq_('./_collection')('Set', function(get){
+  return function Set(){ return get(this, arguments.length > 0 ? arguments[0] : undefined); };
+}, {
+  // 23.2.3.1 Set.prototype.add(value)
+  add: function add(value){
+    return strong.def(this, value = value === 0 ? 0 : value, value);
+  }
+}, strong);
+},{"./_collection":69,"./_collection-strong":67}],141:[function(_dereq_,module,exports){
+'use strict';
+var $at  = _dereq_('./_string-at')(true);
+
+// 21.1.3.27 String.prototype[@@iterator]()
+_dereq_('./_iter-define')(String, 'String', function(iterated){
+  this._t = String(iterated); // target
+  this._i = 0;                // next index
+// 21.1.5.2.1 %StringIteratorPrototype%.next()
+}, function(){
+  var O     = this._t
+    , index = this._i
+    , point;
+  if(index >= O.length)return {value: undefined, done: true};
+  point = $at(O, index);
+  this._i += point.length;
+  return {value: point, done: false};
+});
+},{"./_iter-define":92,"./_string-at":121}],142:[function(_dereq_,module,exports){
+'use strict';
+// ECMAScript 6 symbols shim
+var global         = _dereq_('./_global')
+  , has            = _dereq_('./_has')
+  , DESCRIPTORS    = _dereq_('./_descriptors')
+  , $export        = _dereq_('./_export')
+  , redefine       = _dereq_('./_redefine')
+  , META           = _dereq_('./_meta').KEY
+  , $fails         = _dereq_('./_fails')
+  , shared         = _dereq_('./_shared')
+  , setToStringTag = _dereq_('./_set-to-string-tag')
+  , uid            = _dereq_('./_uid')
+  , wks            = _dereq_('./_wks')
+  , wksExt         = _dereq_('./_wks-ext')
+  , wksDefine      = _dereq_('./_wks-define')
+  , keyOf          = _dereq_('./_keyof')
+  , enumKeys       = _dereq_('./_enum-keys')
+  , isArray        = _dereq_('./_is-array')
+  , anObject       = _dereq_('./_an-object')
+  , toIObject      = _dereq_('./_to-iobject')
+  , toPrimitive    = _dereq_('./_to-primitive')
+  , createDesc     = _dereq_('./_property-desc')
+  , _create        = _dereq_('./_object-create')
+  , gOPNExt        = _dereq_('./_object-gopn-ext')
+  , $GOPD          = _dereq_('./_object-gopd')
+  , $DP            = _dereq_('./_object-dp')
+  , $keys          = _dereq_('./_object-keys')
+  , gOPD           = $GOPD.f
+  , dP             = $DP.f
+  , gOPN           = gOPNExt.f
+  , $Symbol        = global.Symbol
+  , $JSON          = global.JSON
+  , _stringify     = $JSON && $JSON.stringify
+  , PROTOTYPE      = 'prototype'
+  , HIDDEN         = wks('_hidden')
+  , TO_PRIMITIVE   = wks('toPrimitive')
+  , isEnum         = {}.propertyIsEnumerable
+  , SymbolRegistry = shared('symbol-registry')
+  , AllSymbols     = shared('symbols')
+  , ObjectProto    = Object[PROTOTYPE]
+  , USE_NATIVE     = typeof $Symbol == 'function'
+  , QObject        = global.QObject;
+// Don't use setters in Qt Script, https://github.com/zloirock/core-js/issues/173
+var setter = !QObject || !QObject[PROTOTYPE] || !QObject[PROTOTYPE].findChild;
+
+// fallback for old Android, https://code.google.com/p/v8/issues/detail?id=687
+var setSymbolDesc = DESCRIPTORS && $fails(function(){
+  return _create(dP({}, 'a', {
+    get: function(){ return dP(this, 'a', {value: 7}).a; }
+  })).a != 7;
+}) ? function(it, key, D){
+  var protoDesc = gOPD(ObjectProto, key);
+  if(protoDesc)delete ObjectProto[key];
+  dP(it, key, D);
+  if(protoDesc && it !== ObjectProto)dP(ObjectProto, key, protoDesc);
+} : dP;
+
+var wrap = function(tag){
+  var sym = AllSymbols[tag] = _create($Symbol[PROTOTYPE]);
+  sym._k = tag;
+  return sym;
+};
+
+var isSymbol = USE_NATIVE && typeof $Symbol.iterator == 'symbol' ? function(it){
+  return typeof it == 'symbol';
+} : function(it){
+  return it instanceof $Symbol;
+};
+
+var $defineProperty = function defineProperty(it, key, D){
+  anObject(it);
+  key = toPrimitive(key, true);
+  anObject(D);
+  if(has(AllSymbols, key)){
+    if(!D.enumerable){
+      if(!has(it, HIDDEN))dP(it, HIDDEN, createDesc(1, {}));
+      it[HIDDEN][key] = true;
+    } else {
+      if(has(it, HIDDEN) && it[HIDDEN][key])it[HIDDEN][key] = false;
+      D = _create(D, {enumerable: createDesc(0, false)});
+    } return setSymbolDesc(it, key, D);
+  } return dP(it, key, D);
+};
+var $defineProperties = function defineProperties(it, P){
+  anObject(it);
+  var keys = enumKeys(P = toIObject(P))
+    , i    = 0
+    , l = keys.length
+    , key;
+  while(l > i)$defineProperty(it, key = keys[i++], P[key]);
+  return it;
+};
+var $create = function create(it, P){
+  return P === undefined ? _create(it) : $defineProperties(_create(it), P);
+};
+var $propertyIsEnumerable = function propertyIsEnumerable(key){
+  var E = isEnum.call(this, key = toPrimitive(key, true));
+  return E || !has(this, key) || !has(AllSymbols, key) || has(this, HIDDEN) && this[HIDDEN][key] ? E : true;
+};
+var $getOwnPropertyDescriptor = function getOwnPropertyDescriptor(it, key){
+  var D = gOPD(it = toIObject(it), key = toPrimitive(key, true));
+  if(D && has(AllSymbols, key) && !(has(it, HIDDEN) && it[HIDDEN][key]))D.enumerable = true;
+  return D;
+};
+var $getOwnPropertyNames = function getOwnPropertyNames(it){
+  var names  = gOPN(toIObject(it))
+    , result = []
+    , i      = 0
+    , key;
+  while(names.length > i)if(!has(AllSymbols, key = names[i++]) && key != HIDDEN && key != META)result.push(key);
+  return result;
+};
+var $getOwnPropertySymbols = function getOwnPropertySymbols(it){
+  var names  = gOPN(toIObject(it))
+    , result = []
+    , i      = 0
+    , key;
+  while(names.length > i)if(has(AllSymbols, key = names[i++]))result.push(AllSymbols[key]);
+  return result;
+};
+
+// 19.4.1.1 Symbol([description])
+if(!USE_NATIVE){
+  $Symbol = function Symbol(){
+    if(this instanceof $Symbol)throw TypeError('Symbol is not a constructor!');
+    var tag = uid(arguments.length > 0 ? arguments[0] : undefined);
+    DESCRIPTORS && setter && setSymbolDesc(ObjectProto, tag, {
+      configurable: true,
+      set: function(value){
+        if(has(this, HIDDEN) && has(this[HIDDEN], tag))this[HIDDEN][tag] = false;
+        setSymbolDesc(this, tag, createDesc(1, value));
+      }
+    });
+    return wrap(tag);
+  };
+  redefine($Symbol[PROTOTYPE], 'toString', function toString(){
+    return this._k;
+  });
+
+  $GOPD.f = $getOwnPropertyDescriptor;
+  $DP.f   = $defineProperty;
+  _dereq_('./_object-gopn').f = gOPNExt.f = $getOwnPropertyNames;
+  _dereq_('./_object-pie').f  = $propertyIsEnumerable;
+  _dereq_('./_object-gops').f = $getOwnPropertySymbols;
+
+  if(DESCRIPTORS && !_dereq_('./_library')){
+    redefine(ObjectProto, 'propertyIsEnumerable', $propertyIsEnumerable, true);
+  }
+
+  wksExt.f = function(name){
+    return wrap(wks(name));
+  }
+}
+
+$export($export.G + $export.W + $export.F * !USE_NATIVE, {Symbol: $Symbol});
+
+for(var symbols = (
+  // 19.4.2.2, 19.4.2.3, 19.4.2.4, 19.4.2.6, 19.4.2.8, 19.4.2.9, 19.4.2.10, 19.4.2.11, 19.4.2.12, 19.4.2.13, 19.4.2.14
+  'hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables'
+).split(','), i = 0; symbols.length > i; )wks(symbols[i++]);
+
+for(var symbols = $keys(wks.store), i = 0; symbols.length > i; )wksDefine(symbols[i++]);
+
+$export($export.S + $export.F * !USE_NATIVE, 'Symbol', {
+  // 19.4.2.1 Symbol.for(key)
+  'for': function(key){
+    return has(SymbolRegistry, key += '')
+      ? SymbolRegistry[key]
+      : SymbolRegistry[key] = $Symbol(key);
+  },
+  // 19.4.2.5 Symbol.keyFor(sym)
+  keyFor: function keyFor(key){
+    if(isSymbol(key))return keyOf(SymbolRegistry, key);
+    throw TypeError(key + ' is not a symbol!');
+  },
+  useSetter: function(){ setter = true; },
+  useSimple: function(){ setter = false; }
+});
+
+$export($export.S + $export.F * !USE_NATIVE, 'Object', {
+  // 19.1.2.2 Object.create(O [, Properties])
+  create: $create,
+  // 19.1.2.4 Object.defineProperty(O, P, Attributes)
+  defineProperty: $defineProperty,
+  // 19.1.2.3 Object.defineProperties(O, Properties)
+  defineProperties: $defineProperties,
+  // 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
+  getOwnPropertyDescriptor: $getOwnPropertyDescriptor,
+  // 19.1.2.7 Object.getOwnPropertyNames(O)
+  getOwnPropertyNames: $getOwnPropertyNames,
+  // 19.1.2.8 Object.getOwnPropertySymbols(O)
+  getOwnPropertySymbols: $getOwnPropertySymbols
+});
+
+// 24.3.2 JSON.stringify(value [, replacer [, space]])
+$JSON && $export($export.S + $export.F * (!USE_NATIVE || $fails(function(){
+  var S = $Symbol();
+  // MS Edge converts symbol values to JSON as {}
+  // WebKit converts symbol values to JSON as null
+  // V8 throws on boxed symbols
+  return _stringify([S]) != '[null]' || _stringify({a: S}) != '{}' || _stringify(Object(S)) != '{}';
+})), 'JSON', {
+  stringify: function stringify(it){
+    if(it === undefined || isSymbol(it))return; // IE8 returns string on undefined
+    var args = [it]
+      , i    = 1
+      , replacer, $replacer;
+    while(arguments.length > i)args.push(arguments[i++]);
+    replacer = args[1];
+    if(typeof replacer == 'function')$replacer = replacer;
+    if($replacer || !isArray(replacer))replacer = function(key, value){
+      if($replacer)value = $replacer.call(this, key, value);
+      if(!isSymbol(value))return value;
+    };
+    args[1] = replacer;
+    return _stringify.apply($JSON, args);
+  }
+});
+
+// 19.4.3.4 Symbol.prototype[@@toPrimitive](hint)
+$Symbol[PROTOTYPE][TO_PRIMITIVE] || _dereq_('./_hide')($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
+// 19.4.3.5 Symbol.prototype[@@toStringTag]
+setToStringTag($Symbol, 'Symbol');
+// 20.2.1.9 Math[@@toStringTag]
+setToStringTag(Math, 'Math', true);
+// 24.3.3 JSON[@@toStringTag]
+setToStringTag(global.JSON, 'JSON', true);
+},{"./_an-object":59,"./_descriptors":73,"./_enum-keys":76,"./_export":77,"./_fails":78,"./_global":80,"./_has":81,"./_hide":82,"./_is-array":88,"./_keyof":96,"./_library":97,"./_meta":98,"./_object-create":100,"./_object-dp":101,"./_object-gopd":103,"./_object-gopn":105,"./_object-gopn-ext":104,"./_object-gops":106,"./_object-keys":109,"./_object-pie":110,"./_property-desc":112,"./_redefine":114,"./_set-to-string-tag":117,"./_shared":119,"./_to-iobject":125,"./_to-primitive":128,"./_uid":129,"./_wks":132,"./_wks-define":130,"./_wks-ext":131}],143:[function(_dereq_,module,exports){
+// https://github.com/DavidBruant/Map-Set.prototype.toJSON
+var $export  = _dereq_('./_export');
+
+$export($export.P + $export.R, 'Map', {toJSON: _dereq_('./_collection-to-json')('Map')});
+},{"./_collection-to-json":68,"./_export":77}],144:[function(_dereq_,module,exports){
+// https://github.com/DavidBruant/Map-Set.prototype.toJSON
+var $export  = _dereq_('./_export');
+
+$export($export.P + $export.R, 'Set', {toJSON: _dereq_('./_collection-to-json')('Set')});
+},{"./_collection-to-json":68,"./_export":77}],145:[function(_dereq_,module,exports){
+_dereq_('./_wks-define')('asyncIterator');
+},{"./_wks-define":130}],146:[function(_dereq_,module,exports){
+_dereq_('./_wks-define')('observable');
+},{"./_wks-define":130}],147:[function(_dereq_,module,exports){
+_dereq_('./es6.array.iterator');
+var global        = _dereq_('./_global')
+  , hide          = _dereq_('./_hide')
+  , Iterators     = _dereq_('./_iterators')
+  , TO_STRING_TAG = _dereq_('./_wks')('toStringTag');
+
+for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList', 'CSSRuleList'], i = 0; i < 5; i++){
+  var NAME       = collections[i]
+    , Collection = global[NAME]
+    , proto      = Collection && Collection.prototype;
+  if(proto && !proto[TO_STRING_TAG])hide(proto, TO_STRING_TAG, NAME);
+  Iterators[NAME] = Iterators.Array;
+}
+},{"./_global":80,"./_hide":82,"./_iterators":95,"./_wks":132,"./es6.array.iterator":134}],148:[function(_dereq_,module,exports){
 //      Copyright (c) 2012 Mathieu Turcotte
 //      Licensed under the MIT license.
 
@@ -6928,7 +9412,7 @@ module.exports.call = function(fn, vargs, callback) {
     return new FunctionCall(fn, vargs, callback);
 };
 
-},{"./lib/backoff":40,"./lib/function_call.js":41,"./lib/strategy/exponential":42,"./lib/strategy/fibonacci":43}],40:[function(_dereq_,module,exports){
+},{"./lib/backoff":149,"./lib/function_call.js":150,"./lib/strategy/exponential":151,"./lib/strategy/fibonacci":152}],149:[function(_dereq_,module,exports){
 //      Copyright (c) 2012 Mathieu Turcotte
 //      Licensed under the MIT license.
 
@@ -6995,7 +9479,7 @@ Backoff.prototype.reset = function() {
 
 module.exports = Backoff;
 
-},{"events":54,"precond":62,"util":94}],41:[function(_dereq_,module,exports){
+},{"events":163,"precond":171,"util":198}],150:[function(_dereq_,module,exports){
 //      Copyright (c) 2012 Mathieu Turcotte
 //      Licensed under the MIT license.
 
@@ -7187,7 +9671,7 @@ FunctionCall.prototype.handleBackoff_ = function(number, delay, err) {
 
 module.exports = FunctionCall;
 
-},{"./backoff":40,"./strategy/fibonacci":43,"events":54,"precond":62,"util":94}],42:[function(_dereq_,module,exports){
+},{"./backoff":149,"./strategy/fibonacci":152,"events":163,"precond":171,"util":198}],151:[function(_dereq_,module,exports){
 //      Copyright (c) 2012 Mathieu Turcotte
 //      Licensed under the MIT license.
 
@@ -7230,7 +9714,7 @@ ExponentialBackoffStrategy.prototype.reset_ = function() {
 
 module.exports = ExponentialBackoffStrategy;
 
-},{"./strategy":44,"precond":62,"util":94}],43:[function(_dereq_,module,exports){
+},{"./strategy":153,"precond":171,"util":198}],152:[function(_dereq_,module,exports){
 //      Copyright (c) 2012 Mathieu Turcotte
 //      Licensed under the MIT license.
 
@@ -7260,7 +9744,7 @@ FibonacciBackoffStrategy.prototype.reset_ = function() {
 
 module.exports = FibonacciBackoffStrategy;
 
-},{"./strategy":44,"util":94}],44:[function(_dereq_,module,exports){
+},{"./strategy":153,"util":198}],153:[function(_dereq_,module,exports){
 //      Copyright (c) 2012 Mathieu Turcotte
 //      Licensed under the MIT license.
 
@@ -7342,7 +9826,7 @@ BackoffStrategy.prototype.reset_ = function() {
 
 module.exports = BackoffStrategy;
 
-},{"events":54,"util":94}],45:[function(_dereq_,module,exports){
+},{"events":163,"util":198}],154:[function(_dereq_,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -7468,11 +9952,11 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],46:[function(_dereq_,module,exports){
-
-},{}],47:[function(_dereq_,module,exports){
-arguments[4][46][0].apply(exports,arguments)
-},{"dup":46}],48:[function(_dereq_,module,exports){
+},{}],155:[function(_dereq_,module,exports){
+arguments[4][138][0].apply(exports,arguments)
+},{"dup":138}],156:[function(_dereq_,module,exports){
+arguments[4][138][0].apply(exports,arguments)
+},{"dup":138}],157:[function(_dereq_,module,exports){
 (function (global){
 /*!
  * The buffer module from node.js, for the browser.
@@ -9024,14 +11508,14 @@ function blitBuffer (src, dst, offset, length) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"base64-js":45,"ieee754":56,"isarray":49}],49:[function(_dereq_,module,exports){
+},{"base64-js":154,"ieee754":165,"isarray":158}],158:[function(_dereq_,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],50:[function(_dereq_,module,exports){
+},{}],159:[function(_dereq_,module,exports){
 module.exports = {
   "100": "Continue",
   "101": "Switching Protocols",
@@ -9096,7 +11580,7 @@ module.exports = {
   "511": "Network Authentication Required"
 }
 
-},{}],51:[function(_dereq_,module,exports){
+},{}],160:[function(_dereq_,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -9207,10 +11691,10 @@ function objectToString(o) {
 }
 
 }).call(this,{"isBuffer":_dereq_("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":58}],52:[function(_dereq_,module,exports){
+},{"../../is-buffer/index.js":167}],161:[function(_dereq_,module,exports){
 module.exports = _dereq_('./lib');
 
-},{"./lib":53}],53:[function(_dereq_,module,exports){
+},{"./lib":162}],162:[function(_dereq_,module,exports){
 var FORMAT_REGEXP = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/;
 
 function matchToInteger(match){
@@ -9283,7 +11767,7 @@ exports.toSeconds = function(stringOrDuration) {
   return duration.hours * 3600 + duration.minutes * 60 + duration.seconds;
 };
 
-},{}],54:[function(_dereq_,module,exports){
+},{}],163:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -9583,7 +12067,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],55:[function(_dereq_,module,exports){
+},{}],164:[function(_dereq_,module,exports){
 var http = _dereq_('http');
 
 var https = module.exports;
@@ -9599,7 +12083,7 @@ https.request = function (params, cb) {
     return http.request.call(this, params, cb);
 }
 
-},{"http":84}],56:[function(_dereq_,module,exports){
+},{"http":181}],165:[function(_dereq_,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -9685,7 +12169,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],57:[function(_dereq_,module,exports){
+},{}],166:[function(_dereq_,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -9710,7 +12194,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],58:[function(_dereq_,module,exports){
+},{}],167:[function(_dereq_,module,exports){
 /**
  * Determine if an object is Buffer
  *
@@ -9729,7 +12213,7 @@ module.exports = function (obj) {
     ))
 }
 
-},{}],59:[function(_dereq_,module,exports){
+},{}],168:[function(_dereq_,module,exports){
 /*
 
   Javascript State Machine Library - https://github.com/jakesgordon/javascript-state-machine
@@ -9958,7 +12442,7 @@ module.exports = function (obj) {
 
 }());
 
-},{}],60:[function(_dereq_,module,exports){
+},{}],169:[function(_dereq_,module,exports){
 /*
 * loglevel - https://github.com/pimterry/loglevel
 *
@@ -10183,7 +12667,7 @@ module.exports = function (obj) {
     return defaultLogger;
 }));
 
-},{}],61:[function(_dereq_,module,exports){
+},{}],170:[function(_dereq_,module,exports){
 (function (global){
 /*!
  * Platform.js v1.3.1 <http://mths.be/platform>
@@ -11322,14 +13806,14 @@ module.exports = function (obj) {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],62:[function(_dereq_,module,exports){
+},{}],171:[function(_dereq_,module,exports){
 /*
  * Copyright (c) 2012 Mathieu Turcotte
  * Licensed under the MIT license.
  */
 
 module.exports = _dereq_('./lib/checks');
-},{"./lib/checks":63}],63:[function(_dereq_,module,exports){
+},{"./lib/checks":172}],172:[function(_dereq_,module,exports){
 /*
  * Copyright (c) 2012 Mathieu Turcotte
  * Licensed under the MIT license.
@@ -11425,7 +13909,7 @@ module.exports.checkIsBoolean = typeCheck('boolean');
 module.exports.checkIsFunction = typeCheck('function');
 module.exports.checkIsObject = typeCheck('object');
 
-},{"./errors":64,"util":94}],64:[function(_dereq_,module,exports){
+},{"./errors":173,"util":198}],173:[function(_dereq_,module,exports){
 /*
  * Copyright (c) 2012 Mathieu Turcotte
  * Licensed under the MIT license.
@@ -11451,7 +13935,7 @@ IllegalStateError.prototype.name = 'IllegalStateError';
 
 module.exports.IllegalStateError = IllegalStateError;
 module.exports.IllegalArgumentError = IllegalArgumentError;
-},{"util":94}],65:[function(_dereq_,module,exports){
+},{"util":198}],174:[function(_dereq_,module,exports){
 (function (process){
 'use strict';
 
@@ -11475,7 +13959,7 @@ function nextTick(fn) {
 }
 
 }).call(this,_dereq_('_process'))
-},{"_process":66}],66:[function(_dereq_,module,exports){
+},{"_process":175}],175:[function(_dereq_,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -11568,7 +14052,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],67:[function(_dereq_,module,exports){
+},{}],176:[function(_dereq_,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
@@ -12105,7 +14589,7 @@ process.umask = function() { return 0; };
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],68:[function(_dereq_,module,exports){
+},{}],177:[function(_dereq_,module,exports){
 (function (process){
 // vim:ts=4:sts=4:sw=4:
 /*!
@@ -14157,7 +16641,7 @@ return Q;
 });
 
 }).call(this,_dereq_('_process'))
-},{"_process":66}],69:[function(_dereq_,module,exports){
+},{"_process":175}],178:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14243,7 +16727,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],70:[function(_dereq_,module,exports){
+},{}],179:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14330,147 +16814,606 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],71:[function(_dereq_,module,exports){
+},{}],180:[function(_dereq_,module,exports){
 'use strict';
 
 exports.decode = exports.parse = _dereq_('./decode');
 exports.encode = exports.stringify = _dereq_('./encode');
 
-},{"./decode":69,"./encode":70}],72:[function(_dereq_,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
+},{"./decode":178,"./encode":179}],181:[function(_dereq_,module,exports){
+(function (global){
+var ClientRequest = _dereq_('./lib/request')
+var extend = _dereq_('xtend')
+var statusCodes = _dereq_('builtin-status-codes')
+var url = _dereq_('url')
 
-module.exports = Stream;
+var http = exports
 
-var EE = _dereq_('events').EventEmitter;
-var inherits = _dereq_('inherits');
+http.request = function (opts, cb) {
+	if (typeof opts === 'string')
+		opts = url.parse(opts)
+	else
+		opts = extend(opts)
 
-inherits(Stream, EE);
-Stream.Readable = _dereq_('readable-stream/readable.js');
-Stream.Writable = _dereq_('readable-stream/writable.js');
-Stream.Duplex = _dereq_('readable-stream/duplex.js');
-Stream.Transform = _dereq_('readable-stream/transform.js');
-Stream.PassThrough = _dereq_('readable-stream/passthrough.js');
+	// Normally, the page is loaded from http or https, so not specifying a protocol
+	// will result in a (valid) protocol-relative url. However, this won't work if
+	// the protocol is something else, like 'file:'
+	var defaultProtocol = global.location.protocol.search(/^https?:$/) === -1 ? 'http:' : ''
 
-// Backwards-compat with node 0.4.x
-Stream.Stream = Stream;
+	var protocol = opts.protocol || defaultProtocol
+	var host = opts.hostname || opts.host
+	var port = opts.port
+	var path = opts.path || '/'
 
+	// Necessary for IPv6 addresses
+	if (host && host.indexOf(':') !== -1)
+		host = '[' + host + ']'
 
+	// This may be a relative url. The browser should always be able to interpret it correctly.
+	opts.url = (host ? (protocol + '//' + host) : '') + (port ? ':' + port : '') + path
+	opts.method = (opts.method || 'GET').toUpperCase()
+	opts.headers = opts.headers || {}
 
-// old-style streams.  Note that the pipe method (the only relevant
-// part of this class) is overridden in the Readable class.
+	// Also valid opts.auth, opts.mode
 
-function Stream() {
-  EE.call(this);
+	var req = new ClientRequest(opts)
+	if (cb)
+		req.on('response', cb)
+	return req
 }
 
-Stream.prototype.pipe = function(dest, options) {
-  var source = this;
+http.get = function get (opts, cb) {
+	var req = http.request(opts, cb)
+	req.end()
+	return req
+}
 
-  function ondata(chunk) {
-    if (dest.writable) {
-      if (false === dest.write(chunk) && source.pause) {
-        source.pause();
-      }
-    }
-  }
+http.Agent = function () {}
+http.Agent.defaultMaxSockets = 4
 
-  source.on('data', ondata);
+http.STATUS_CODES = statusCodes
 
-  function ondrain() {
-    if (source.readable && source.resume) {
-      source.resume();
-    }
-  }
+http.METHODS = [
+	'CHECKOUT',
+	'CONNECT',
+	'COPY',
+	'DELETE',
+	'GET',
+	'HEAD',
+	'LOCK',
+	'M-SEARCH',
+	'MERGE',
+	'MKACTIVITY',
+	'MKCOL',
+	'MOVE',
+	'NOTIFY',
+	'OPTIONS',
+	'PATCH',
+	'POST',
+	'PROPFIND',
+	'PROPPATCH',
+	'PURGE',
+	'PUT',
+	'REPORT',
+	'SEARCH',
+	'SUBSCRIBE',
+	'TRACE',
+	'UNLOCK',
+	'UNSUBSCRIBE'
+]
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./lib/request":183,"builtin-status-codes":159,"url":194,"xtend":201}],182:[function(_dereq_,module,exports){
+(function (global){
+exports.fetch = isFunction(global.fetch) && isFunction(global.ReadableByteStream)
 
-  dest.on('drain', ondrain);
+exports.blobConstructor = false
+try {
+	new Blob([new ArrayBuffer(1)])
+	exports.blobConstructor = true
+} catch (e) {}
 
-  // If the 'end' option is not supplied, dest.end() will be called when
-  // source gets the 'end' or 'close' events.  Only dest.end() once.
-  if (!dest._isStdio && (!options || options.end !== false)) {
-    source.on('end', onend);
-    source.on('close', onclose);
-  }
+var xhr = new global.XMLHttpRequest()
+// If location.host is empty, e.g. if this page/worker was loaded
+// from a Blob, then use example.com to avoid an error
+xhr.open('GET', global.location.host ? '/' : 'https://example.com')
 
-  var didOnEnd = false;
-  function onend() {
-    if (didOnEnd) return;
-    didOnEnd = true;
+function checkTypeSupport (type) {
+	try {
+		xhr.responseType = type
+		return xhr.responseType === type
+	} catch (e) {}
+	return false
+}
 
-    dest.end();
-  }
+// For some strange reason, Safari 7.0 reports typeof global.ArrayBuffer === 'object'.
+// Safari 7.1 appears to have fixed this bug.
+var haveArrayBuffer = typeof global.ArrayBuffer !== 'undefined'
+var haveSlice = haveArrayBuffer && isFunction(global.ArrayBuffer.prototype.slice)
 
+exports.arraybuffer = haveArrayBuffer && checkTypeSupport('arraybuffer')
+// These next two tests unavoidably show warnings in Chrome. Since fetch will always
+// be used if it's available, just return false for these to avoid the warnings.
+exports.msstream = !exports.fetch && haveSlice && checkTypeSupport('ms-stream')
+exports.mozchunkedarraybuffer = !exports.fetch && haveArrayBuffer &&
+	checkTypeSupport('moz-chunked-arraybuffer')
+exports.overrideMimeType = isFunction(xhr.overrideMimeType)
+exports.vbArray = isFunction(global.VBArray)
 
-  function onclose() {
-    if (didOnEnd) return;
-    didOnEnd = true;
+function isFunction (value) {
+  return typeof value === 'function'
+}
 
-    if (typeof dest.destroy === 'function') dest.destroy();
-  }
+xhr = null // Help gc
 
-  // don't leave dangling pipes when there are errors.
-  function onerror(er) {
-    cleanup();
-    if (EE.listenerCount(this, 'error') === 0) {
-      throw er; // Unhandled stream error in pipe.
-    }
-  }
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],183:[function(_dereq_,module,exports){
+(function (process,global,Buffer){
+var capability = _dereq_('./capability')
+var inherits = _dereq_('inherits')
+var response = _dereq_('./response')
+var stream = _dereq_('readable-stream')
+var toArrayBuffer = _dereq_('to-arraybuffer')
 
-  source.on('error', onerror);
-  dest.on('error', onerror);
+var IncomingMessage = response.IncomingMessage
+var rStates = response.readyStates
 
-  // remove all the event listeners that were added.
-  function cleanup() {
-    source.removeListener('data', ondata);
-    dest.removeListener('drain', ondrain);
+function decideMode (preferBinary) {
+	if (capability.fetch) {
+		return 'fetch'
+	} else if (capability.mozchunkedarraybuffer) {
+		return 'moz-chunked-arraybuffer'
+	} else if (capability.msstream) {
+		return 'ms-stream'
+	} else if (capability.arraybuffer && preferBinary) {
+		return 'arraybuffer'
+	} else if (capability.vbArray && preferBinary) {
+		return 'text:vbarray'
+	} else {
+		return 'text'
+	}
+}
 
-    source.removeListener('end', onend);
-    source.removeListener('close', onclose);
+var ClientRequest = module.exports = function (opts) {
+	var self = this
+	stream.Writable.call(self)
 
-    source.removeListener('error', onerror);
-    dest.removeListener('error', onerror);
+	self._opts = opts
+	self._body = []
+	self._headers = {}
+	if (opts.auth)
+		self.setHeader('Authorization', 'Basic ' + new Buffer(opts.auth).toString('base64'))
+	Object.keys(opts.headers).forEach(function (name) {
+		self.setHeader(name, opts.headers[name])
+	})
 
-    source.removeListener('end', cleanup);
-    source.removeListener('close', cleanup);
+	var preferBinary
+	if (opts.mode === 'prefer-streaming') {
+		// If streaming is a high priority but binary compatibility and
+		// the accuracy of the 'content-type' header aren't
+		preferBinary = false
+	} else if (opts.mode === 'allow-wrong-content-type') {
+		// If streaming is more important than preserving the 'content-type' header
+		preferBinary = !capability.overrideMimeType
+	} else if (!opts.mode || opts.mode === 'default' || opts.mode === 'prefer-fast') {
+		// Use binary if text streaming may corrupt data or the content-type header, or for speed
+		preferBinary = true
+	} else {
+		throw new Error('Invalid value for opts.mode')
+	}
+	self._mode = decideMode(preferBinary)
 
-    dest.removeListener('close', cleanup);
-  }
+	self.on('finish', function () {
+		self._onFinish()
+	})
+}
 
-  source.on('end', cleanup);
-  source.on('close', cleanup);
+inherits(ClientRequest, stream.Writable)
 
-  dest.on('close', cleanup);
+ClientRequest.prototype.setHeader = function (name, value) {
+	var self = this
+	var lowerName = name.toLowerCase()
+	// This check is not necessary, but it prevents warnings from browsers about setting unsafe
+	// headers. To be honest I'm not entirely sure hiding these warnings is a good thing, but
+	// http-browserify did it, so I will too.
+	if (unsafeHeaders.indexOf(lowerName) !== -1)
+		return
 
-  dest.emit('pipe', source);
+	self._headers[lowerName] = {
+		name: name,
+		value: value
+	}
+}
 
-  // Allow for unix-like usage: A.pipe(B).pipe(C)
-  return dest;
-};
+ClientRequest.prototype.getHeader = function (name) {
+	var self = this
+	return self._headers[name.toLowerCase()].value
+}
 
-},{"events":54,"inherits":57,"readable-stream/duplex.js":74,"readable-stream/passthrough.js":80,"readable-stream/readable.js":81,"readable-stream/transform.js":82,"readable-stream/writable.js":83}],73:[function(_dereq_,module,exports){
-arguments[4][49][0].apply(exports,arguments)
-},{"dup":49}],74:[function(_dereq_,module,exports){
-module.exports = _dereq_("./lib/_stream_duplex.js")
+ClientRequest.prototype.removeHeader = function (name) {
+	var self = this
+	delete self._headers[name.toLowerCase()]
+}
 
-},{"./lib/_stream_duplex.js":75}],75:[function(_dereq_,module,exports){
+ClientRequest.prototype._onFinish = function () {
+	var self = this
+
+	if (self._destroyed)
+		return
+	var opts = self._opts
+
+	var headersObj = self._headers
+	var body
+	if (opts.method === 'POST' || opts.method === 'PUT' || opts.method === 'PATCH') {
+		if (capability.blobConstructor) {
+			body = new global.Blob(self._body.map(function (buffer) {
+				return toArrayBuffer(buffer)
+			}), {
+				type: (headersObj['content-type'] || {}).value || ''
+			})
+		} else {
+			// get utf8 string
+			body = Buffer.concat(self._body).toString()
+		}
+	}
+
+	if (self._mode === 'fetch') {
+		var headers = Object.keys(headersObj).map(function (name) {
+			return [headersObj[name].name, headersObj[name].value]
+		})
+
+		global.fetch(self._opts.url, {
+			method: self._opts.method,
+			headers: headers,
+			body: body,
+			mode: 'cors',
+			credentials: opts.withCredentials ? 'include' : 'same-origin'
+		}).then(function (response) {
+			self._fetchResponse = response
+			self._connect()
+		}, function (reason) {
+			self.emit('error', reason)
+		})
+	} else {
+		var xhr = self._xhr = new global.XMLHttpRequest()
+		try {
+			xhr.open(self._opts.method, self._opts.url, true)
+		} catch (err) {
+			process.nextTick(function () {
+				self.emit('error', err)
+			})
+			return
+		}
+
+		// Can't set responseType on really old browsers
+		if ('responseType' in xhr)
+			xhr.responseType = self._mode.split(':')[0]
+
+		if ('withCredentials' in xhr)
+			xhr.withCredentials = !!opts.withCredentials
+
+		if (self._mode === 'text' && 'overrideMimeType' in xhr)
+			xhr.overrideMimeType('text/plain; charset=x-user-defined')
+
+		Object.keys(headersObj).forEach(function (name) {
+			xhr.setRequestHeader(headersObj[name].name, headersObj[name].value)
+		})
+
+		self._response = null
+		xhr.onreadystatechange = function () {
+			switch (xhr.readyState) {
+				case rStates.LOADING:
+				case rStates.DONE:
+					self._onXHRProgress()
+					break
+			}
+		}
+		// Necessary for streaming in Firefox, since xhr.response is ONLY defined
+		// in onprogress, not in onreadystatechange with xhr.readyState = 3
+		if (self._mode === 'moz-chunked-arraybuffer') {
+			xhr.onprogress = function () {
+				self._onXHRProgress()
+			}
+		}
+
+		xhr.onerror = function () {
+			if (self._destroyed)
+				return
+			self.emit('error', new Error('XHR error'))
+		}
+
+		try {
+			xhr.send(body)
+		} catch (err) {
+			process.nextTick(function () {
+				self.emit('error', err)
+			})
+			return
+		}
+	}
+}
+
+/**
+ * Checks if xhr.status is readable and non-zero, indicating no error.
+ * Even though the spec says it should be available in readyState 3,
+ * accessing it throws an exception in IE8
+ */
+function statusValid (xhr) {
+	try {
+		var status = xhr.status
+		return (status !== null && status !== 0)
+	} catch (e) {
+		return false
+	}
+}
+
+ClientRequest.prototype._onXHRProgress = function () {
+	var self = this
+
+	if (!statusValid(self._xhr) || self._destroyed)
+		return
+
+	if (!self._response)
+		self._connect()
+
+	self._response._onXHRProgress()
+}
+
+ClientRequest.prototype._connect = function () {
+	var self = this
+
+	if (self._destroyed)
+		return
+
+	self._response = new IncomingMessage(self._xhr, self._fetchResponse, self._mode)
+	self.emit('response', self._response)
+}
+
+ClientRequest.prototype._write = function (chunk, encoding, cb) {
+	var self = this
+
+	self._body.push(chunk)
+	cb()
+}
+
+ClientRequest.prototype.abort = ClientRequest.prototype.destroy = function () {
+	var self = this
+	self._destroyed = true
+	if (self._response)
+		self._response._destroyed = true
+	if (self._xhr)
+		self._xhr.abort()
+	// Currently, there isn't a way to truly abort a fetch.
+	// If you like bikeshedding, see https://github.com/whatwg/fetch/issues/27
+}
+
+ClientRequest.prototype.end = function (data, encoding, cb) {
+	var self = this
+	if (typeof data === 'function') {
+		cb = data
+		data = undefined
+	}
+
+	stream.Writable.prototype.end.call(self, data, encoding, cb)
+}
+
+ClientRequest.prototype.flushHeaders = function () {}
+ClientRequest.prototype.setTimeout = function () {}
+ClientRequest.prototype.setNoDelay = function () {}
+ClientRequest.prototype.setSocketKeepAlive = function () {}
+
+// Taken from http://www.w3.org/TR/XMLHttpRequest/#the-setrequestheader%28%29-method
+var unsafeHeaders = [
+	'accept-charset',
+	'accept-encoding',
+	'access-control-request-headers',
+	'access-control-request-method',
+	'connection',
+	'content-length',
+	'cookie',
+	'cookie2',
+	'date',
+	'dnt',
+	'expect',
+	'host',
+	'keep-alive',
+	'origin',
+	'referer',
+	'te',
+	'trailer',
+	'transfer-encoding',
+	'upgrade',
+	'user-agent',
+	'via'
+]
+
+}).call(this,_dereq_('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},_dereq_("buffer").Buffer)
+},{"./capability":182,"./response":184,"_process":175,"buffer":157,"inherits":166,"readable-stream":191,"to-arraybuffer":193}],184:[function(_dereq_,module,exports){
+(function (process,global,Buffer){
+var capability = _dereq_('./capability')
+var inherits = _dereq_('inherits')
+var stream = _dereq_('readable-stream')
+
+var rStates = exports.readyStates = {
+	UNSENT: 0,
+	OPENED: 1,
+	HEADERS_RECEIVED: 2,
+	LOADING: 3,
+	DONE: 4
+}
+
+var IncomingMessage = exports.IncomingMessage = function (xhr, response, mode) {
+	var self = this
+	stream.Readable.call(self)
+
+	self._mode = mode
+	self.headers = {}
+	self.rawHeaders = []
+	self.trailers = {}
+	self.rawTrailers = []
+
+	// Fake the 'close' event, but only once 'end' fires
+	self.on('end', function () {
+		// The nextTick is necessary to prevent the 'request' module from causing an infinite loop
+		process.nextTick(function () {
+			self.emit('close')
+		})
+	})
+
+	if (mode === 'fetch') {
+		self._fetchResponse = response
+
+		self.url = response.url
+		self.statusCode = response.status
+		self.statusMessage = response.statusText
+		// backwards compatible version of for (<item> of <iterable>):
+		// for (var <item>,_i,_it = <iterable>[Symbol.iterator](); <item> = (_i = _it.next()).value,!_i.done;)
+		for (var header, _i, _it = response.headers[Symbol.iterator](); header = (_i = _it.next()).value, !_i.done;) {
+			self.headers[header[0].toLowerCase()] = header[1]
+			self.rawHeaders.push(header[0], header[1])
+		}
+
+		// TODO: this doesn't respect backpressure. Once WritableStream is available, this can be fixed
+		var reader = response.body.getReader()
+		function read () {
+			reader.read().then(function (result) {
+				if (self._destroyed)
+					return
+				if (result.done) {
+					self.push(null)
+					return
+				}
+				self.push(new Buffer(result.value))
+				read()
+			})
+		}
+		read()
+
+	} else {
+		self._xhr = xhr
+		self._pos = 0
+
+		self.url = xhr.responseURL
+		self.statusCode = xhr.status
+		self.statusMessage = xhr.statusText
+		var headers = xhr.getAllResponseHeaders().split(/\r?\n/)
+		headers.forEach(function (header) {
+			var matches = header.match(/^([^:]+):\s*(.*)/)
+			if (matches) {
+				var key = matches[1].toLowerCase()
+				if (key === 'set-cookie') {
+					if (self.headers[key] === undefined) {
+						self.headers[key] = []
+					}
+					self.headers[key].push(matches[2])
+				} else if (self.headers[key] !== undefined) {
+					self.headers[key] += ', ' + matches[2]
+				} else {
+					self.headers[key] = matches[2]
+				}
+				self.rawHeaders.push(matches[1], matches[2])
+			}
+		})
+
+		self._charset = 'x-user-defined'
+		if (!capability.overrideMimeType) {
+			var mimeType = self.rawHeaders['mime-type']
+			if (mimeType) {
+				var charsetMatch = mimeType.match(/;\s*charset=([^;])(;|$)/)
+				if (charsetMatch) {
+					self._charset = charsetMatch[1].toLowerCase()
+				}
+			}
+			if (!self._charset)
+				self._charset = 'utf-8' // best guess
+		}
+	}
+}
+
+inherits(IncomingMessage, stream.Readable)
+
+IncomingMessage.prototype._read = function () {}
+
+IncomingMessage.prototype._onXHRProgress = function () {
+	var self = this
+
+	var xhr = self._xhr
+
+	var response = null
+	switch (self._mode) {
+		case 'text:vbarray': // For IE9
+			if (xhr.readyState !== rStates.DONE)
+				break
+			try {
+				// This fails in IE8
+				response = new global.VBArray(xhr.responseBody).toArray()
+			} catch (e) {}
+			if (response !== null) {
+				self.push(new Buffer(response))
+				break
+			}
+			// Falls through in IE8	
+		case 'text':
+			try { // This will fail when readyState = 3 in IE9. Switch mode and wait for readyState = 4
+				response = xhr.responseText
+			} catch (e) {
+				self._mode = 'text:vbarray'
+				break
+			}
+			if (response.length > self._pos) {
+				var newData = response.substr(self._pos)
+				if (self._charset === 'x-user-defined') {
+					var buffer = new Buffer(newData.length)
+					for (var i = 0; i < newData.length; i++)
+						buffer[i] = newData.charCodeAt(i) & 0xff
+
+					self.push(buffer)
+				} else {
+					self.push(newData, self._charset)
+				}
+				self._pos = response.length
+			}
+			break
+		case 'arraybuffer':
+			if (xhr.readyState !== rStates.DONE)
+				break
+			response = xhr.response
+			self.push(new Buffer(new Uint8Array(response)))
+			break
+		case 'moz-chunked-arraybuffer': // take whole
+			response = xhr.response
+			if (xhr.readyState !== rStates.LOADING || !response)
+				break
+			self.push(new Buffer(new Uint8Array(response)))
+			break
+		case 'ms-stream':
+			response = xhr.response
+			if (xhr.readyState !== rStates.LOADING)
+				break
+			var reader = new global.MSStreamReader()
+			reader.onprogress = function () {
+				if (reader.result.byteLength > self._pos) {
+					self.push(new Buffer(new Uint8Array(reader.result.slice(self._pos))))
+					self._pos = reader.result.byteLength
+				}
+			}
+			reader.onload = function () {
+				self.push(null)
+			}
+			// reader.onerror = ??? // TODO: this
+			reader.readAsArrayBuffer(response)
+			break
+	}
+
+	// The ms-stream case handles end separately in reader.onload()
+	if (self._xhr.readyState === rStates.DONE && self._mode !== 'ms-stream') {
+		self.push(null)
+	}
+}
+
+}).call(this,_dereq_('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},_dereq_("buffer").Buffer)
+},{"./capability":182,"_process":175,"buffer":157,"inherits":166,"readable-stream":191}],185:[function(_dereq_,module,exports){
+arguments[4][158][0].apply(exports,arguments)
+},{"dup":158}],186:[function(_dereq_,module,exports){
 // a duplex stream is just a stream that is both readable and writable.
 // Since JS doesn't have multiple prototypal inheritance, this class
 // prototypally inherits from Readable, and then parasitically from
@@ -14546,7 +17489,7 @@ function forEach(xs, f) {
     f(xs[i], i);
   }
 }
-},{"./_stream_readable":77,"./_stream_writable":79,"core-util-is":51,"inherits":57,"process-nextick-args":65}],76:[function(_dereq_,module,exports){
+},{"./_stream_readable":188,"./_stream_writable":190,"core-util-is":160,"inherits":166,"process-nextick-args":174}],187:[function(_dereq_,module,exports){
 // a passthrough stream.
 // basically just the most minimal sort of Transform stream.
 // Every written chunk gets output as-is.
@@ -14573,7 +17516,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":78,"core-util-is":51,"inherits":57}],77:[function(_dereq_,module,exports){
+},{"./_stream_transform":189,"core-util-is":160,"inherits":166}],188:[function(_dereq_,module,exports){
 (function (process){
 'use strict';
 
@@ -15456,7 +18399,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,_dereq_('_process'))
-},{"./_stream_duplex":75,"_process":66,"buffer":48,"core-util-is":51,"events":54,"inherits":57,"isarray":73,"process-nextick-args":65,"string_decoder/":88,"util":46}],78:[function(_dereq_,module,exports){
+},{"./_stream_duplex":186,"_process":175,"buffer":157,"core-util-is":160,"events":163,"inherits":166,"isarray":185,"process-nextick-args":174,"string_decoder/":192,"util":155}],189:[function(_dereq_,module,exports){
 // a transform stream is a readable/writable stream where you do
 // something with the data.  Sometimes it's called a "filter",
 // but that's not a great name for it, since that implies a thing where
@@ -15637,7 +18580,7 @@ function done(stream, er) {
 
   return stream.push(null);
 }
-},{"./_stream_duplex":75,"core-util-is":51,"inherits":57}],79:[function(_dereq_,module,exports){
+},{"./_stream_duplex":186,"core-util-is":160,"inherits":166}],190:[function(_dereq_,module,exports){
 (function (process){
 // A bit simpler than readable streams.
 // Implement an async ._write(chunk, encoding, cb), and it'll handle all
@@ -16156,10 +19099,8 @@ function CorkedRequest(state) {
   };
 }
 }).call(this,_dereq_('_process'))
-},{"./_stream_duplex":75,"_process":66,"buffer":48,"core-util-is":51,"events":54,"inherits":57,"process-nextick-args":65,"util-deprecate":92}],80:[function(_dereq_,module,exports){
-module.exports = _dereq_("./lib/_stream_passthrough.js")
-
-},{"./lib/_stream_passthrough.js":76}],81:[function(_dereq_,module,exports){
+},{"./_stream_duplex":186,"_process":175,"buffer":157,"core-util-is":160,"events":163,"inherits":166,"process-nextick-args":174,"util-deprecate":196}],191:[function(_dereq_,module,exports){
+(function (process){
 var Stream = (function (){
   try {
     return _dereq_('st' + 'ream'); // hack to fix a circular dependency issue when used with browserify
@@ -16173,603 +19114,12 @@ exports.Duplex = _dereq_('./lib/_stream_duplex.js');
 exports.Transform = _dereq_('./lib/_stream_transform.js');
 exports.PassThrough = _dereq_('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":75,"./lib/_stream_passthrough.js":76,"./lib/_stream_readable.js":77,"./lib/_stream_transform.js":78,"./lib/_stream_writable.js":79}],82:[function(_dereq_,module,exports){
-module.exports = _dereq_("./lib/_stream_transform.js")
-
-},{"./lib/_stream_transform.js":78}],83:[function(_dereq_,module,exports){
-module.exports = _dereq_("./lib/_stream_writable.js")
-
-},{"./lib/_stream_writable.js":79}],84:[function(_dereq_,module,exports){
-(function (global){
-var ClientRequest = _dereq_('./lib/request')
-var extend = _dereq_('xtend')
-var statusCodes = _dereq_('builtin-status-codes')
-var url = _dereq_('url')
-
-var http = exports
-
-http.request = function (opts, cb) {
-	if (typeof opts === 'string')
-		opts = url.parse(opts)
-	else
-		opts = extend(opts)
-
-	// Normally, the page is loaded from http or https, so not specifying a protocol
-	// will result in a (valid) protocol-relative url. However, this won't work if
-	// the protocol is something else, like 'file:'
-	var defaultProtocol = global.location.protocol.search(/^https?:$/) === -1 ? 'http:' : ''
-
-	var protocol = opts.protocol || defaultProtocol
-	var host = opts.hostname || opts.host
-	var port = opts.port
-	var path = opts.path || '/'
-
-	// Necessary for IPv6 addresses
-	if (host && host.indexOf(':') !== -1)
-		host = '[' + host + ']'
-
-	// This may be a relative url. The browser should always be able to interpret it correctly.
-	opts.url = (host ? (protocol + '//' + host) : '') + (port ? ':' + port : '') + path
-	opts.method = (opts.method || 'GET').toUpperCase()
-	opts.headers = opts.headers || {}
-
-	// Also valid opts.auth, opts.mode
-
-	var req = new ClientRequest(opts)
-	if (cb)
-		req.on('response', cb)
-	return req
+if (!process.browser && process.env.READABLE_STREAM === 'disable' && Stream) {
+  module.exports = Stream;
 }
 
-http.get = function get (opts, cb) {
-	var req = http.request(opts, cb)
-	req.end()
-	return req
-}
-
-http.Agent = function () {}
-http.Agent.defaultMaxSockets = 4
-
-http.STATUS_CODES = statusCodes
-
-http.METHODS = [
-	'CHECKOUT',
-	'CONNECT',
-	'COPY',
-	'DELETE',
-	'GET',
-	'HEAD',
-	'LOCK',
-	'M-SEARCH',
-	'MERGE',
-	'MKACTIVITY',
-	'MKCOL',
-	'MOVE',
-	'NOTIFY',
-	'OPTIONS',
-	'PATCH',
-	'POST',
-	'PROPFIND',
-	'PROPPATCH',
-	'PURGE',
-	'PUT',
-	'REPORT',
-	'SEARCH',
-	'SUBSCRIBE',
-	'TRACE',
-	'UNLOCK',
-	'UNSUBSCRIBE'
-]
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./lib/request":86,"builtin-status-codes":50,"url":90,"xtend":97}],85:[function(_dereq_,module,exports){
-(function (global){
-exports.fetch = isFunction(global.fetch) && isFunction(global.ReadableByteStream)
-
-exports.blobConstructor = false
-try {
-	new Blob([new ArrayBuffer(1)])
-	exports.blobConstructor = true
-} catch (e) {}
-
-var xhr = new global.XMLHttpRequest()
-// If location.host is empty, e.g. if this page/worker was loaded
-// from a Blob, then use example.com to avoid an error
-xhr.open('GET', global.location.host ? '/' : 'https://example.com')
-
-function checkTypeSupport (type) {
-	try {
-		xhr.responseType = type
-		return xhr.responseType === type
-	} catch (e) {}
-	return false
-}
-
-// For some strange reason, Safari 7.0 reports typeof global.ArrayBuffer === 'object'.
-// Safari 7.1 appears to have fixed this bug.
-var haveArrayBuffer = typeof global.ArrayBuffer !== 'undefined'
-var haveSlice = haveArrayBuffer && isFunction(global.ArrayBuffer.prototype.slice)
-
-exports.arraybuffer = haveArrayBuffer && checkTypeSupport('arraybuffer')
-// These next two tests unavoidably show warnings in Chrome. Since fetch will always
-// be used if it's available, just return false for these to avoid the warnings.
-exports.msstream = !exports.fetch && haveSlice && checkTypeSupport('ms-stream')
-exports.mozchunkedarraybuffer = !exports.fetch && haveArrayBuffer &&
-	checkTypeSupport('moz-chunked-arraybuffer')
-exports.overrideMimeType = isFunction(xhr.overrideMimeType)
-exports.vbArray = isFunction(global.VBArray)
-
-function isFunction (value) {
-  return typeof value === 'function'
-}
-
-xhr = null // Help gc
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],86:[function(_dereq_,module,exports){
-(function (process,global,Buffer){
-// var Base64 = require('Base64')
-var capability = _dereq_('./capability')
-var inherits = _dereq_('inherits')
-var response = _dereq_('./response')
-var stream = _dereq_('stream')
-var toArrayBuffer = _dereq_('to-arraybuffer')
-
-var IncomingMessage = response.IncomingMessage
-var rStates = response.readyStates
-
-function decideMode (preferBinary) {
-	if (capability.fetch) {
-		return 'fetch'
-	} else if (capability.mozchunkedarraybuffer) {
-		return 'moz-chunked-arraybuffer'
-	} else if (capability.msstream) {
-		return 'ms-stream'
-	} else if (capability.arraybuffer && preferBinary) {
-		return 'arraybuffer'
-	} else if (capability.vbArray && preferBinary) {
-		return 'text:vbarray'
-	} else {
-		return 'text'
-	}
-}
-
-var ClientRequest = module.exports = function (opts) {
-	var self = this
-	stream.Writable.call(self)
-
-	self._opts = opts
-	self._body = []
-	self._headers = {}
-	if (opts.auth)
-		self.setHeader('Authorization', 'Basic ' + new Buffer(opts.auth).toString('base64'))
-	Object.keys(opts.headers).forEach(function (name) {
-		self.setHeader(name, opts.headers[name])
-	})
-
-	var preferBinary
-	if (opts.mode === 'prefer-streaming') {
-		// If streaming is a high priority but binary compatibility and
-		// the accuracy of the 'content-type' header aren't
-		preferBinary = false
-	} else if (opts.mode === 'allow-wrong-content-type') {
-		// If streaming is more important than preserving the 'content-type' header
-		preferBinary = !capability.overrideMimeType
-	} else if (!opts.mode || opts.mode === 'default' || opts.mode === 'prefer-fast') {
-		// Use binary if text streaming may corrupt data or the content-type header, or for speed
-		preferBinary = true
-	} else {
-		throw new Error('Invalid value for opts.mode')
-	}
-	self._mode = decideMode(preferBinary)
-
-	self.on('finish', function () {
-		self._onFinish()
-	})
-}
-
-inherits(ClientRequest, stream.Writable)
-
-ClientRequest.prototype.setHeader = function (name, value) {
-	var self = this
-	var lowerName = name.toLowerCase()
-	// This check is not necessary, but it prevents warnings from browsers about setting unsafe
-	// headers. To be honest I'm not entirely sure hiding these warnings is a good thing, but
-	// http-browserify did it, so I will too.
-	if (unsafeHeaders.indexOf(lowerName) !== -1)
-		return
-
-	self._headers[lowerName] = {
-		name: name,
-		value: value
-	}
-}
-
-ClientRequest.prototype.getHeader = function (name) {
-	var self = this
-	return self._headers[name.toLowerCase()].value
-}
-
-ClientRequest.prototype.removeHeader = function (name) {
-	var self = this
-	delete self._headers[name.toLowerCase()]
-}
-
-ClientRequest.prototype._onFinish = function () {
-	var self = this
-
-	if (self._destroyed)
-		return
-	var opts = self._opts
-
-	var headersObj = self._headers
-	var body
-	if (opts.method === 'POST' || opts.method === 'PUT' || opts.method === 'PATCH') {
-		if (capability.blobConstructor) {
-			body = new global.Blob(self._body.map(function (buffer) {
-				return toArrayBuffer(buffer)
-			}), {
-				type: (headersObj['content-type'] || {}).value || ''
-			})
-		} else {
-			// get utf8 string
-			body = Buffer.concat(self._body).toString()
-		}
-	}
-
-	if (self._mode === 'fetch') {
-		var headers = Object.keys(headersObj).map(function (name) {
-			return [headersObj[name].name, headersObj[name].value]
-		})
-
-		global.fetch(self._opts.url, {
-			method: self._opts.method,
-			headers: headers,
-			body: body,
-			mode: 'cors',
-			credentials: opts.withCredentials ? 'include' : 'same-origin'
-		}).then(function (response) {
-			self._fetchResponse = response
-			self._connect()
-		}, function (reason) {
-			self.emit('error', reason)
-		})
-	} else {
-		var xhr = self._xhr = new global.XMLHttpRequest()
-		try {
-			xhr.open(self._opts.method, self._opts.url, true)
-		} catch (err) {
-			process.nextTick(function () {
-				self.emit('error', err)
-			})
-			return
-		}
-
-		// Can't set responseType on really old browsers
-		if ('responseType' in xhr)
-			xhr.responseType = self._mode.split(':')[0]
-
-		if ('withCredentials' in xhr)
-			xhr.withCredentials = !!opts.withCredentials
-
-		if (self._mode === 'text' && 'overrideMimeType' in xhr)
-			xhr.overrideMimeType('text/plain; charset=x-user-defined')
-
-		Object.keys(headersObj).forEach(function (name) {
-			xhr.setRequestHeader(headersObj[name].name, headersObj[name].value)
-		})
-
-		self._response = null
-		xhr.onreadystatechange = function () {
-			switch (xhr.readyState) {
-				case rStates.LOADING:
-				case rStates.DONE:
-					self._onXHRProgress()
-					break
-			}
-		}
-		// Necessary for streaming in Firefox, since xhr.response is ONLY defined
-		// in onprogress, not in onreadystatechange with xhr.readyState = 3
-		if (self._mode === 'moz-chunked-arraybuffer') {
-			xhr.onprogress = function () {
-				self._onXHRProgress()
-			}
-		}
-
-		xhr.onerror = function () {
-			if (self._destroyed)
-				return
-			self.emit('error', new Error('XHR error'))
-		}
-
-		try {
-			xhr.send(body)
-		} catch (err) {
-			process.nextTick(function () {
-				self.emit('error', err)
-			})
-			return
-		}
-	}
-}
-
-/**
- * Checks if xhr.status is readable and non-zero, indicating no error.
- * Even though the spec says it should be available in readyState 3,
- * accessing it throws an exception in IE8
- */
-function statusValid (xhr) {
-	try {
-		var status = xhr.status
-		return (status !== null && status !== 0)
-	} catch (e) {
-		return false
-	}
-}
-
-ClientRequest.prototype._onXHRProgress = function () {
-	var self = this
-
-	if (!statusValid(self._xhr) || self._destroyed)
-		return
-
-	if (!self._response)
-		self._connect()
-
-	self._response._onXHRProgress()
-}
-
-ClientRequest.prototype._connect = function () {
-	var self = this
-
-	if (self._destroyed)
-		return
-
-	self._response = new IncomingMessage(self._xhr, self._fetchResponse, self._mode)
-	self.emit('response', self._response)
-}
-
-ClientRequest.prototype._write = function (chunk, encoding, cb) {
-	var self = this
-
-	self._body.push(chunk)
-	cb()
-}
-
-ClientRequest.prototype.abort = ClientRequest.prototype.destroy = function () {
-	var self = this
-	self._destroyed = true
-	if (self._response)
-		self._response._destroyed = true
-	if (self._xhr)
-		self._xhr.abort()
-	// Currently, there isn't a way to truly abort a fetch.
-	// If you like bikeshedding, see https://github.com/whatwg/fetch/issues/27
-}
-
-ClientRequest.prototype.end = function (data, encoding, cb) {
-	var self = this
-	if (typeof data === 'function') {
-		cb = data
-		data = undefined
-	}
-
-	stream.Writable.prototype.end.call(self, data, encoding, cb)
-}
-
-ClientRequest.prototype.flushHeaders = function () {}
-ClientRequest.prototype.setTimeout = function () {}
-ClientRequest.prototype.setNoDelay = function () {}
-ClientRequest.prototype.setSocketKeepAlive = function () {}
-
-// Taken from http://www.w3.org/TR/XMLHttpRequest/#the-setrequestheader%28%29-method
-var unsafeHeaders = [
-	'accept-charset',
-	'accept-encoding',
-	'access-control-request-headers',
-	'access-control-request-method',
-	'connection',
-	'content-length',
-	'cookie',
-	'cookie2',
-	'date',
-	'dnt',
-	'expect',
-	'host',
-	'keep-alive',
-	'origin',
-	'referer',
-	'te',
-	'trailer',
-	'transfer-encoding',
-	'upgrade',
-	'user-agent',
-	'via'
-]
-
-}).call(this,_dereq_('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},_dereq_("buffer").Buffer)
-},{"./capability":85,"./response":87,"_process":66,"buffer":48,"inherits":57,"stream":72,"to-arraybuffer":89}],87:[function(_dereq_,module,exports){
-(function (process,global,Buffer){
-var capability = _dereq_('./capability')
-var inherits = _dereq_('inherits')
-var stream = _dereq_('stream')
-
-var rStates = exports.readyStates = {
-	UNSENT: 0,
-	OPENED: 1,
-	HEADERS_RECEIVED: 2,
-	LOADING: 3,
-	DONE: 4
-}
-
-var IncomingMessage = exports.IncomingMessage = function (xhr, response, mode) {
-	var self = this
-	stream.Readable.call(self)
-
-	self._mode = mode
-	self.headers = {}
-	self.rawHeaders = []
-	self.trailers = {}
-	self.rawTrailers = []
-
-	// Fake the 'close' event, but only once 'end' fires
-	self.on('end', function () {
-		// The nextTick is necessary to prevent the 'request' module from causing an infinite loop
-		process.nextTick(function () {
-			self.emit('close')
-		})
-	})
-
-	if (mode === 'fetch') {
-		self._fetchResponse = response
-
-		self.statusCode = response.status
-		self.statusMessage = response.statusText
-		// backwards compatible version of for (<item> of <iterable>):
-		// for (var <item>,_i,_it = <iterable>[Symbol.iterator](); <item> = (_i = _it.next()).value,!_i.done;)
-		for (var header, _i, _it = response.headers[Symbol.iterator](); header = (_i = _it.next()).value, !_i.done;) {
-			self.headers[header[0].toLowerCase()] = header[1]
-			self.rawHeaders.push(header[0], header[1])
-		}
-
-		// TODO: this doesn't respect backpressure. Once WritableStream is available, this can be fixed
-		var reader = response.body.getReader()
-		function read () {
-			reader.read().then(function (result) {
-				if (self._destroyed)
-					return
-				if (result.done) {
-					self.push(null)
-					return
-				}
-				self.push(new Buffer(result.value))
-				read()
-			})
-		}
-		read()
-
-	} else {
-		self._xhr = xhr
-		self._pos = 0
-
-		self.statusCode = xhr.status
-		self.statusMessage = xhr.statusText
-		var headers = xhr.getAllResponseHeaders().split(/\r?\n/)
-		headers.forEach(function (header) {
-			var matches = header.match(/^([^:]+):\s*(.*)/)
-			if (matches) {
-				var key = matches[1].toLowerCase()
-				if (key === 'set-cookie') {
-					if (self.headers[key] === undefined) {
-						self.headers[key] = []
-					}
-					self.headers[key].push(matches[2])
-				} else if (self.headers[key] !== undefined) {
-					self.headers[key] += ', ' + matches[2]
-				} else {
-					self.headers[key] = matches[2]
-				}
-				self.rawHeaders.push(matches[1], matches[2])
-			}
-		})
-
-		self._charset = 'x-user-defined'
-		if (!capability.overrideMimeType) {
-			var mimeType = self.rawHeaders['mime-type']
-			if (mimeType) {
-				var charsetMatch = mimeType.match(/;\s*charset=([^;])(;|$)/)
-				if (charsetMatch) {
-					self._charset = charsetMatch[1].toLowerCase()
-				}
-			}
-			if (!self._charset)
-				self._charset = 'utf-8' // best guess
-		}
-	}
-}
-
-inherits(IncomingMessage, stream.Readable)
-
-IncomingMessage.prototype._read = function () {}
-
-IncomingMessage.prototype._onXHRProgress = function () {
-	var self = this
-
-	var xhr = self._xhr
-
-	var response = null
-	switch (self._mode) {
-		case 'text:vbarray': // For IE9
-			if (xhr.readyState !== rStates.DONE)
-				break
-			try {
-				// This fails in IE8
-				response = new global.VBArray(xhr.responseBody).toArray()
-			} catch (e) {}
-			if (response !== null) {
-				self.push(new Buffer(response))
-				break
-			}
-			// Falls through in IE8	
-		case 'text':
-			try { // This will fail when readyState = 3 in IE9. Switch mode and wait for readyState = 4
-				response = xhr.responseText
-			} catch (e) {
-				self._mode = 'text:vbarray'
-				break
-			}
-			if (response.length > self._pos) {
-				var newData = response.substr(self._pos)
-				if (self._charset === 'x-user-defined') {
-					var buffer = new Buffer(newData.length)
-					for (var i = 0; i < newData.length; i++)
-						buffer[i] = newData.charCodeAt(i) & 0xff
-
-					self.push(buffer)
-				} else {
-					self.push(newData, self._charset)
-				}
-				self._pos = response.length
-			}
-			break
-		case 'arraybuffer':
-			if (xhr.readyState !== rStates.DONE)
-				break
-			response = xhr.response
-			self.push(new Buffer(new Uint8Array(response)))
-			break
-		case 'moz-chunked-arraybuffer': // take whole
-			response = xhr.response
-			if (xhr.readyState !== rStates.LOADING || !response)
-				break
-			self.push(new Buffer(new Uint8Array(response)))
-			break
-		case 'ms-stream':
-			response = xhr.response
-			if (xhr.readyState !== rStates.LOADING)
-				break
-			var reader = new global.MSStreamReader()
-			reader.onprogress = function () {
-				if (reader.result.byteLength > self._pos) {
-					self.push(new Buffer(new Uint8Array(reader.result.slice(self._pos))))
-					self._pos = reader.result.byteLength
-				}
-			}
-			reader.onload = function () {
-				self.push(null)
-			}
-			// reader.onerror = ??? // TODO: this
-			reader.readAsArrayBuffer(response)
-			break
-	}
-
-	// The ms-stream case handles end separately in reader.onload()
-	if (self._xhr.readyState === rStates.DONE && self._mode !== 'ms-stream') {
-		self.push(null)
-	}
-}
-
-}).call(this,_dereq_('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},_dereq_("buffer").Buffer)
-},{"./capability":85,"_process":66,"buffer":48,"inherits":57,"stream":72}],88:[function(_dereq_,module,exports){
+}).call(this,_dereq_('_process'))
+},{"./lib/_stream_duplex.js":186,"./lib/_stream_passthrough.js":187,"./lib/_stream_readable.js":188,"./lib/_stream_transform.js":189,"./lib/_stream_writable.js":190,"_process":175}],192:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -16992,7 +19342,7 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":48}],89:[function(_dereq_,module,exports){
+},{"buffer":157}],193:[function(_dereq_,module,exports){
 var Buffer = _dereq_('buffer').Buffer
 
 module.exports = function (buf) {
@@ -17021,7 +19371,7 @@ module.exports = function (buf) {
 	}
 }
 
-},{"buffer":48}],90:[function(_dereq_,module,exports){
+},{"buffer":157}],194:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -17755,7 +20105,7 @@ Url.prototype.parseHost = function() {
   if (host) this.hostname = host;
 };
 
-},{"./util":91,"punycode":67,"querystring":71}],91:[function(_dereq_,module,exports){
+},{"./util":195,"punycode":176,"querystring":180}],195:[function(_dereq_,module,exports){
 'use strict';
 
 module.exports = {
@@ -17773,7 +20123,7 @@ module.exports = {
   }
 };
 
-},{}],92:[function(_dereq_,module,exports){
+},{}],196:[function(_dereq_,module,exports){
 (function (global){
 
 /**
@@ -17844,14 +20194,14 @@ function config (name) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],93:[function(_dereq_,module,exports){
+},{}],197:[function(_dereq_,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],94:[function(_dereq_,module,exports){
+},{}],198:[function(_dereq_,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -18441,7 +20791,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,_dereq_('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":93,"_process":66,"inherits":57}],95:[function(_dereq_,module,exports){
+},{"./support/isBuffer":197,"_process":175,"inherits":166}],199:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -18486,7 +20836,7 @@ function ws(uri, protocols, opts) {
 
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
-},{}],96:[function(_dereq_,module,exports){
+},{}],200:[function(_dereq_,module,exports){
 (function (process,Buffer){
 /**
  * Wrapper for built-in http.js to emulate the browser XMLHttpRequest object.
@@ -19110,7 +21460,7 @@ exports.XMLHttpRequest = function() {
 };
 
 }).call(this,_dereq_('_process'),_dereq_("buffer").Buffer)
-},{"_process":66,"buffer":48,"child_process":47,"fs":47,"http":84,"https":55,"url":90}],97:[function(_dereq_,module,exports){
+},{"_process":175,"buffer":157,"child_process":156,"fs":156,"http":181,"https":164,"url":194}],201:[function(_dereq_,module,exports){
 module.exports = extend
 
 var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -19131,18 +21481,15 @@ function extend() {
     return target
 }
 
-},{}],98:[function(_dereq_,module,exports){
+},{}],202:[function(_dereq_,module,exports){
 module.exports={
   "name": "twilio-ip-messaging",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "A library for Twilio IP messaging",
   "main": "lib/index.js",
   "repository": {
     "type": "git",
-    "url": "https://code.hq.twilio.com/rtd/ipmessaging-js-lib.git"
-  },
-  "scripts": {
-    "postinstall": "node ./scripts/postinstall.js"
+    "url": "https://github.com/twilio/twilio-ip-messaging.js"
   },
   "author": "Twilio",
   "license": "MIT",
@@ -19160,7 +21507,9 @@ module.exports={
   "devDependencies": {
     "async": "^2.0.0-rc.1",
     "babel-eslint": "^4.1.3",
+    "babel-plugin-transform-runtime": "^6.7.5",
     "babel-preset-es2015": "^6.3.13",
+    "babel-runtime": "^6.6.1",
     "babelify": "^7.2.0",
     "browserify": "^12.0.1",
     "chai": "^3.2.0",
@@ -19180,7 +21529,7 @@ module.exports={
     "gulp-replace": "^0.5.4",
     "gulp-tap": "^0.1.3",
     "gulp-uglify": "^1.2.0",
-    "jsdoc": "git+http://github.com/ryan-rowland/jsdoc.git",
+    "jsdoc": "^3.4.0",
     "jsdoc-babel": "^0.1.0",
     "mocha.parallel": "^0.11.2",
     "proxyquire": "^1.7.3",
