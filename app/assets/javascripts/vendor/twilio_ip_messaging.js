@@ -1,4 +1,4 @@
-/* twilio-ip-messaging.js 0.10.2
+/* twilio-ip-messaging.js 0.10.3
 The following license applies to all parts of this software except as
 documented below.
 
@@ -241,23 +241,32 @@ DataSyncClient.prototype.createEntity = function (data, purpose) {
 
 /**
  * Open exisiting data entity
- * {@see DataEntity}
+ * @param {string} uri Stream location
+ * @param {boolean} subscribe Should subscribe immediately
+ * @return {Promise<EventStream>}
  */
-DataSyncClient.prototype.openEntity = function (uri) {
+DataSyncClient.prototype.openEntity = function (uri, subscribe) {
   var _this3 = this;
 
+  if (subscribe) {
+    uri += '?subscribe=true';
+  }
   return this._network.get(uri).then(function (response) {
     if (response.body.hasOwnProperty('type')) {
       throw new Error('Unexpected data type: ' + response.body.type + ' when entity was expected');
     }
-    return new DataEntity(_this3._getDependencies(), response.body);
+    var entity = new DataEntity(_this3._getDependencies(), response.body);
+    if (response.body.subscriptionId) {
+      _this3._subscriptions.add(entity.uri, entity, response.body.subscriptionId);
+    }
+    return entity;
   });
 };
 
 /**
- *  Creates the new Event Stream.
- *  @param {string} purpose - the purpose of created object
- *  @return Returns the promise which might fail
+ * Creates the new Event Stream.
+ * @param {string} purpose - the purpose of created object
+ * @return {Promise<EventStream>}
  */
 DataSyncClient.prototype.createStream = function (purpose, context) {
   var _this4 = this;
@@ -280,17 +289,25 @@ DataSyncClient.prototype.createStream = function (purpose, context) {
 /**
  *  Open exiting event stream by given URI
  *  @param {string} uri Stream location
+ *  @param {boolean} subscribe Should subscribe immediately
  *  @return Promise<EventStream>
  */
-DataSyncClient.prototype.openStream = function (uri) {
+DataSyncClient.prototype.openStream = function (uri, subscribe) {
   var _this5 = this;
 
+  if (subscribe) {
+    uri += '?subscribe=true';
+  }
   return this._network.get(uri).then(function (response) {
     if (response.body.type !== 'stream') {
       throw new Error('Unexpected data type: ' + response.body.type);
     }
     log.debug('DSS I: data stream opened: ', response);
-    return new DataStream(_this5._getDependencies(), response.body);
+    var stream = new DataStream(_this5._getDependencies(), response.body);
+    if (response.body.subscriptionId) {
+      _this5._subscriptions.add(stream.uri, stream, response.body.subscriptionId);
+    }
+    return stream;
   });
 };
 
@@ -318,16 +335,24 @@ DataSyncClient.prototype.createMap = function (purpose, context) {
 /**
  * Open an existing Map
  * @param {string} uri
+ * @param {boolean} subscribe Should subscribe immediately
  * @return Promise<DataMap>
  */
-DataSyncClient.prototype.openMap = function (uri) {
+DataSyncClient.prototype.openMap = function (uri, subscribe) {
   var _this7 = this;
 
+  if (subscribe) {
+    uri += '?subscribe=true';
+  }
   return this._network.get(uri).then(function (response) {
     if (response.body.type !== 'map') {
       throw new Error('Unexpected data type: ' + response.body.type);
     }
-    return new DataMap(_this7._getDependencies(), response.body);
+    var map = new DataMap(_this7._getDependencies(), response.body);
+    if (response.body.subscriptionId) {
+      _this7._subscriptions.add(map.uri, map, response.body.subscriptionId);
+    }
+    return map;
   });
 };
 
@@ -346,7 +371,7 @@ DataSyncClient.prototype.setAuthToken = function (token) {
 
 module.exports = DataSyncClient;
 
-},{"./configuration.js":3,"./dataentity.js":4,"./datamap.js":5,"./datastream.js":6,"./network.js":7,"./router.js":8,"./subscriptions.js":9,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"loglevel":169}],2:[function(_dereq_,module,exports){
+},{"./configuration.js":3,"./dataentity.js":4,"./datamap.js":5,"./datastream.js":6,"./network.js":8,"./router.js":9,"./subscriptions.js":10,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"loglevel":166}],2:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -387,15 +412,15 @@ function CollectionEntity(data) {
   });
 }
 
-CollectionEntity.prototype._update = function (value) {
-  this._value = value;
+CollectionEntity.prototype._update = function (other) {
+  this._value = other.value;
 };
 
 (0, _freeze2.default)(CollectionEntity);
 
 module.exports = CollectionEntity;
 
-},{"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42}],3:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34}],3:[function(_dereq_,module,exports){
 'use strict';
 
 var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
@@ -456,7 +481,7 @@ DataSyncConfig.prototype.updateToken = function (token) {
 
 module.exports = DataSyncConfig;
 
-},{"babel-runtime/core-js/object/define-properties":41}],4:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/object/define-properties":33}],4:[function(_dereq_,module,exports){
 'use strict';
 
 var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
@@ -790,7 +815,7 @@ DataEntity.prototype.update = function (path, value) {
 
 module.exports = DataEntity;
 
-},{"../../util/jsondiff":37,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"babel-runtime/helpers/typeof":47,"events":163,"loglevel":169,"util":198}],5:[function(_dereq_,module,exports){
+},{"../../util/jsondiff":28,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"babel-runtime/core-js/promise":36,"babel-runtime/helpers/typeof":40,"events":160,"loglevel":166,"util":205}],5:[function(_dereq_,module,exports){
 'use strict';
 
 var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
@@ -953,7 +978,7 @@ DataMap.prototype.set = function (key, value) {
   if (typeof entity !== 'undefined') {
     var _uri = entity.uri;
     return this._deps.network.put(_uri, { data: value }).then(function () {
-      entity._update(value);
+      entity._update({ value: value });
     });
   }
 
@@ -1185,7 +1210,7 @@ DataMap.prototype._handleContextUpdate = function (data) {
 
 module.exports = DataMap;
 
-},{"../../util":36,"./collectionentity":2,"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"babel-runtime/helpers/typeof":47,"events":163,"util":198}],6:[function(_dereq_,module,exports){
+},{"../../util":27,"./collectionentity":2,"babel-runtime/core-js/map":32,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"babel-runtime/core-js/promise":36,"babel-runtime/helpers/typeof":40,"events":160,"util":205}],6:[function(_dereq_,module,exports){
 'use strict';
 
 var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
@@ -1212,6 +1237,7 @@ var util = _dereq_('../../util');
 var log = _dereq_('loglevel');
 
 var Entity = _dereq_('./collectionentity');
+var Cache = _dereq_('./datastreamcache');
 
 /**
  * @class EventStream
@@ -1224,13 +1250,14 @@ function EventStream(deps, descriptor) {
     _config: { value: deps.config, writable: false },
     _deps: { value: deps, writable: false },
     _descriptor: { value: descriptor },
+    _cache: { value: new Cache() },
 
     _links: { get: function get() {
         return _this._descriptor.links;
       } },
     _context: { writable: true },
     _revision: { value: descriptor.revision, writable: true },
-    _entities: { value: new _map2.default(), writable: false },
+    _entities: { value: new _map2.default() },
 
     uri: { enumerable: true,
       get: function get() {
@@ -1253,7 +1280,7 @@ inherits(EventStream, EventEmitter);
  * @private
  */
 EventStream.prototype._uriForKey = function (id) {
-  return this._links.entities + '/' + id;
+  return this._links.entities + '/' + id + '?metadata=all';
 };
 
 /**
@@ -1280,11 +1307,10 @@ EventStream.prototype.add = function (value) {
   var _this2 = this;
 
   return this._deps.network.post(this._links.entities, { data: value }).then(function (response) {
-    var streamEntity = new Entity({ id: Number(response.body.entity_id),
+    var entity = new Entity({ id: Number(response.body.entity_id),
       uri: response.body.links.entity,
       value: value });
-    _this2._entities.set(streamEntity.id, streamEntity);
-    return streamEntity.id;
+    return _this2._cache.set(entity.id, entity);
   });
 };
 
@@ -1293,16 +1319,20 @@ EventStream.prototype.add = function (value) {
  * @returns Promise to remove, which may fail
  */
 EventStream.prototype.remove = function (id) {
+  var _this3 = this;
+
   var uri = this._uriForKey(id);
   return this._deps.network.delete(uri).then(function () {
-    return;
+    return _this3._cache.remove(id);
   });
 };
 
 EventStream.prototype.update = function (id, value) {
+  var _this4 = this;
+
   var uri = this._uriForKey(id);
   return this._deps.network.put(uri, { data: value }).then(function () {
-    return;
+    return _this4._cache.update(id, value);
   });
 };
 
@@ -1311,19 +1341,23 @@ EventStream.prototype.update = function (id, value) {
  * @param {Number} id - entity id
  */
 EventStream.prototype.get = function (entityId) {
-  var _this3 = this;
+  var _this5 = this;
 
-  if (this._entities.has(entityId)) {
-    return _promise2.default.resolve(this._entities.get(entityId));
+  var cached = this._cache.get(entityId);
+  if (cached) {
+    return _promise2.default.resolve(cached);
   }
 
   var uri = this._uriForKey(entityId);
   return this._deps.network.get(uri).then(function (response) {
-    var streamEntity = new Entity({ id: Number(response.body.entity_id),
-      uri: uri,
-      value: response.body.data });
-    _this3._entities.set(streamEntity.id, streamEntity);
-    return streamEntity;
+    var id = Number(response.body.entity_id);
+    if (isNaN(id)) {
+      log.error('DSS E: Malformed answer from server: ', uri, response);
+      throw new Error('Can\'t parse server response');
+    }
+
+    var streamEntity = new Entity({ id: id, uri: uri, value: response.body.data });
+    return _this5._cache.set(streamEntity.id, streamEntity);
   });
 };
 
@@ -1332,12 +1366,12 @@ EventStream.prototype.get = function (entityId) {
  * @private
  */
 EventStream.prototype._queryEvents = function () {
-  var _this4 = this;
+  var _this6 = this;
 
   var uri = this._links.events + '?from=' + this._revision + '&limit=100';
   return this._deps.network.get(uri).then(function (response) {
     response.body.results.forEach(function (event) {
-      return _this4._update(event);
+      return _this6._update(event);
     });
   });
 };
@@ -1351,10 +1385,19 @@ EventStream.prototype._queryEvents = function () {
  *  @param {String} order - order of entities, should be 'asc' or 'desc'
  */
 EventStream.prototype.queryEntities = function (direction, from, limit, order) {
-  var _this5 = this;
+  var _this7 = this;
 
   direction = direction || 'forward';
   order = order || 'asc';
+
+  var cachedData = this._cache.query(direction, from, limit, order);
+  if (cachedData.state === Cache.state.COMPLETE) {
+    return _promise2.default.resolve(cachedData.items);
+  }
+
+  if (cachedData.state === Cache.state.HEAD || cachedData.state === Cache.state.TAIL) {
+    from = cachedData.since;
+  }
 
   var uri = new util.UriBuilder(this._links.entities).arg('direction', direction).arg('from', from).arg('limit', limit).arg('order', order).build();
 
@@ -1364,55 +1407,46 @@ EventStream.prototype.queryEntities = function (direction, from, limit, order) {
         uri: el.links.entity,
         value: el.data });
     });
-    queryResult.forEach(function (entity) {
-      return _this5._entities.set(entity.id, entity);
-    });
-    return queryResult;
+    return _this7._cache.store(queryResult, { from: from, direction: direction });
+  }).then(function (deduplicated) {
+    if (cachedData.state === Cache.state.HEAD) {
+      var result = cachedData.items;
+      result.push.apply(result, deduplicated);
+      return result;
+    }
+
+    if (cachedData.state === Cache.state.TAIL) {
+      var _result = deduplicated;
+      _result.push.apply(_result, cachedData.items);
+      return _result;
+    }
+
+    return deduplicated;
   });
-};
-
-/**
- *  Query entities from the stream
- *
- *  @param {String} from Entity, which should be used as an anchor, or "end" if it should be got from end
- *  @param {Number} count - amount of entities to get
- *  @param {String} order - order of entities, should be 'asc' or 'desc'
- */
-EventStream.prototype.queryEntitiesBefore = function (from, count, order) {
-  return this.queryEntities('backwards', from, count, order);
-};
-
-/**
- * Query last entities from event stream
- * @param {Integer} count Number of entities to fetch
- * @param {String} order Order of entites. Could be 'asc' or 'desc'
- */
-EventStream.prototype.queryLastEntities = function (count, order) {
-  return this.queryEntitiesBefore('end', count, order);
 };
 
 /**
  * @return Promise<Object> Context of collection
  */
 EventStream.prototype.getContext = function () {
-  var _this6 = this;
+  var _this8 = this;
 
   if (typeof this._context !== 'undefined') {
     return _promise2.default.resolve(this._context);
   }
 
   return this._deps.network.get(this._links.context).then(function (response) {
-    _this6._context = response.body.data;
-    return _this6._context;
+    _this8._context = response.body.data;
+    return _this8._context;
   });
 };
 
 EventStream.prototype.updateContext = function (context) {
-  var _this7 = this;
+  var _this9 = this;
 
   return this._deps.network.put(this._links.context, { data: context }).then(function () {
-    _this7._context = context;
-    _this7.emit('contextUpdated', context);
+    _this9._context = context;
+    _this9.emit('contextUpdated', context);
   }).catch(function (err) {
     log.error('Failed to update context', err);
     throw err;
@@ -1470,13 +1504,12 @@ EventStream.prototype._update = function (update) {
  * @private
  */
 EventStream.prototype._handleEntityAdded = function (entityId, uri, data) {
-  if (!this._entities.has(entityId)) {
-    var streamEntity = new Entity({ id: Number(entityId),
+  if (!this._cache.has(entityId)) {
+    var entity = new Entity({ id: Number(entityId),
       uri: uri,
       value: data });
-
-    this._entities.set(entityId, streamEntity);
-    this.emit('entityAdded', streamEntity);
+    entity = this._cache.set(entityId, entity);
+    this.emit('entityAdded', entity);
   }
 };
 
@@ -1485,22 +1518,19 @@ EventStream.prototype._handleEntityAdded = function (entityId, uri, data) {
  * @private
  */
 EventStream.prototype._handleEntityUpdated = function (entityId, uri, data) {
-  var streamEntity = new Entity({ id: entityId,
+  var entity = new Entity({ id: entityId,
     uri: uri,
     value: data });
-
-  this._entities.set(entityId, streamEntity);
-  this.emit('entityUpdated', streamEntity);
+  entity = this._cache.update(entityId, entity);
+  this.emit('entityUpdated', entity);
 };
 
 /**
  * @private
  */
 EventStream.prototype._handleEntityRemoved = function (entityId) {
-  if (this._entities.has(entityId)) {
-    this._entities.delete(entityId);
-    this.emit('entityRemoved', entityId);
-  }
+  this._cache.remove(entityId);
+  this.emit('entityRemoved', entityId);
 };
 
 EventStream.prototype._handleContextUpdate = function (data) {
@@ -1512,7 +1542,238 @@ EventStream.prototype._handleContextUpdate = function (data) {
 
 module.exports = EventStream;
 
-},{"../../util":36,"./collectionentity":2,"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"events":163,"loglevel":169,"util":198}],7:[function(_dereq_,module,exports){
+},{"../../util":27,"./collectionentity":2,"./datastreamcache":7,"babel-runtime/core-js/map":32,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"babel-runtime/core-js/promise":36,"events":160,"loglevel":166,"util":205}],7:[function(_dereq_,module,exports){
+'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _getIterator2 = _dereq_('babel-runtime/core-js/get-iterator');
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
+var _map = _dereq_('babel-runtime/core-js/map');
+
+var _map2 = _interopRequireDefault(_map);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var log = _dereq_('loglevel');
+
+function Cache() {
+  (0, _defineProperties2.default)(this, {
+    _cacheHeadEnsured: { value: false, writable: true },
+    _cacheTailEnsured: { value: false, writable: true },
+    _ensuredCacheRanges: { value: [], writable: true },
+
+    _items: { value: new _map2.default() }
+  });
+}
+
+Cache.state = {
+  FAILED: 'failed',
+  HEAD: 'head',
+  TAIL: 'tail',
+  COMPLETE: 'complete'
+};
+
+function mergeRange(ranges, range) {
+  ranges.push(range);
+  ranges.sort(function (a, b) {
+    return a.begin - b.begin;
+  });
+  return ranges.reduce(function (res, x) {
+    if (res.length === 0) {
+      res.push(x);return res;
+    }
+
+    var last = res[res.length - 1];
+    if (last.end < x.begin - 1) {
+      res.push(x);return res;
+    }
+
+    last.end = Math.max(last.end, x.end);
+    return res;
+  }, []);
+}
+
+Cache.prototype._getRangeFor = function (index, direction) {
+  var edge = typeof index === 'undefined';
+  if (this._ensuredCacheRanges.length === 0) {
+    return null;
+  }
+
+  if (edge && direction === 'forward' && this._cacheHeadEnsured) {
+    return this._ensuredCacheRanges[0];
+  } else if (edge && direction !== 'forward' && this._cacheTailEnsured) {
+    return this._ensuredCacheRanges[this._ensuredCacheRanges.length - 1];
+  }
+
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
+
+  try {
+    for (var _iterator = (0, _getIterator3.default)(this._ensuredCacheRanges), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var range = _step.value;
+
+      if (index >= range.begin && index <= range.end) {
+        return range;
+      }
+    }
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator.return) {
+        _iterator.return();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
+    }
+  }
+
+  return null;
+};
+
+Cache.prototype.store = function store(items, args) {
+  var _this = this;
+
+  var dedupItems = items.map(function (item) {
+    var knownItem = _this._items.get(item.id);
+    if (!knownItem) {
+      _this._items.set(item.id, item);
+      knownItem = item;
+    }
+    return knownItem;
+  });
+
+  if (dedupItems.length > 0) {
+    var range = [dedupItems[0].id, dedupItems[dedupItems.length - 1].id].sort(function (x, y) {
+      return x - y;
+    });
+
+    // Always use "from" argument as a range edge, if provided
+    if (typeof args.from !== 'undefined' && args.direction === 'forward') {
+      range[0] = args.from;
+    } else if (typeof args.from !== 'undefined') {
+      range[1] = args.from;
+    }
+
+    if (this._cacheTailEnsured) {
+      var maxItemId = items.reduce(function (prv, cur) {
+        return prv > cur.id ? prv : cur.id;
+      }, 0);
+      var lastRange = this._getRangeFor(void 0, 'backwards');
+      if (lastRange && lastRange.end < maxItemId) {
+        range[0] = lastRange.end;
+      }
+    }
+
+    this._ensuredCacheRanges = mergeRange(this._ensuredCacheRanges, { begin: range[0], end: range[1] });
+
+    // If request reached begin or end - mark them as ensured
+    if (typeof args.from === 'undefined' && args.direction === 'forward') {
+      this._cacheHeadEnsured = true;
+    } else if (typeof args.from === 'undefined') {
+      this._cacheTailEnsured = true;
+    }
+
+    log.debug('DSS: New cache state: ', this._ensuredCacheRanges.map(function (rng) {
+      return '{' + rng.begin + ', ' + rng.end + '}';
+    }), 'Head', this._cacheHeadEnsured, 'tail', this._cacheTailEnsured);
+  }
+
+  return dedupItems;
+};
+
+Cache.prototype.has = function (id) {
+  return this._items.has(id);
+};
+
+Cache.prototype.get = function (id) {
+  return this._items.get(id) || null;
+};
+
+Cache.prototype.set = function (id, item) {
+  return this.store([item], { from: id })[0];
+};
+
+Cache.prototype.remove = function (id) {
+  this._items.delete(id);
+};
+
+Cache.prototype.update = function (id, item) {
+  var cached = this._items.get(id);
+  if (!cached) {
+    this._items.set(id, item);
+    return item;
+  }
+
+  cached._update(item);
+  return cached;
+};
+
+Cache.prototype.query = function (direction, from, limit, order) {
+  void order;
+  var state = 'failed';
+  var since = null;
+  var items = [];
+
+  var range = this._getRangeFor(from, direction);
+  log.debug('DSS: Cache range for ', from, ' is ', range);
+  if (!range) {
+    return { state: state, items: items };
+  }
+
+  var fwd = direction === 'forward';
+  var key = from || (fwd ? range.begin : range.end);
+  for (;;) {
+    var current = this._items.get(key);
+    if (current) {
+      // there may be holes in indexes
+      items.push(current);
+    }
+
+    if (items.length === limit || !fwd && key === 0) {
+      state = 'complete';
+      break;
+    }
+
+    if (fwd) {
+      if (++key > range.end) {
+        state = 'head';
+        break;
+      }
+    } else if (--key < range.begin) {
+      state = 'tail';
+      break;
+    }
+  }
+
+  if (!fwd) {
+    items.reverse();
+  }
+
+  since = key;
+  log.debug('DSS: Cache state is ', state);
+  return { state: state, since: since, items: items };
+};
+
+(0, _freeze2.default)(Cache.state);
+(0, _freeze2.default)(Cache);
+
+module.exports = Cache;
+
+},{"babel-runtime/core-js/get-iterator":30,"babel-runtime/core-js/map":32,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"loglevel":166}],8:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -1590,7 +1851,7 @@ Network.prototype.delete = function (uri) {
 
 module.exports = Network;
 
-},{"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42}],8:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34}],9:[function(_dereq_,module,exports){
 'use strict';
 
 var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
@@ -1689,7 +1950,7 @@ Router.prototype.onConnected = function () {
 
 module.exports = Router;
 
-},{"../../util":36,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"loglevel":169}],9:[function(_dereq_,module,exports){
+},{"../../util":27,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"loglevel":166}],10:[function(_dereq_,module,exports){
 'use strict';
 
 var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
@@ -1744,11 +2005,11 @@ Subscriptions.prototype._subscribeOnServer = function (entityUri) {
       channelType: 'twilsock'
     }
   }).then(function (res) {
-    log.debug('DSS I: subscribed: ', res.headers.Location);
-    if (!res.headers.Location) {
-      throw new Error('Location header is absent or inaccessible');
+    log.debug('DSS I: subscribed: ', res.headers.location);
+    if (!res.headers.location) {
+      throw new Error('location header is absent or inaccessible');
     }
-    _this._serverSubscriptions.set(entityUri, res.headers.Location);
+    _this._serverSubscriptions.set(entityUri, res.headers.location);
     return true;
   }).catch(function (err) {
     log.error('DSS E: subscription failed: ', err);
@@ -1787,9 +2048,7 @@ Subscriptions.prototype._unsubscribeOnServer = function (entityUri) {
  * @param {string} uri URI to the server object
  * @param {object} endpoint Endpoint object
  */
-Subscriptions.prototype.add = function (entityUri, entity) {
-  var _this3 = this;
-
+Subscriptions.prototype.add = function (entityUri, entity, subscriptionUri) {
   if (this._subscriptions.has(entityUri)) {
     var _subscribers = this._subscriptions.get(entityUri);
     _subscribers.add(entity);
@@ -1798,9 +2057,14 @@ Subscriptions.prototype.add = function (entityUri, entity) {
 
   var subscribers = new _set2.default();
   subscribers.add(entity);
+  this._subscriptions.set(entityUri, subscribers);
+
+  if (subscriptionUri) {
+    this._serverSubscriptions.set(entityUri, subscriptionUri);
+    return _promise2.default.resolve(true);
+  }
 
   return this._subscribeOnServer(entityUri).then(function () {
-    _this3._subscriptions.set(entityUri, subscribers);
     return true;
   });
 };
@@ -1860,7 +2124,7 @@ Subscriptions.prototype.forEach = function (handler) {
 
 module.exports = Subscriptions;
 
-},{"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"babel-runtime/core-js/set":44,"loglevel":169}],10:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/map":32,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"babel-runtime/core-js/promise":36,"babel-runtime/core-js/set":37,"loglevel":166}],11:[function(_dereq_,module,exports){
 'use strict';
 
 var _promise = _dereq_('babel-runtime/core-js/promise');
@@ -2200,15 +2464,17 @@ Channel.prototype._subscribe = function _subscribe() {
   if (this._entityPromise) {
     return this._entityPromise;
   }
-
-  this._entityPromise = this._session.datasync.openEntity(this._uri).then(function (entity) {
+  this._entityPromise = this._session.datasync.openEntity(this._uri, true).then(function (entity) {
     _this2._entity = entity;
-    entity.subscribe();
     entity.on('updated', function (data) {
       return _this2._update(data);
     });
     _this2._update(entity.getData());
     return _this2._entity;
+  }).catch(function (err) {
+    _this2._enityPromise = null;
+    log.error('Failed to get channel object', err);
+    throw err;
   });
   return this._entityPromise;
 };
@@ -2226,11 +2492,13 @@ Channel.prototype._subscribeStreams = function _subscribeStreams() {
   this._subscribePromise = this._subscribePromise || this._subscribe().then(function (entity) {
     var messagesUri = entity.value('/messagesUrl');
     var rosterUri = entity.value('/rosterUrl');
-    return _promise2.default.all([_this3._messagesEntity.subscribe(messagesUri).then(function () {
-      return _this3._messagesEntity.getMessages();
-    }), _this3._membersEntity.subscribe(rosterUri)]);
+    return _promise2.default.all([_this3._messagesEntity.subscribe(messagesUri), _this3._membersEntity.subscribe(rosterUri)]);
   }).then(function () {
     return _this3._entity;
+  }).catch(function (err) {
+    _this3._subscribePromise = null;
+    log.error('Failed to subscribe on channel objects', _this3.sid, err);
+    throw err;
   });
   return this._subscribePromise;
 };
@@ -2448,13 +2716,34 @@ Channel.prototype.getAttributes = function getAttributes() {
  * Get a sorted list of Messages.
  * @param {Number} [count] - Amount of Messages to fetch
  * @param {String} [anchor='end'] - Newest Message to fetch
- * @returns {Promise<Array<Message>>}
+ * @returns {Promise<Paginator<Message>>}
  */
-Channel.prototype.getMessages = function getMessages(count, anchor) {
+
+/**
+ * Returns messages from channel using paginator interface
+ * @param {Number} [pageSize=100] Number of messages to return in single chunk.
+ * @param {String} [anchor='end'] Newest message to fetch.
+ * @returns {Promise<Paginator<Message>>} page of messages
+ */
+Channel.prototype.getMessagesPaged = function getMessagesPaged(count, anchor) {
   var _this8 = this;
 
   return this._subscribeStreams().then(function () {
-    return _this8._messagesEntity.getMessages(count, anchor);
+    return _this8._messagesEntity.getMessagesPaged(count, anchor);
+  });
+};
+
+/**
+ * Get a sorted list of Messages using paginator interface
+ * @param {Number} [count] - Amount of Messages to fetch
+ * @param {String} [anchor='end'] - Newest Message to fetch
+ * @returns {Promise<Array<Message>>}
+ */
+Channel.prototype.getMessages = function getMessages(count, anchor) {
+  var _this9 = this;
+
+  return this._subscribeStreams().then(function () {
+    return _this9._messagesEntity.getMessages(count, anchor);
   });
 };
 
@@ -2463,10 +2752,10 @@ Channel.prototype.getMessages = function getMessages(count, anchor) {
  * @returns {Promise<Array<Member>>}
  */
 Channel.prototype.getMembers = function getMembers() {
-  var _this9 = this;
+  var _this10 = this;
 
   return this._subscribeStreams().then(function () {
-    return _this9._membersEntity.getMembers();
+    return _this10._membersEntity.getMembers();
   });
 };
 
@@ -2488,12 +2777,12 @@ Channel.prototype.invite = function inviteByIdentity(identity) {
  * @returns {Promise<Channel|SessionError>}
  */
 Channel.prototype.join = function joinChannel() {
-  var _this10 = this;
+  var _this11 = this;
 
   return this._session.addCommand('joinChannel', {
     channelSid: this._sid
   }).then(function () {
-    return _this10;
+    return _this11;
   });
 };
 
@@ -2502,7 +2791,7 @@ Channel.prototype.join = function joinChannel() {
  * @returns {Promise<Channel|SessionError>}
  */
 Channel.prototype.leave = function leaveChannel() {
-  var _this11 = this;
+  var _this12 = this;
 
   if (this._status !== Channel.status.JOINED) {
     return _promise2.default.resolve(this);
@@ -2511,7 +2800,7 @@ Channel.prototype.leave = function leaveChannel() {
   return this._session.addCommand('leaveChannel', {
     channelSid: this._sid
   }).then(function () {
-    return _this11;
+    return _this12;
   });
 };
 
@@ -2542,14 +2831,16 @@ Channel.prototype.sendMessage = function sendMessage(messageBody) {
  * @returns {Promise}
  */
 Channel.prototype.setAllMessagesConsumed = function setAllChannelMessagesConsumed() {
-  var _this12 = this;
+  var _this13 = this;
 
   return this._subscribeStreams().then(function () {
-    if (_this12.messages && _this12.messages.length > 0) {
-      return _this12.advanceLastConsumedMessageIndex(_this12.messages[_this12.messages.length - 1].index);
+    return _this13.getMessages(1);
+  }).then(function (messages) {
+    if (messages.length > 0) {
+      return _this13.advanceLastConsumedMessageIndex(messages[0].index);
     }
   }).then(function () {
-    return _this12;
+    return _this13;
   });
 };
 
@@ -2567,7 +2858,7 @@ Channel.prototype.typing = function typing() {
  * @returns {Promise<Channel|SessionError>} A Promise for the Channel
  */
 Channel.prototype.updateAttributes = function updateAttributes(attributes) {
-  var _this13 = this;
+  var _this14 = this;
 
   if (typeof attributes === 'undefined') {
     throw new Error('Attributes is a required parameter for updateAttributes');
@@ -2579,7 +2870,7 @@ Channel.prototype.updateAttributes = function updateAttributes(attributes) {
     channelSid: this._sid,
     attributes: (0, _stringify2.default)(attributes)
   }).then(function () {
-    return _this13;
+    return _this14;
   });
 };
 
@@ -2589,7 +2880,7 @@ Channel.prototype.updateAttributes = function updateAttributes(attributes) {
  * @returns {Promise<Channel|SessionError>} A Promise for the Channel
  */
 Channel.prototype.updateFriendlyName = function updateFriendlyName(name) {
-  var _this14 = this;
+  var _this15 = this;
 
   if (this._friendlyName === name) {
     return _promise2.default.resolve(this);
@@ -2599,7 +2890,7 @@ Channel.prototype.updateFriendlyName = function updateFriendlyName(name) {
     channelSid: this._sid,
     friendlyName: name
   }).then(function () {
-    return _this14;
+    return _this15;
   });
 };
 
@@ -2609,7 +2900,7 @@ Channel.prototype.updateFriendlyName = function updateFriendlyName(name) {
  * @returns {Promise}
  */
 Channel.prototype.updateLastConsumedMessageIndex = function updateLastConsumedMessageIndex(index) {
-  var _this15 = this;
+  var _this16 = this;
 
   if (parseInt(index) !== index) {
     var err = 'Channel.updateLastConsumedMessageIndex requires an integral <Number>index parameter';
@@ -2617,9 +2908,9 @@ Channel.prototype.updateLastConsumedMessageIndex = function updateLastConsumedMe
   }
 
   return this._subscribeStreams().then(function () {
-    _this15._consumptionHorizon.updateLastConsumedMessageIndexForChannel(_this15.sid, index);
+    _this16._consumptionHorizon.updateLastConsumedMessageIndexForChannel(_this16.sid, index);
   }).then(function () {
-    return _this15;
+    return _this16;
   });
 };
 
@@ -2647,7 +2938,7 @@ Channel.prototype.updateType = function (type) {
  * @returns {Promise<Channel|SessionError>} A Promise for the Channel
  */
 Channel.prototype.updateUniqueName = function updateUniqueName(uniqueName) {
-  var _this16 = this;
+  var _this17 = this;
 
   if (this._uniqueName === uniqueName) {
     return _promise2.default.resolve(this);
@@ -2657,7 +2948,7 @@ Channel.prototype.updateUniqueName = function updateUniqueName(uniqueName) {
     channelSid: this._sid,
     uniqueName: uniqueName
   }).then(function () {
-    return _this16;
+    return _this17;
   });
 };
 
@@ -2716,7 +3007,7 @@ Channel.prototype.updateUniqueName = function updateUniqueName(uniqueName) {
 
 module.exports = Channel;
 
-},{"../../util/jsondiff":37,"./data/members":14,"./data/messages":15,"./member":17,"babel-runtime/core-js/json/stringify":39,"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"events":163,"loglevel":169,"util":198}],11:[function(_dereq_,module,exports){
+},{"../../util/jsondiff":28,"./data/members":15,"./data/messages":16,"./member":18,"babel-runtime/core-js/json/stringify":31,"babel-runtime/core-js/map":32,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"babel-runtime/core-js/promise":36,"events":160,"loglevel":166,"util":205}],12:[function(_dereq_,module,exports){
 'use strict';
 
 var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
@@ -2741,6 +3032,11 @@ var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
 var log = _dereq_('loglevel');
 
+var NotificationClient = _dereq_('twilio-notifications');
+var TwilsockClient = _dereq_('twilsock');
+var Transport = _dereq_('twilio-transport');
+var DataSyncClient = _dereq_('../datasync/client');
+
 var Configuration = _dereq_('./configuration');
 var Session = _dereq_('./session.js');
 var ChannelsEntity = _dereq_('./data/channels.js');
@@ -2748,11 +3044,6 @@ var ChannelsEntity = _dereq_('./data/channels.js');
 var UserInfos = _dereq_('./data/userinfos.js');
 var TypingIndicator = _dereq_('./services/typingindicator');
 var ConsumptionHorizon = _dereq_('./services/consumptionhorizon');
-
-var DataSyncClient = _dereq_('../datasync/client');
-var NotificationClient = _dereq_('../notification/client');
-var TwilsockClient = _dereq_('../twilsock/client');
-var Transport = _dereq_('../transport');
 
 var SDK_VERSION = _dereq_('../../../package.json').version;
 
@@ -2803,10 +3094,11 @@ function Client(accessManager, options) {
 
   var token = accessManager.token;
 
-  var twilsock = options.twilsockClient || new TwilsockClient(token, options);
+  var twilsock = options.twilsockClient || new TwilsockClient(accessManager, options);
   var transport = options.transportClient || new Transport(twilsock, options);
-  var notification = options.notificationClient || new NotificationClient('ip_messaging', token, transport, twilsock, options);
+  var notification = options.notificationClient || new NotificationClient('ip_messaging', accessManager, { transport: transport, twilsockClient: twilsock });
   var datasync = options.dataSyncClient || new DataSyncClient(token, notification, transport, options);
+
   var session = new Session(datasync, transport, config);
   var sessionPromise = session.initialize(token);
 
@@ -3129,7 +3421,7 @@ Client.prototype.createChannel = function createChannel(options) {
 
 module.exports = Client;
 
-},{"../../../package.json":202,"../datasync/client":1,"../notification/client":24,"../transport":28,"../twilsock/client":30,"./configuration":12,"./data/channels.js":13,"./data/userinfos.js":16,"./services/consumptionhorizon":19,"./services/typingindicator":20,"./session.js":21,"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"events":163,"loglevel":169,"util":198}],12:[function(_dereq_,module,exports){
+},{"../../../package.json":211,"../datasync/client":1,"./configuration":13,"./data/channels.js":14,"./data/userinfos.js":17,"./services/consumptionhorizon":21,"./services/typingindicator":22,"./session.js":23,"babel-runtime/core-js/map":32,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"babel-runtime/core-js/promise":36,"events":160,"loglevel":166,"twilio-notifications":190,"twilio-transport":196,"twilsock":197,"util":205}],13:[function(_dereq_,module,exports){
 'use strict';
 
 var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
@@ -3160,7 +3452,7 @@ function IPMessagingConfig(options) {
 
 module.exports = IPMessagingConfig;
 
-},{"babel-runtime/core-js/object/define-properties":41}],13:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/object/define-properties":33}],14:[function(_dereq_,module,exports){
 'use strict';
 
 var _promise = _dereq_('babel-runtime/core-js/promise');
@@ -3279,9 +3571,7 @@ ChannelsEntity.prototype.fetchChannels = function fetchChannels(session) {
 ChannelsEntity.prototype._fetchMyChannels = function (url) {
   var _this2 = this;
 
-  return this._session.datasync.openMap(url).then(function (map) {
-    map.subscribe();
-
+  return this._session.datasync.openMap(url, true).then(function (map) {
     map.on('entityAdded', function (entity) {
       var sid = entity.id;
       _this2._upsertChannel(sid, entity.value);
@@ -3326,9 +3616,7 @@ ChannelsEntity.prototype._fetchMyChannels = function (url) {
 ChannelsEntity.prototype._fetchPublicChannels = function (url) {
   var _this3 = this;
 
-  return this._session.datasync.openMap(url).then(function (map) {
-    map.subscribe();
-
+  return this._session.datasync.openMap(url, true).then(function (map) {
     map.on('entityAdded', function (entity) {
       var sid = entity.id;
       var channel = _this3.channels.get(sid);
@@ -3441,7 +3729,7 @@ ChannelsEntity.prototype._registerForEvents = function (channel) {
 
 module.exports = ChannelsEntity;
 
-},{"../channel":10,"babel-runtime/core-js/json/stringify":39,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/promise":43,"events":163,"util":198}],14:[function(_dereq_,module,exports){
+},{"../channel":11,"babel-runtime/core-js/json/stringify":31,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/promise":36,"events":160,"util":205}],15:[function(_dereq_,module,exports){
 'use strict';
 
 var _promise = _dereq_('babel-runtime/core-js/promise');
@@ -3456,6 +3744,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
+var log = _dereq_('loglevel');
 
 var Member = _dereq_('../member');
 
@@ -3503,9 +3792,7 @@ Members.prototype.unsubscribe = function unsubscribe() {
 Members.prototype.subscribe = function (rosterUri) {
   var _this = this;
 
-  this._rosterStreamPromise = this._datasync.openMap(rosterUri).then(function (rosterMap) {
-    rosterMap.subscribe();
-
+  return this._rosterStreamPromise = this._rosterStreamPromise || this._datasync.openMap(rosterUri, true).then(function (rosterMap) {
     rosterMap.on('entityAdded', function (entity) {
       _this.upsertMember(entity.id, entity.value).then(function (member) {
         _this.emit('memberJoined', member);
@@ -3533,8 +3820,11 @@ Members.prototype.subscribe = function (rosterUri) {
     }).then(function () {
       return rosterMap;
     });
+  }).catch(function (err) {
+    _this._rosterStreamPromise = null;
+    log.error('Failed to get roster object for channel', _this.channel.sid, err);
+    throw err;
   });
-  return this._rosterStreamPromise;
 };
 
 Members.prototype.upsertMember = function upsertMember(memberSid, data) {
@@ -3647,12 +3937,16 @@ module.exports = Members;
  * @type {Member}
  */
 
-},{"../member":17,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/promise":43,"events":163,"util":198}],15:[function(_dereq_,module,exports){
+},{"../member":18,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/promise":36,"events":160,"loglevel":166,"util":205}],16:[function(_dereq_,module,exports){
 'use strict';
 
 var _promise = _dereq_('babel-runtime/core-js/promise');
 
 var _promise2 = _interopRequireDefault(_promise);
+
+var _getIterator2 = _dereq_('babel-runtime/core-js/get-iterator');
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
 
 var _map = _dereq_('babel-runtime/core-js/map');
 
@@ -3666,9 +3960,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var EventEmitter = _dereq_('events').EventEmitter;
 var inherits = _dereq_('util').inherits;
+var log = _dereq_('loglevel');
 
 var Message = _dereq_('../message');
-var Q = _dereq_('q');
+var Paginator = _dereq_('../paginator');
+
+function isForward(direction) {
+  return direction.toLowerCase() === 'forward';
+}
 
 /*
  * Creates an instance of messages collection
@@ -3677,16 +3976,12 @@ var Q = _dereq_('q');
  * @classdesc Represents the collection of messages in a channel
  */
 function Messages(channel, session, messages) {
-  var deferred = Q.defer();
-
   (0, _defineProperties2.default)(this, {
     _datasync: { value: session.datasync },
-    _deferred: { value: deferred },
     _eventStreamPromise: { value: null, writable: true },
     _sortedMessages: { value: messages },
     _messagesByIndex: { value: new _map2.default() },
     _session: { value: session },
-    _waitForURI: { value: deferred.promise },
     channel: {
       enumerable: true,
       value: channel
@@ -3705,23 +4000,48 @@ inherits(Messages, EventEmitter);
 Messages.prototype.subscribe = function subscribe(uri) {
   var _this = this;
 
-  this._eventStreamPromise = this._eventStreamPromise || this._datasync.openStream(uri).then(function (eventStream) {
+  return this._eventStreamPromise = this._eventStreamPromise || this._datasync.openStream(uri, true).then(function (eventStream) {
 
     eventStream.on('entityAdded', function (entity) {
       var message = new Message(_this.channel, entity.id, entity.value);
+      if (_this._messagesByIndex.has(message.index)) {
+        log.debug('Message arrived, but already known and ignored', _this.channel.sid, message.index);
+        return;
+      }
+
       _this._sortedMessages.push(message);
       _this._messagesByIndex.set(message.index, message);
       message.on('updated', function () {
         return _this.emit('messageUpdated', message);
       });
 
-      // This place should be rewritten on iterators, etc.
-      // But currently IE11 support blocks that
-      _this.channel.members.forEach(function (member) {
-        if (member.identity === message.author) {
-          member._endTyping();
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = (0, _getIterator3.default)(_this.channel.members.values()), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var member = _step.value;
+
+          if (member.identity === message.author) {
+            member._endTyping();
+            break;
+          }
         }
-      });
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
 
       _this.emit('messageAdded', message);
     });
@@ -3742,14 +4062,11 @@ Messages.prototype.subscribe = function subscribe(uri) {
       }
     });
 
-    _this._deferred.resolve(eventStream);
-
     return eventStream;
-  });
-
-  return this._eventStreamPromise.then(function (eventStream) {
-    eventStream.subscribe();
-    return eventStream;
+  }).catch(function (err) {
+    _this._eventStreamPromise = null;
+    log.error('Failed to get messages object for channel', _this.channel.sid, err);
+    throw err;
   });
 };
 
@@ -3792,19 +4109,36 @@ Messages.prototype.send = function (message) {
 };
 
 /**
- * Returns last messages from channel
- *
- * @returns last page of messages by default
- *
- * @param {Number} count Number of messages to return
- * @param {String} anchor Most early message id which is already known, or 'end'
+ * Returns messages from channel using paginator interface
+ * @param {Number} [pageSize] Number of messages to return in single chunk. By default it's 100.
+ * @param {String} [anchor] Most early message id which is already known, or 'end' by default
+ * @returns {Promise<Paginator<Message>>} last page of messages by default
  */
-Messages.prototype.getMessages = function getMessages(count, anchor) {
+Messages.prototype.getMessagesPaged = function getMessagesPaged(pageSize, anchor, direction) {
   var _this2 = this;
 
-  count = count || 100;
+  anchor = typeof anchor !== 'undefined' ? anchor : 'end';
+  direction = direction || 'backwards';
+  return this.getMessages(pageSize, anchor, direction).then(function (messages) {
+    return new Paginator(messages, pageSize, anchor, direction, _this2.getMessagesPaged.bind(_this2));
+  });
+};
 
-  if (typeof anchor !== 'undefined') {
+/**
+ * Returns last messages from channel
+ * @param {Number} [pageSize] Number of messages to return in single chunk. By default it's 100.
+ * @param {String} [anchor] Most early message id which is already known, or 'end' by default
+ * @returns {Promise<Array<Message>>} last page of messages by default
+ */
+Messages.prototype.getMessages = function getMessages(pageSize, anchor, direction) {
+  var _this3 = this;
+
+  pageSize = pageSize || 100;
+  anchor = typeof anchor !== 'undefined' ? anchor : 'end';
+  direction = direction || 'backwards';
+  var count = pageSize;
+
+  if (anchor !== 'end') {
     count++;
 
     var isKnown = this._sortedMessages.some(function (message) {
@@ -3820,31 +4154,35 @@ Messages.prototype.getMessages = function getMessages(count, anchor) {
     }
   }
 
-  return this._waitForURI.then(function (messagesStream) {
-    return messagesStream.queryEntitiesBefore(anchor, count);
+  return this.subscribe().then(function (messagesStream) {
+    return messagesStream.queryEntities(direction, anchor !== 'end' ? anchor : void 0, count);
   }).then(function (messageEntities) {
     var messages = [];
-
     messageEntities.forEach(function (messageEntity) {
       var messageData = messageEntity.value;
-      var message = new Message(_this2.channel, messageEntity.id, messageData);
-      messages.push(message);
-      _this2._messagesByIndex.set(message.index, message);
-      message.on('updated', function () {
-        return _this2.emit('messageUpdated', message);
-      });
+      var message = new Message(_this3.channel, messageEntity.id, messageData);
+
+      var dedupMessage = _this3._messagesByIndex.get(message.index);
+      if (!dedupMessage) {
+        _this3._messagesByIndex.set(message.index, message);
+        message.on('updated', function () {
+          return _this3.emit('messageUpdated', message);
+        });
+        dedupMessage = message;
+      }
+      messages.push(dedupMessage);
     });
 
     // Remove the matched anchor
-    if (typeof anchor !== 'undefined' && anchor !== 'end') {
-      var removedMessage = messages.pop();
-      if (removedMessage) {
-        _this2._messagesByIndex.delete(removedMessage.index);
-        removedMessage.removeAllListeners('messageUpdated');
+    if (anchor !== 'end') {
+      if (isForward(direction)) {
+        messages.shift();
+      } else {
+        messages.pop();
       }
     }
 
-    _this2._updateSortedMessages();
+    _this3._updateSortedMessages();
     return messages;
   });
 };
@@ -3863,7 +4201,7 @@ Messages.prototype._updateSortedMessages = function _updateSortedMessages() {
 
 module.exports = Messages;
 
-},{"../message":18,"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/promise":43,"events":163,"q":177,"util":198}],16:[function(_dereq_,module,exports){
+},{"../message":19,"../paginator":20,"babel-runtime/core-js/get-iterator":30,"babel-runtime/core-js/map":32,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/promise":36,"events":160,"loglevel":166,"util":205}],17:[function(_dereq_,module,exports){
 'use strict';
 
 var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
@@ -3965,7 +4303,7 @@ UserInfos.prototype.getUserInfo = function (identity, id) {
 
 module.exports = UserInfos;
 
-},{"../userinfo":23,"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"events":163,"util":198}],17:[function(_dereq_,module,exports){
+},{"../userinfo":25,"babel-runtime/core-js/map":32,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"events":160,"util":205}],18:[function(_dereq_,module,exports){
 'use strict';
 
 var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
@@ -4217,7 +4555,7 @@ module.exports = Member;
  * @type {Member}
  */
 
-},{"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"events":163,"util":198}],18:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"events":160,"util":205}],19:[function(_dereq_,module,exports){
 'use strict';
 
 var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
@@ -4388,7 +4726,73 @@ Message.prototype.updateBody = function updateMessageBody(body) {
 
 module.exports = Message;
 
-},{"babel-runtime/core-js/object/define-properties":41,"events":163,"util":198}],19:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/object/define-properties":33,"events":160,"util":205}],20:[function(_dereq_,module,exports){
+'use strict';
+
+/**
+ * @class
+ * @classdesc Pagination helper class
+ *
+ * @property {Array} items Array of elements on current page
+ * @property {boolean} hasNextPage
+ * @property {boolean} hasPrevPage
+ *
+ * @constructor
+ * @param {Array} items Array of element for current page
+ * @param {Object} params
+ */
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function Paginator(items, pageSize, anchor, direction, source) {
+  var hasNextPage = direction === 'backwards' ? anchor !== 'end' : items.length === pageSize;
+  var hasPrevPage = direction === 'backwards' ? items.length === pageSize && items.length > 0 && items[0].index !== 0 : anchor !== 'end';
+
+  var nextPageArgs = hasNextPage ? [pageSize, items[items.length - 1].sid, 'forward'] : null;
+  var prevPageArgs = hasPrevPage ? [pageSize, items.length > 0 ? items[0].sid : 'end', 'backwards'] : null;
+
+  (0, _defineProperties2.default)(this, {
+    _source: { value: source },
+    _nextPageArgs: { value: nextPageArgs },
+    _prevPageArgs: { value: prevPageArgs },
+
+    hasNextPage: { value: hasNextPage, enumerable: true },
+    hasPrevPage: { value: hasPrevPage, enumerable: true },
+    items: { get: function get() {
+        return items;
+      }, enumerable: true }
+  });
+}
+
+/**
+ * Request next page.
+ * Does not modify existing object
+ * @return {Promise<Paginator>}
+ */
+Paginator.prototype.nextPage = function () {
+  return this.hasNextPage ? this._source.apply(null, this._nextPageArgs) : _promise2.default.reject(new Error('No next page for query'));
+};
+
+/**
+ * Request previous page.
+ * Does not modify existing object
+ * @return {Promise<Paginator>}
+ */
+Paginator.prototype.prevPage = function () {
+  return this.hasPrevPage ? this._source.apply(null, this._prevPageArgs) : _promise2.default.reject(new Error('No prev page for query'));
+};
+
+module.exports = Paginator;
+
+},{"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/promise":36}],21:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -4487,7 +4891,7 @@ ConsumptionHorizon.prototype._delayedSendConsumptionHorizon = function (delay) {
 
 module.exports = ConsumptionHorizon;
 
-},{"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42}],20:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/map":32,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34}],22:[function(_dereq_,module,exports){
 'use strict';
 
 var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
@@ -4609,7 +5013,7 @@ TypingIndicator.prototype._send = function (channelSid) {
 
 module.exports = TypingIndicator;
 
-},{"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"loglevel":169}],21:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/map":32,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"babel-runtime/core-js/promise":36,"loglevel":166}],23:[function(_dereq_,module,exports){
 'use strict';
 
 var _promise = _dereq_('babel-runtime/core-js/promise');
@@ -4626,7 +5030,7 @@ var _defineProperties2 = _interopRequireDefault(_defineProperties);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var guid = _dereq_('../../util/guid');
+var uuid = _dereq_('uuid');
 var platform = _dereq_('platform');
 var log = _dereq_('loglevel');
 
@@ -4722,7 +5126,7 @@ Session.prototype._processCommand = function (action, params) {
 
   var command = { request: params };
   command.request.action = action;
-  command.commandId = guid();
+  command.commandId = uuid.v4();
 
   log.info('IPMSG: Adding command: ', action, command.commandId);
   log.debug('IPMSG: ', params);
@@ -4856,7 +5260,7 @@ Session.prototype.getConsumptionReportInterval = function () {
 
 module.exports = Session;
 
-},{"../../../package.json":202,"../../util/changetracker":34,"../../util/guid":35,"./sessionerror":22,"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/promise":43,"durational":161,"loglevel":169,"platform":170}],22:[function(_dereq_,module,exports){
+},{"../../../package.json":211,"../../util/changetracker":26,"./sessionerror":24,"babel-runtime/core-js/map":32,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/promise":36,"durational":158,"loglevel":166,"platform":167,"uuid":207}],24:[function(_dereq_,module,exports){
 'use strict';
 
 var inherits = _dereq_('util').inherits;
@@ -4884,7 +5288,7 @@ inherits(SessionError, Error);
 
 module.exports = SessionError;
 
-},{"util":198}],23:[function(_dereq_,module,exports){
+},{"util":205}],25:[function(_dereq_,module,exports){
 'use strict';
 
 var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
@@ -4977,8 +5381,7 @@ UserInfo.prototype._fetch = function () {
   var update = function update(item) {
     return _this2._update(item.id, item.value.value);
   };
-  this._promiseToFetch = this._datasync.openMap(this._uri).then(function (map) {
-    map.subscribe();
+  this._promiseToFetch = this._datasync.openMap(this._uri, true).then(function (map) {
     map.on('entityUpdated', update);
     return _promise2.default.all([map.get('friendlyName').then(update), map.get('attributes').then(update)]);
   }).then(function () {
@@ -5039,1606 +5442,7 @@ UserInfo.prototype.updateFriendlyName = function (friendlyName) {
 
 module.exports = UserInfo;
 
-},{"babel-runtime/core-js/json/stringify":39,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"events":163,"util":198}],24:[function(_dereq_,module,exports){
-'use strict';
-
-var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
-
-var _freeze2 = _interopRequireDefault(_freeze);
-
-var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
-
-var _defineProperties2 = _interopRequireDefault(_defineProperties);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var EventEmitter = _dereq_('events').EventEmitter;
-var inherits = _dereq_('util').inherits;
-var log = _dereq_('loglevel');
-
-var NotificationConfig = _dereq_('./configuration');
-var Registrar = _dereq_('./registrar');
-
-/**
- * Creates the instance of Notification helper library
- * @param {string} productId id of a product, which uses notification library
- * @param {string} token - Twilio token
- * @param {config} options Object with config values to override defaults
- *
- * @class NotificationClient
- * @classdesc The helper library for the notification service.
- * Provides high level api for creating and managing notification subscriptions and receiving messages
- */
-function NotificationClient(productId, token, transport, twilsock, options) {
-  var _this = this;
-
-  if (!token) {
-    throw new Error('Token is required for Notification client');
-  }
-
-  var reliableTransportState = {
-    overall: false,
-    transport: false,
-    registration: false
-  };
-
-  var config = new NotificationConfig(token, options);
-  (0, _defineProperties2.default)(this, {
-    _config: { value: config },
-    _registrar: { value: new Registrar(productId, transport, config) },
-    _twilsock: { value: twilsock },
-    _reliableTransportState: { value: reliableTransportState }
-  });
-
-  EventEmitter.call(this);
-
-  this._registrar.on('stateChanged', function (state) {
-    _this._onRegistrationStateChange(state);
-  });
-  this._registrar.on('needReliableTransport', this._onNeedReliableTransport.bind(this));
-
-  this._twilsock.on('message', function (type, message) {
-    return _this._routeMessage(type, message);
-  });
-  this._twilsock.on('connected', function (notificationId) {
-    _this._onTransportStateChange(true);
-    _this._registrar.setNotificationId('twilsock', notificationId);
-  });
-  this._twilsock.on('disconnected', function () {
-    _this._onTransportStateChange(false);
-  });
-}
-
-inherits(NotificationClient, EventEmitter);
-
-/**
- *  Routes messages to the external subscribers
- */
-NotificationClient.prototype._routeMessage = function (type, message) {
-  log.trace('Message arrived: ', type, message);
-  this.emit('message', type, message);
-};
-
-NotificationClient.prototype._onNeedReliableTransport = function (isNeeded) {
-  if (isNeeded) {
-    this._twilsock.connect();
-  } else {
-    this._twilsock.disconnect();
-  }
-};
-
-NotificationClient.prototype._onRegistrationStateChange = function (state) {
-  this._reliableTransportState.registration = state === 'registered';
-  this._updateTransportState();
-};
-
-NotificationClient.prototype._onTransportStateChange = function (connected) {
-  this._reliableTransportState.transport = connected;
-  this._updateTransportState();
-};
-
-NotificationClient.prototype._updateTransportState = function () {
-  var overallState = this._reliableTransportState.transport && this._reliableTransportState.registration;
-  if (this._reliableTransportState.overall !== overallState) {
-    this._reliableTransportState.overall = overallState;
-
-    log.info('NTFCN I: Transport ready ' + overallState);
-    this.emit('transportReady', overallState);
-  }
-};
-
-/**
- *  Adds the subscription for the given message type
- *  @param {string} messageType The type of message that you want to receive
- *  @param {string} channelType. Supported are 'twilsock' and 'gcm'
- */
-NotificationClient.prototype.subscribe = function (messageType, channelType) {
-  log.trace('Add subscriptions for event type: ', messageType);
-
-  channelType = channelType || 'twilsock';
-  return this._registrar.subscribe(messageType, channelType);
-};
-
-/**
- *  Remove the subscription for the particular message type
- *  @param {string} messageType The type of message that you don't want to receive anymore
- *  @param {string} Channel type. Supported are 'twilsock' and 'gcm'
- */
-NotificationClient.prototype.unsubscribe = function (messageType, channelType) {
-  return this._registrar.unsubscribe(messageType, channelType);
-};
-
-/**
- *  Handle incoming push notification.
- *  Client application should call this method when it receives push notifications and pass the received data
- */
-NotificationClient.prototype.handlePushNotification = function (msg) {
-  log.warn('Push message passed, but no functionality implemented yet: ' + msg);
-};
-
-/**
- *  Set GCM token to enable application register for a push messages
- *  @param {string} gcmToken Token received from GCM system
- */
-NotificationClient.prototype.setGCMToken = function (gcmToken) {
-  this._registrar.setNotificationId('gcm', gcmToken);
-};
-
-/**
- * Set authentication token
- * If token is already set, it will be replaced with the new one
- *
- * @param {String} Authentication token
- */
-NotificationClient.prototype.setAuthToken = function (authToken) {
-  log.info('NTFCN I: authTokenUpdated');
-  this._config.updateToken(authToken);
-
-  this._registrar._updateGcmRegistration();
-
-  this._twilsock.disconnect().then(this._twilsock.connect.bind(this._twilsock));
-  // Reconnection of twilsock automatically triggers re-registration
-};
-
-(0, _freeze2.default)(NotificationClient);
-
-/**
- * Fired when new message arrived.
- * @param {Object} message`
- * @event NotificationClient#message
- */
-/**
- * Fired when a Channel's attributes or metadata have been updated.
- * @param {boolean} transport state
- * @event NotificationClient#transportReady
- */
-
-module.exports = NotificationClient;
-
-},{"./configuration":25,"./registrar":27,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"events":163,"loglevel":169,"util":198}],25:[function(_dereq_,module,exports){
-'use strict';
-
-var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
-
-var _defineProperties2 = _interopRequireDefault(_defineProperties);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var ERS_URI = 'https://ers.twilio.com';
-var ERS_PATH = '/v1/registrations';
-
-/**
- * Notification library configuration provider
- */
-function NotificationConfig(token, options) {
-  var _this = this;
-
-  options = (options || {}).Notification || {};
-  var uri = options.ersUri || ERS_URI;
-
-  (0, _defineProperties2.default)(this, {
-    _registrarUri: { value: uri + ERS_PATH },
-    _token: { value: token, writable: true },
-
-    registrarUri: { get: function get() {
-        return _this._registrarUri;
-      } },
-    token: { get: function get() {
-        return _this._token;
-      } }
-  });
-}
-
-NotificationConfig.prototype.updateToken = function (token) {
-  this._token = token;
-};
-
-module.exports = NotificationConfig;
-
-},{"babel-runtime/core-js/object/define-properties":41}],26:[function(_dereq_,module,exports){
-'use strict';
-
-var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
-
-var _freeze2 = _interopRequireDefault(_freeze);
-
-var _promise = _dereq_('babel-runtime/core-js/promise');
-
-var _promise2 = _interopRequireDefault(_promise);
-
-var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
-
-var _defineProperties2 = _interopRequireDefault(_defineProperties);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var EventEmitter = _dereq_('events').EventEmitter;
-var inherits = _dereq_('util').inherits;
-var StateMachine = _dereq_('javascript-state-machine');
-var Backoff = _dereq_('backoff');
-var log = _dereq_('loglevel');
-
-/**
- * Creates new instance of the ERS registrar
- *
- * @class RegistrarClient
- * @classdesc Manages the registrations on ERS service.
- * It deduplicates registrations and manages them automatically
- *
- * @param Object configuration
- * @param string notificationId
- * @param string channelType
- * @param Array messageTypes
- */
-function RegistrarClient(productId, transport, config, channelType) {
-  var _this = this;
-
-  var fsm = StateMachine.create({
-    initial: { state: 'unregistered', event: 'init', defer: true },
-    events: [{ name: 'userUpdate', from: ['unregistered'], to: 'registering' }, { name: 'userUpdate', from: ['registered'], to: 'unregistering' }, { name: 'registered', from: ['registering', 'retrying'], to: 'registered' }, { name: 'unregistered', from: ['unregistering'], to: 'unregistered' }, { name: 'retry', from: ['retrying'], to: 'retrying' }, { name: 'failure', from: ['registering'], to: 'retrying' }, { name: 'failure', from: ['retrying'], to: 'retrying' }, { name: 'failure', from: ['unregistering'], to: 'unregistered' }],
-    callbacks: {
-      onregistering: function onregistering(event, from, to, arg) {
-        return _this._register(arg);
-      },
-      onunregistering: function onunregistering() {
-        return _this._unregister();
-      },
-      onregistered: function onregistered() {
-        return _this._onRegistered();
-      },
-      onunregistered: function onunregistered() {
-        return _this._onUnregistered();
-      },
-      onretrying: function onretrying(event, from, to, arg) {
-        return _this._initRetry(arg);
-      },
-      onfailure: function onfailure(event, from, to, arg) {
-        if (from === 'retrying') {
-          _this._initRetry(arg);
-        }
-      }
-    }
-  });
-
-  var backoff = Backoff.exponential({
-    randomisationFactor: 0.2,
-    initialDelay: 2 * 1000,
-    maxDelay: 2 * 60 * 1000
-  });
-
-  backoff.on('ready', function () {
-    _this._retry();
-  });
-
-  var platform = (typeof navigator !== 'undefined' ? navigator.userAgent : 'web').substring(0, 128);
-
-  (0, _defineProperties2.default)(this, {
-    _transport: { value: transport },
-    _url: { value: config.registrarUri, writable: false },
-    _config: { value: config },
-    _productId: { value: productId },
-    _platform: { value: platform },
-    _fsm: { value: fsm },
-    _backoff: { value: backoff },
-    _channelType: { value: channelType },
-    _registrationId: { value: false, writable: true },
-    _notificationId: { value: false },
-    _messageTypes: { value: [], writable: true },
-    _pendingUpdate: { value: null, writable: true }
-  });
-
-  EventEmitter.call(this);
-  fsm.init();
-}
-
-inherits(RegistrarClient, EventEmitter);
-
-/**
- * Update service registration
- * @param Array messageTypes Array of message type names
- * @public
- */
-RegistrarClient.prototype.update = function (notificationId, messageTypes) {
-  var regData = { notificationId: notificationId, messageTypes: messageTypes };
-
-  if (this._fsm.is('unregistered')) {
-    if (regData.notificationId && regData.messageTypes.length > 0) {
-      this._fsm.userUpdate(regData);
-    }
-  } else if (this._fsm.is('registered')) {
-    this._fsm.userUpdate(regData);
-    this._setPendingUpdate(regData);
-  } else {
-    this._setPendingUpdate(regData);
-  }
-};
-
-RegistrarClient.prototype._setPendingUpdate = function (regData) {
-  this._pendingUpdate = regData;
-};
-
-RegistrarClient.prototype._checkPendingUpdate = function () {
-  if (!this._pendingUpdate) {
-    return;
-  }
-
-  var pendingUpdate = this._pendingUpdate;
-  this._pendingUpdate = null;
-
-  this.update(pendingUpdate.notificationId, pendingUpdate.messageTypes);
-};
-
-RegistrarClient.prototype._initRetry = function (regData) {
-  if (!this._pendingUpdate) {
-    this._setPendingUpdate(regData);
-  }
-
-  this._backoff.backoff();
-};
-
-RegistrarClient.prototype._retry = function () {
-  if (!this._pendingUpdate) {
-    return;
-  }
-
-  var pendingUpdate = this._pendingUpdate;
-  this._pendingUpdate = null;
-
-  this._register(pendingUpdate);
-};
-
-RegistrarClient.prototype._onRegistered = function () {
-  this._backoff.reset();
-  this.emit('stateChanged', 'registered');
-  this._checkPendingUpdate();
-};
-
-RegistrarClient.prototype._onUnregistered = function () {
-  this._backoff.reset();
-  this.emit('stateChanged', 'unregistered');
-  this._checkPendingUpdate();
-};
-
-RegistrarClient.prototype._register = function (regData) {
-  var _this2 = this;
-
-  /* eslint-disable camelcase */
-  var registrarRequest = {
-    endpoint_platform: this._platform,
-    channel_type: this._channelType,
-    version: '2',
-    message_types: regData.messageTypes,
-    data: {},
-    ttl: 'PT24H'
-  };
-
-  if (this._channelType === 'twilsock') {
-    registrarRequest.data.url = regData.notificationId;
-  } else {
-    registrarRequest.data.registration_id = regData.notificationId;
-  }
-
-  var uri = this._url + '?productId=' + this._productId;
-  var headers = {
-    'Content-Type': 'application/json',
-    'X-Twilio-Token': this._config.token
-  };
-  /* eslint-enable camelcase */
-
-  log.trace('NTFCN I: Creating registration for channel ', this._channelType);
-  return this._transport.post(uri, headers, registrarRequest).then(function (response) {
-    _this2._registrationId = response.body.id;
-    _this2._registrationData = regData;
-
-    log.debug('NTFCN I: Registration created: ', response);
-    _this2._fsm.registered();
-  }).catch(function (error) {
-    log.error('NTFCN E: Registration failed: ', error);
-    _this2._fsm.failure(regData);
-    return error;
-  });
-};
-
-RegistrarClient.prototype._unregister = function () {
-  var _this3 = this;
-
-  if (!this._registrationId) {
-    return _promise2.default.resolve();
-  }
-
-  var uri = this._url + '/' + this._registrationId + '?productId=' + this._productId;
-  var headers = {
-    'Content-Type': 'application/json',
-    'X-Twilio-Token': this._config.token
-  };
-
-  log.trace('NTFCN I: removing registration for ', this._channelType);
-  this._transport.delete(uri, headers).then(function () {
-    log.debug('NTFCN I: registration removed for ', _this3._channelType);
-    _this3._registrationId = false;
-    _this3._fsm.unregistered();
-  }).catch(function (reason) {
-    // failure to remove registration since being treated as "unregistered" state
-    // because it is indicates that something wrong with server/connection
-    log.error('NTFCN E: failed to remove of registration ', _this3.channelType, reason);
-    _this3._fsm.failure();
-    return reason;
-  });
-};
-
-(0, _freeze2.default)(RegistrarClient);
-
-module.exports = RegistrarClient;
-
-},{"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"backoff":148,"events":163,"javascript-state-machine":168,"loglevel":169,"util":198}],27:[function(_dereq_,module,exports){
-'use strict';
-
-var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
-
-var _freeze2 = _interopRequireDefault(_freeze);
-
-var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
-
-var _defineProperties2 = _interopRequireDefault(_defineProperties);
-
-var _set = _dereq_('babel-runtime/core-js/set');
-
-var _set2 = _interopRequireDefault(_set);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var EventEmitter = _dereq_('events').EventEmitter;
-var inherits = _dereq_('util').inherits;
-var log = _dereq_('loglevel');
-
-var RegistrarClient = _dereq_('./registrar.connector');
-
-/**
- * Creates the new instance of ERS registrar client
- *
- * @class Registrar
- * @classdesc Provides an interface to the ERS registrar
- */
-function Registrar(productId, transport, config) {
-  var _this = this;
-
-  var subscriptions = {
-    twilsock: new _set2.default(),
-    gcm: new _set2.default()
-  };
-
-  var notificationIds = {
-    twilsock: null,
-    gcm: null
-  };
-
-  var twilsockRegistrarClient = new RegistrarClient(productId, transport, config, 'twilsock');
-  var gcmRegistrarClient = new RegistrarClient(productId, transport, config, 'gcm');
-
-  (0, _defineProperties2.default)(this, {
-    _conf: { value: config },
-    _subscriptions: { value: subscriptions },
-    _notificationIds: { value: notificationIds },
-    _twilsockRegistrar: { value: twilsockRegistrarClient },
-    _gcmRegistrar: { value: gcmRegistrarClient }
-  });
-
-  EventEmitter.call(this);
-
-  twilsockRegistrarClient.on('stateChanged', function (value) {
-    return _this.emit('stateChanged', value);
-  });
-}
-inherits(Registrar, EventEmitter);
-
-/**
- *  Sets notification ID.
- *  If new URI is different from previous, it triggers updating of registration for given channel
- *
- *  @param {string} uri The notification ID
- */
-Registrar.prototype.setNotificationId = function (channelType, notificationId) {
-  log.trace('NTFCN I: Notification id for channel ', channelType, notificationId);
-  if (this._notificationIds[channelType] !== notificationId) {
-    this._notificationIds[channelType] = notificationId;
-    this._updateRegistration(channelType);
-  }
-};
-
-/**
- *  Updates the subscriptions list
- *  Should be called after reliable transport reconnect
- */
-Registrar.prototype.refreshSubscriptions = function () {
-  log.info('NTFCN: Refresh registrations');
-  this._updateTwilsockRegistration();
-};
-
-/**
- *  Checks if subscription for given message and channel already exists
- */
-Registrar.prototype.hasSubscription = function (messageType, channelType) {
-  if (channelType === 'twilsock') {
-    return this._subscriptions.twilsock.has(messageType);
-  }
-
-  if (channelType === 'gcm') {
-    return this._subscriptions.gcm.has(messageType);
-  }
-
-  throw new Error('Unknown channel type: ' + channelType);
-};
-
-/**
- *  Subscribe for given type of message
- *
- * @param {String} messageType Message type identifier
- * @param {String} channelType Channel type, can be 'twilsock' or 'gcm'
- */
-Registrar.prototype.subscribe = function (messageType, channelType) {
-  if (this.hasSubscription(messageType, channelType)) {
-    return;
-  }
-
-  if (channelType === 'twilsock') {
-    if (this._subscriptions.twilsock.size === 0) {
-      this.emit('needReliableTransport', true);
-    }
-
-    this._subscriptions.twilsock.add(messageType);
-    this._updateTwilsockRegistration();
-  } else if (channelType === 'gcm') {
-    this._subscriptions.gcm.add(messageType);
-    this._updateGcmRegistration();
-  } else {
-    throw new Error('Can\'t subscribe to the channel type ' + channelType);
-  }
-};
-
-/**
- *  Remove subscription
- *  @param {String} messageType Message type
- *  @param {String} channelType Channel type (twilsock or gcm)
- */
-Registrar.prototype.unsubscribe = function (messageType, channelType) {
-  if (!this.hasSubscription(messageType, channelType)) {
-    return;
-  }
-
-  if (channelType === 'twilsock') {
-    this._subscriptions.twilsock.delete(messageType);
-    this._updateTwilsockRegistration();
-
-    if (this._subscriptions.twilsock.size === 0) {
-      this.emit('needReliableTransport', false);
-    }
-  } else if (channelType === 'gcm') {
-    this._subscriptions.gcm.delete(messageType);
-    this._updateGcmRegistration();
-  }
-};
-
-/**
- *  Update all registrations for channel type
- */
-Registrar.prototype._updateRegistration = function (channelType) {
-  if (channelType === 'twilsock') {
-    return this._updateTwilsockRegistration();
-  } else if (channelType === 'gcm') {
-    return this._updateGcmRegistration();
-  }
-};
-
-/**
- *  Updates registration for the GCM channel
- *  @private
- */
-Registrar.prototype._updateTwilsockRegistration = function () {
-  if (!this._notificationIds.twilsock) {
-    log.trace('Ignoring twilsock registration update request: no twilsock id in place');
-    return; // Can't make twilsock registration without transport url
-  }
-
-  var notificationId = this._notificationIds.twilsock;
-  var activeSubscriptions = [];
-  this._subscriptions.twilsock.forEach(function (messageType) {
-    return activeSubscriptions.push(messageType);
-  });
-
-  log.debug('Subscribing to the twilsock notifications');
-  this._twilsockRegistrar.update(notificationId, activeSubscriptions);
-};
-
-/**
- *  Updates registration for the GCM channel
- *  @private
- */
-Registrar.prototype._updateGcmRegistration = function () {
-  if (!this._notificationIds.gcm) {
-    log.trace('Ignoring twilsock registration update request: no twilsock id in place');
-    return; // Can't make gcm registration without transport url
-  }
-
-  var notificationId = this._notificationIds.gcm;
-  var activeSubscriptions = [];
-  this._subscriptions.gcm.forEach(function (messageType) {
-    return activeSubscriptions.push(messageType);
-  });
-  this._gcmRegistrar.update(notificationId, activeSubscriptions);
-};
-
-(0, _freeze2.default)(Registrar);
-
-module.exports = Registrar;
-
-},{"./registrar.connector":26,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/set":44,"events":163,"loglevel":169,"util":198}],28:[function(_dereq_,module,exports){
-'use strict';
-
-var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
-
-var _freeze2 = _interopRequireDefault(_freeze);
-
-var _map = _dereq_('babel-runtime/core-js/map');
-
-var _map2 = _interopRequireDefault(_map);
-
-var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
-
-var _defineProperties2 = _interopRequireDefault(_defineProperties);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var request = _dereq_('./request');
-
-function parseUri(uri) {
-  var match = uri.match(/^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)(\/[^?#]*)(\?[^#]*|)(#.*|)$/);
-  if (match) {
-    var uriStruct = {
-      protocol: match[1],
-      host: match[2],
-      hostname: match[3],
-      port: match[4],
-      pathname: match[5],
-      search: match[6],
-      hash: match[7]
-    };
-
-    if (uriStruct.search.length > 0) {
-      var paramsString = uriStruct.search.substring(1);
-      uriStruct.params = paramsString.split('&').map(function (el) {
-        return el.split('=');
-      }).reduce(function (prev, curr) {
-        prev[curr[0]] = curr[1];return prev;
-      }, {});
-    }
-    return uriStruct;
-  }
-  throw new Error('Incorrect URI: ' + uri);
-}
-
-function twilsockAddress(method, uri) {
-  var parsedUri = parseUri(uri);
-  var to = {
-    method: method,
-    host: parsedUri.host,
-    path: parsedUri.pathname
-  };
-  if (parsedUri.params) {
-    to.params = parsedUri.params;
-  }
-  return to;
-}
-
-function twilsockParams(type, uri, headers, body) {
-  return {
-    to: twilsockAddress(type, uri),
-    headers: headers,
-    body: body
-  };
-}
-
-function adaptTwilsockResponse(response) {
-  return { status: response.status,
-    headers: response.header.http_headers,
-    body: response.body };
-}
-
-function httpParams(uri, headers, body) {
-  return {
-    url: uri,
-    headers: headers,
-    body: body
-  };
-}
-
-function adaptHttpResponse(response) {
-  try {
-    response.body = JSON.parse(response.body);
-  } finally {
-    return response;
-  }
-}
-
-/**
- * @class Transport
- * @classdesc Provides network interface
- */
-function Transport(twilsock) {
-  (0, _defineProperties2.default)(this, {
-    _activeGetRequests: { value: new _map2.default() },
-    _twilsock: { value: twilsock },
-    _http: { value: request }
-  });
-
-  if (twilsock) {
-    twilsock.connect();
-  }
-}
-
-Transport.prototype._shouldUseTwilsock = function () {
-  return this._twilsock && this._twilsock.isConnected;
-};
-
-/**
- * @private
- */
-Transport.prototype._get = function (uri, headers) {
-  if (this._shouldUseTwilsock()) {
-    return this._twilsock.send(twilsockParams('GET', uri, headers)).then(adaptTwilsockResponse);
-  }
-
-  return this._http.get(httpParams(uri, headers)).then(adaptHttpResponse);
-};
-
-/**
- * Make a GET request by given URI
- *
- * This function applies "multiplexing" optimization.
- * If several requests for the same URI happen on the same time,
- * only one will really happen, but all clients will see th result.
- *
- * @Returns Promise<Response> Result of successful get request
- */
-Transport.prototype.get = function (uri, headers) {
-  var _this = this;
-
-  if (this._activeGetRequests.has(uri)) {
-    return this._activeGetRequests.get(uri);
-  }
-
-  var promise = this._get(uri, headers).then(function (response) {
-    _this._activeGetRequests.delete(uri);
-    return response;
-  }).catch(function (error) {
-    _this._activeGetRequests.delete(uri);
-    throw error;
-  });
-
-  this._activeGetRequests.set(uri, promise);
-  return promise;
-};
-
-/**
- * Make a POST request by given URI
- * @Returns Promise<Response> Result of successful request
- */
-Transport.prototype.post = function (uri, headers, body) {
-  if (this._shouldUseTwilsock()) {
-    return this._twilsock.send(twilsockParams('POST', uri, headers, body)).then(adaptTwilsockResponse);
-  }
-
-  return this._http.post(httpParams(uri, headers, body)).then(adaptHttpResponse);
-};
-
-/**
- * Make a PUT request by given URI
- * @Returns Promise<Response> Result of successful request
- */
-Transport.prototype.put = function (uri, headers, body) {
-  if (this._shouldUseTwilsock()) {
-    return this._twilsock.send(twilsockParams('PUT', uri, headers, body)).then(adaptTwilsockResponse);
-  }
-
-  return this._http.put(httpParams(uri, headers, body)).then(adaptHttpResponse);
-};
-
-/**
- * Make a DELETE request by given URI
- * @Returns Promise<Response> Result of successful request
- */
-Transport.prototype.delete = function (uri, headers) {
-  if (this._shouldUseTwilsock()) {
-    return this._twilsock.send(twilsockParams('DELETE', uri, headers)).then(adaptHttpResponse);
-  }
-
-  return this._http.delete(httpParams(uri, headers)).then(adaptHttpResponse);
-};
-
-(0, _freeze2.default)(Transport);
-
-module.exports = Transport;
-
-},{"./request":29,"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42}],29:[function(_dereq_,module,exports){
-'use strict';
-
-var _stringify = _dereq_('babel-runtime/core-js/json/stringify');
-
-var _stringify2 = _interopRequireDefault(_stringify);
-
-var _promise = _dereq_('babel-runtime/core-js/promise');
-
-var _promise2 = _interopRequireDefault(_promise);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var XHR = typeof XMLHttpRequest === 'undefined' ? _dereq_('xmlhttprequest').XMLHttpRequest : XMLHttpRequest;
-
-function parseResponseHeaders(headerString) {
-  return headerString.split('\r\n').map(function (el) {
-    return el.split(': ');
-  }).filter(function (el) {
-    return el.length === 2 && el[1].length > 0;
-  }).reduce(function (prev, curr) {
-    prev[curr[0]] = curr[1];return prev;
-  }, {});
-}
-
-function request(method, params) {
-  var promise = new _promise2.default(function (resolve, reject) {
-
-    var xhr = new XHR();
-    xhr.open(method, params.url, true);
-
-    xhr.onreadystatechange = function onreadystatechange() {
-      if (xhr.readyState !== 4) {
-        return;
-      }
-
-      if (200 <= xhr.status && xhr.status < 300) {
-        var headers = parseResponseHeaders(xhr.getAllResponseHeaders());
-        resolve({ status: xhr.status, headers: headers, body: xhr.responseText });
-      } else {
-        reject({ status: xhr.status, description: xhr.statusText, body: xhr.responseText });
-      }
-    };
-
-    for (var headerName in params.headers) {
-      xhr.setRequestHeader(headerName, params.headers[headerName]);
-      if (headerName === 'Content-Type' && params.headers[headerName] === 'application/json') {
-        params.body = (0, _stringify2.default)(params.body);
-      }
-    }
-
-    xhr.send(params.body);
-  });
-
-  return promise;
-}
-
-/**
- * Use XMLHttpRequest to get a network resource.
- * @param {String} method - HTTP Method
- * @param {Object} params - Request parameters
- * @param {String} params.url - URL of the resource
- * @param {Array}  params.headers - An array of headers to pass [{ headerName : headerBody }]
- * @param {Object} params.body - A JSON body to send to the resource
- * @returns {Promise}
- **/
-var Request = request;
-
-/**
- * Sugar function for request('GET', params);
- * @param {Object} params - Request parameters
- * @returns {Promise}
- */
-Request.get = function (params) {
-  return request('GET', params);
-};
-
-/**
- * Sugar function for request('POST', params);
- * @param {Object} params - Request parameters
- * @returns {Promise}
- */
-Request.post = function (params) {
-  return request('POST', params);
-};
-
-/**
- * Sugar function for request('PUT', params);
- * @param {Object} params - Request parameters
- * @returns {Promise}
- */
-Request.put = function (params) {
-  return request('PUT', params);
-};
-
-/**
- * Sugar function for request('DELETE', params);
- * @param {Object} params - Request parameters
- * @returns {Promise}
- */
-Request.delete = function (params) {
-  return request('DELETE', params);
-};
-
-module.exports = Request;
-
-},{"babel-runtime/core-js/json/stringify":39,"babel-runtime/core-js/promise":43,"xmlhttprequest":200}],30:[function(_dereq_,module,exports){
-'use strict';
-
-var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
-
-var _freeze2 = _interopRequireDefault(_freeze);
-
-var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
-
-var _defineProperties2 = _interopRequireDefault(_defineProperties);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var EventEmitter = _dereq_('events').EventEmitter;
-var inherits = _dereq_('util').inherits;
-var log = _dereq_('loglevel');
-
-var Configuration = _dereq_('./configuration.js');
-var TwilsockChannel = _dereq_('./twilsock.js');
-var PacketInterface = _dereq_('./packetinterface.js');
-
-/**
- * Client library for the Twilsock protocol
- */
-function TwilsockClient(token, options) {
-  var _this = this;
-
-  var config = new Configuration(token, options);
-  var twilsock = new TwilsockChannel(config);
-  var packetInterface = new PacketInterface(twilsock);
-
-  (0, _defineProperties2.default)(this, {
-    _config: { value: config },
-    _socket: { value: twilsock },
-    _network: { value: packetInterface },
-
-    isConnected: { get: function get() {
-        return _this._socket.isConnected();
-      } }
-  });
-
-  EventEmitter.call(this);
-
-  this._socket.on('message', function (type, message) {
-    return _this.emit('message', type, message);
-  });
-  this._socket.on('connected', function (uri) {
-    return _this.emit('connected', uri);
-  });
-  this._socket.on('disconnected', function () {
-    return _this.emit('disconnected');
-  });
-}
-
-inherits(TwilsockClient, EventEmitter);
-
-/**
- * Send a message
- * @param {Object} message Message structure with header, body and remote address
- * @public
- * @returns {Promise<Result>} Result from remote side
- */
-TwilsockClient.prototype.send = function (message) {
-  return this._network.send(message.to, message.headers, message.body);
-};
-
-/**
- * @param {String} token authentification token
- * @public
- */
-TwilsockClient.prototype.setAuthToken = function (token) {
-  var _this2 = this;
-
-  log.info('Twilsock I: authTokenUpdated');
-  this._config.updateToken(token);
-
-  this._socket.disconnect().then(function () {
-    return _this2._socket.connect();
-  });
-};
-
-/**
- * Connect to the server
- * @fires TwilsockClient#connected
- * @public
- */
-TwilsockClient.prototype.connect = function () {
-  return this._socket.connect();
-};
-
-/**
- * Connect to the server
- * @fires TwilsockClient#disconnected
- * @public
- */
-TwilsockClient.prototype.disconnect = function () {
-  return this._socket.disconnect();
-};
-
-(0, _freeze2.default)(TwilsockClient);
-
-/**
- * Fired when new message received
- * @param {Object} message
- * @event TwilsockClient#message
- */
-
-/**
- * Fired when socket connected
- * @param {String} URI of endpoint
- * @event TwilsockClient#connected
- */
-
-/**
- * Fired when socket disconnected
- * @event TwilsockClient#disconnected
- */
-
-module.exports = TwilsockClient;
-
-},{"./configuration.js":31,"./packetinterface.js":32,"./twilsock.js":33,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"events":163,"loglevel":169,"util":198}],31:[function(_dereq_,module,exports){
-'use strict';
-
-var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
-
-var _defineProperties2 = _interopRequireDefault(_defineProperties);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var TWILSOCK_URI = 'wss://tsock.twilio.com';
-var TWILSOCK_PATH = '/v2/wsconnect';
-
-/**
- * @param {String} token - authentication token
- * @param {Object} options - options to override defaults
- *
- * @class TwilsockConfig
- * @classdesc Settings container for the Twilsock client library
- */
-function TwilsockConfig(token, options) {
-  var _this = this;
-
-  options = options || {};
-  var _options = options.Twilsock || {};
-  var twilsockUri = _options.uri || options.wsServer || TWILSOCK_URI;
-
-  (0, _defineProperties2.default)(this, {
-    _twilsockWsHost: { value: twilsockUri + TWILSOCK_PATH },
-    _token: { value: token, writable: true },
-
-    token: { get: function get() {
-        return _this._token;
-      } },
-    twilsockUri: { get: function get() {
-        return _this._twilsockWsHost;
-      } }
-  });
-}
-
-TwilsockConfig.prototype.updateToken = function (token) {
-  this._token = token;
-};
-
-module.exports = TwilsockConfig;
-
-},{"babel-runtime/core-js/object/define-properties":41}],32:[function(_dereq_,module,exports){
-'use strict';
-
-var _promise = _dereq_('babel-runtime/core-js/promise');
-
-var _promise2 = _interopRequireDefault(_promise);
-
-var _map = _dereq_('babel-runtime/core-js/map');
-
-var _map2 = _interopRequireDefault(_map);
-
-var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
-
-var _defineProperties2 = _interopRequireDefault(_defineProperties);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var log = _dereq_('loglevel');
-
-var TIMEOUT = 30000;
-
-function PacketInterface(socket) {
-  (0, _defineProperties2.default)(this, {
-    _activeRequests: { value: new _map2.default() },
-    _socket: { value: socket }
-  });
-
-  this._socket.on('reply', this._processReply.bind(this));
-}
-
-function isHttpSuccess(code) {
-  return [200, 201, 204].indexOf(code) !== -1;
-}
-
-PacketInterface.prototype._processReply = function (reply) {
-  var request = this._activeRequests.get(reply.id);
-  if (request) {
-    clearTimeout(request.timeout);
-    this._activeRequests.delete(reply.id);
-
-    if (!isHttpSuccess(reply.status.code)) {
-      request.reject(new Error('Transport failure: ' + reply.status.status));
-    } else if (!isHttpSuccess(reply.header.http_status.code)) {
-      request.reject({ status: reply.header.http_status.code,
-        description: reply.header.http_status.status,
-        body: reply.body });
-    } else {
-      request.resolve(reply);
-    }
-  }
-};
-
-PacketInterface.prototype.send = function (address, headers, body) {
-  var _this = this;
-
-  return new _promise2.default(function (resolve, reject) {
-    var id = _this._socket.send(address, headers, body);
-    log.trace('Twilsock: message sent: ', { id: id, address: address, headers: headers, body: body });
-    var requestDescriptor = { resolve: resolve,
-      reject: reject,
-      timeout: setTimeout(function () {
-        log.debug('Request', id, 'is timed out');
-        reject(new Error('Timeout'));
-      }, TIMEOUT)
-    };
-    _this._activeRequests.set(id, requestDescriptor);
-  });
-};
-
-PacketInterface.prototype.shutdown = function () {
-  this._activeRequests.forEach(function (descriptor) {
-    clearTimeout(descriptor.timeout);
-  });
-  this._activeRequests.clear();
-};
-
-module.exports = PacketInterface;
-
-},{"babel-runtime/core-js/map":40,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/promise":43,"loglevel":169}],33:[function(_dereq_,module,exports){
-(function (Buffer){
-'use strict';
-
-var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
-
-var _freeze2 = _interopRequireDefault(_freeze);
-
-var _promise = _dereq_('babel-runtime/core-js/promise');
-
-var _promise2 = _interopRequireDefault(_promise);
-
-var _stringify = _dereq_('babel-runtime/core-js/json/stringify');
-
-var _stringify2 = _interopRequireDefault(_stringify);
-
-var _typeof2 = _dereq_('babel-runtime/helpers/typeof');
-
-var _typeof3 = _interopRequireDefault(_typeof2);
-
-var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
-
-var _defineProperties2 = _interopRequireDefault(_defineProperties);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var EventEmitter = _dereq_('events').EventEmitter;
-var util = _dereq_('../../util');
-var inherits = _dereq_('util').inherits;
-var log = _dereq_('loglevel');
-
-var Backoff = _dereq_('backoff');
-var WebSocket = _dereq_('ws');
-
-var StateMachine = _dereq_('javascript-state-machine');
-
-var ACTIVITY_CHECK_INTERVAL = 5000;
-var ACTIVITY_TIMEOUT = 43000;
-
-/**
- * @class TwilsockChannel
- * @classdesc Twilsock connection
- *
- * @param config
- */
-function TwilsockChannel(config) {
-  var _this = this,
-      _arguments = arguments;
-
-  EventEmitter.call(this);
-
-  var fsm = StateMachine.create({
-    initial: 'disconnected',
-    events: [{ name: 'userConnect', from: ['disconnected'], to: 'connecting' }, { name: 'userDisconnect', from: ['connecting', 'connected', 'retrying'], to: 'disconnecting' }, { name: 'userRetry', from: ['retrying'], to: 'connecting' }, { name: 'socketConnected', from: ['connecting'], to: 'connected' }, { name: 'socketClosed', from: ['connecting', 'connected'], to: 'retrying' }, { name: 'socketClosed', from: ['disconnecting'], to: 'disconnected' }, { name: 'socketRejected', from: ['connecting', 'connected'], to: 'disconnecting' }],
-    callbacks: {
-      onconnecting: function onconnecting() {
-        _this._startWatchdogTimer();
-        _this._setupSocket();
-        _this.emit('connecting');
-      },
-      onretrying: function onretrying() {
-        _this._initRetry();
-        _this.emit('connecting');
-      },
-      onenterconnected: this._onConnected.bind(this),
-      onuserDisconnect: this._closeSocket.bind(this),
-      ondisconnected: function ondisconnected() {
-        _this._stopWatchdogTimer();
-        _this._onDisconnected();
-        if (_this._disconnectedPromiseResolve) {
-          var resolve = _this._disconnectedPromiseResolve;
-          _this._disconnectedPromiseResolve = null;
-          resolve();
-        }
-      },
-      onsocketRejected: function onsocketRejected() {
-        var args = Array.prototype.slice.call(_arguments, 3, _arguments.length);
-        _this._onSocketRejected(args);
-      }
-    },
-    error: function error() {
-      log.trace('Twilsock FSM: unexpected transition', arguments);
-    }
-  });
-
-  var backoff = Backoff.exponential({
-    randomisationFactor: 0.2,
-    initialDelay: 2 * 1000,
-    maxDelay: 2 * 60 * 1000
-  });
-
-  backoff.on('ready', function () {
-    _this._retry();
-  });
-
-  (0, _defineProperties2.default)(this, {
-    _config: { value: config },
-    _transportReady: { value: false, writable: true },
-    _disconnectedPromiseResolve: { value: null, writable: true },
-    _backoff: { value: backoff },
-    _fsm: { value: fsm },
-    _watchTimer: { value: null, writable: true },
-    _timestamp: { value: 0, writable: true }
-  });
-}
-
-inherits(TwilsockChannel, EventEmitter);
-
-TwilsockChannel.prototype._initRetry = function () {
-  this._backoff.backoff();
-};
-
-TwilsockChannel.prototype._retry = function () {
-  this._socket = null;
-  this._fsm.userRetry();
-};
-
-TwilsockChannel.prototype._onConnected = function () {
-  this._backoff.reset();
-  this.emit('connected', this._wschannelUrl);
-};
-
-TwilsockChannel.prototype._onDisconnected = function () {
-  this._backoff.reset();
-  this._wschannelUrl = null;
-  this.emit('disconnected');
-};
-
-function getMagic(buffer) {
-  var strMagic = '';
-  var idx = 0;
-  for (; idx < buffer.length; ++idx) {
-    var chr = String.fromCharCode(buffer[idx]);
-    strMagic += chr;
-    if (chr === '\r') {
-      idx += 2;
-      break;
-    }
-  }
-
-  var magics = strMagic.split(' ');
-  return {
-    size: idx,
-    protocol: magics[0],
-    version: magics[1],
-    headerSize: Number(magics[2])
-  };
-}
-
-/**
- * @param {Uint8Array} array
- * @returns {Object}
- */
-function getJsonObject(array) {
-  var str = new Buffer(array).toString();
-  try {
-    return JSON.parse(str);
-  } catch (e) {
-    log.error('Twilsock E: Failed to parse input: ', str);
-    throw e;
-  }
-}
-
-TwilsockChannel.prototype._setupSocket = function () {
-  var self = this;
-  var uri = this._config.twilsockUri + '?token=' + this._config.token;
-
-  var socket = new WebSocket(uri);
-  socket.binaryType = 'arraybuffer';
-
-  socket.onopen = function () {
-    log.info('Twilsock I: Twilsock socket opened');
-  };
-
-  socket.onclose = function () {
-    log.info('Twilsock I: socket closed');
-    self._fsm.socketClosed();
-  };
-
-  socket.onerror = function (error) {
-    log.debug('Twilsock E: ', error);
-    // self._fsm.socketError();
-  };
-
-  // Log messages from the server
-  socket.onmessage = function (message) {
-    log.trace('Twilsock: ', message.data);
-
-    var fieldMargin = 2;
-
-    var dataView = new Uint8Array(message.data);
-    var magic = getMagic(dataView);
-    if (magic.protocol !== 'TWILSOCK' || magic.version !== 'V1.0') {
-      throw new Error('Unsupported protocol: ' + magic.protocol + ' ver ' + magic.version);
-    }
-
-    var header = getJsonObject(dataView.subarray(magic.size, magic.size + magic.headerSize));
-    log.trace('Twilsock: message received: ', header);
-
-    var payload = null;
-    if (header.payload_size > 0) {
-      var payloadOffset = fieldMargin + magic.size + magic.headerSize;
-      if (!header.hasOwnProperty('payload_type') || header.payload_type.indexOf('application/json') === 0) {
-        payload = getJsonObject(dataView.subarray(payloadOffset));
-      } else if (header.payload_type.indexOf('text/plain') === 0) {
-        payload = new Buffer(dataView.subarray(payloadOffset)).toString();
-      }
-    }
-
-    self._updateActivityTimestamp();
-
-    if (header.method === 'ready') {
-      log.trace('Twilsock ready', payload);
-      self._wschannelUrl = payload.wschannel_url;
-      self._confirmReceiving(header);
-      self._fsm.socketConnected();
-    } else if (header.method === 'notification') {
-      self._confirmReceiving(header);
-      self.emit('message', header.message_type, payload);
-    } else if (header.method === 'reply') {
-      self.emit('reply', { id: header.id,
-        status: header.status,
-        header: header,
-        body: payload });
-    } else if (header.method === 'ping') {
-      self._confirmReceiving(header);
-    } else if (header.method === 'close') {
-      log.trace('Twilsock connection close initated by server');
-      self._confirmReceiving(header);
-      self._fsm.socketRejected(payload);
-    }
-  };
-
-  this._socket = socket;
-};
-
-/**
- * Should be called for each message to confirm it received
- */
-TwilsockChannel.prototype._confirmReceiving = function (messageHeader) {
-  /* eslint-disable camelcase */
-  var header = {
-    method: 'reply',
-    id: messageHeader.id,
-    payload_type: 'application/json',
-    status: { code: 200, status: 'OK' }
-  };
-  /* eslint-enable camelcase */
-
-  this._sendPacket(header);
-};
-
-/**
- * Makes sure that body is properly stringified
- */
-function preparePayload(payload) {
-  switch (typeof payload === 'undefined' ? 'undefined' : (0, _typeof3.default)(payload)) {
-    case 'undefined':
-      return '';
-    case 'object':
-      return (0, _stringify2.default)(payload);
-    default:
-      return payload;
-  }
-}
-
-/**
- * Prepare binary packet and send it over the network
- */
-TwilsockChannel.prototype._sendPacket = function (header, payload) {
-  /* eslint-disable camelcase */
-  var payloadString = preparePayload(payload);
-
-  header.payload_size = Buffer.byteLength(payloadString);
-  var headerString = (0, _stringify2.default)(header) + '\r\n';
-  var magicString = 'TWILSOCK V1.0 ' + (Buffer.byteLength(headerString) - 2) + '\r\n';
-  var message = new Uint8Array(new Buffer(magicString + headerString + payloadString));
-  this._socket.send(message.buffer);
-  /* eslint-enable camelcase */
-};
-
-/**
- * Cancels pending retry attempt if it exists
- * @private
- */
-TwilsockChannel.prototype._cancelRetryAttempt = function () {
-  this._backoff.reset();
-};
-
-/**
- * Shutdown connection
- * @private
- */
-TwilsockChannel.prototype._closeSocket = function () {
-  this._cancelRetryAttempt();
-  if (this._socket) {
-    this._socket.close();
-  }
-};
-
-/**
- * Initiate the twilsock connection
- * If already connected, it does nothing
- */
-TwilsockChannel.prototype.connect = function () {
-  this._fsm.userConnect();
-};
-
-/**
- * Close twilsock connection
- * If already disconnected, it does nothing
- */
-TwilsockChannel.prototype.disconnect = function () {
-  var _this2 = this;
-
-  if (this._fsm.is('disconnected')) {
-    return _promise2.default.resolve();
-  }
-
-  return new _promise2.default(function (resolve) {
-    _this2._fsm.userDisconnect();
-    _this2._disconnectedPromiseResolve = resolve;
-  });
-};
-
-/**
- * Checks if connection established
- */
-TwilsockChannel.prototype.isConnected = function () {
-  return this._socket && this._socket.readyState === 1;
-};
-
-/**
- * Send upstream message
- * @returns {String} id of sent message
- */
-TwilsockChannel.prototype.send = function (address, headers, body) {
-  /* eslint-disable camelcase */
-  var id = util.makeUUID();
-
-  var httpHeader = {
-    host: address.host,
-    path: address.path,
-    method: address.method
-  };
-
-  if (address.hasOwnProperty('params')) {
-    httpHeader.params = address.params;
-  }
-
-  var twilsockHeader = {
-    method: 'message',
-    id: id,
-    http_header: httpHeader
-  };
-
-  if (headers) {
-    twilsockHeader.http_header.headers = headers;
-  }
-
-  if (headers && headers.hasOwnProperty('Content-Type')) {
-    twilsockHeader.payload_type = headers['Content-Type'];
-  }
-
-  this._sendPacket(twilsockHeader, body);
-  return id;
-  /* eslint-enable camelcase */
-};
-
-/**
- * @private
- */
-TwilsockChannel.prototype._onSocketRejected = function socketRejected(reason) {
-  log.error('Twilsock connection closed by server', reason);
-  this.emit('remoteClose', reason);
-  this._closeSocket();
-};
-
-/**
- * @private
- */
-TwilsockChannel.prototype._startWatchdogTimer = function () {
-  var _this3 = this;
-
-  this._timestamp = Date.now();
-  this._watchTimer = setInterval(function () {
-    if (Date.now() - _this3._timestamp > ACTIVITY_TIMEOUT) {
-      _this3._socket.close();
-    }
-  }, ACTIVITY_CHECK_INTERVAL);
-};
-
-/**
- * @private
- */
-TwilsockChannel.prototype._stopWatchdogTimer = function () {
-  clearInterval(this._watchTimer);
-};
-
-/**
- * @private
- */
-TwilsockChannel.prototype._updateActivityTimestamp = function () {
-  this._timestamp = Date.now();
-};
-
-(0, _freeze2.default)(TwilsockChannel);
-
-module.exports = TwilsockChannel;
-
-}).call(this,_dereq_("buffer").Buffer)
-},{"../../util":36,"babel-runtime/core-js/json/stringify":39,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/object/freeze":42,"babel-runtime/core-js/promise":43,"babel-runtime/helpers/typeof":47,"backoff":148,"buffer":157,"events":163,"javascript-state-machine":168,"loglevel":169,"util":198,"ws":199}],34:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/json/stringify":31,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"babel-runtime/core-js/promise":36,"events":160,"util":205}],26:[function(_dereq_,module,exports){
 'use strict';
 
 var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
@@ -6714,19 +5518,7 @@ ChangeTracker.prototype.addEventHandler = function (eventName, path, handler) {
 
 module.exports = ChangeTracker;
 
-},{"./jsondiff":37,"babel-runtime/core-js/object/define-properties":41,"events":163,"util":198}],35:[function(_dereq_,module,exports){
-'use strict';
-
-function guid() {
-    function s4() {
-        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-    }
-    return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
-}
-
-module.exports = guid;
-
-},{}],36:[function(_dereq_,module,exports){
+},{"./jsondiff":28,"babel-runtime/core-js/object/define-properties":33,"events":160,"util":205}],27:[function(_dereq_,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -7075,7 +5867,7 @@ module.exports.faultTolerantWait = faultTolerantWait;
 module.exports.UriBuilder = UriBuilder;
 
 }).call(this,_dereq_("buffer").Buffer)
-},{"babel-runtime/core-js/json/stringify":39,"babel-runtime/core-js/object/define-properties":41,"babel-runtime/core-js/promise":43,"buffer":157}],37:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/json/stringify":31,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/promise":36,"buffer":154}],28:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -7333,7 +6125,7 @@ JsonDiff.isDeepEqual = function (o1, o2) {
 
 module.exports = JsonDiff;
 
-},{"babel-runtime/helpers/typeof":47}],38:[function(_dereq_,module,exports){
+},{"babel-runtime/helpers/typeof":40}],29:[function(_dereq_,module,exports){
 'use strict';
 
 function IPMessaging(token, options) {
@@ -7341,30 +6133,30 @@ function IPMessaging(token, options) {
 }
 
 IPMessaging.Client = _dereq_('./clients/ipmessaging/client');
-IPMessaging.DataSyncClient = _dereq_('./clients/datasync/client');
-IPMessaging.NotificationClient = _dereq_('./clients/notification/client');
-IPMessaging.Transport = _dereq_('./clients/transport');
-IPMessaging.TwilsockClient = _dereq_('./clients/twilsock/client');
 
 module.exports = IPMessaging;
 
-},{"./clients/datasync/client":1,"./clients/ipmessaging/client":11,"./clients/notification/client":24,"./clients/transport":28,"./clients/twilsock/client":30}],39:[function(_dereq_,module,exports){
+},{"./clients/ipmessaging/client":12}],30:[function(_dereq_,module,exports){
+module.exports = { "default": _dereq_("core-js/library/fn/get-iterator"), __esModule: true };
+},{"core-js/library/fn/get-iterator":41}],31:[function(_dereq_,module,exports){
 module.exports = { "default": _dereq_("core-js/library/fn/json/stringify"), __esModule: true };
-},{"core-js/library/fn/json/stringify":48}],40:[function(_dereq_,module,exports){
+},{"core-js/library/fn/json/stringify":42}],32:[function(_dereq_,module,exports){
 module.exports = { "default": _dereq_("core-js/library/fn/map"), __esModule: true };
-},{"core-js/library/fn/map":49}],41:[function(_dereq_,module,exports){
+},{"core-js/library/fn/map":43}],33:[function(_dereq_,module,exports){
 module.exports = { "default": _dereq_("core-js/library/fn/object/define-properties"), __esModule: true };
-},{"core-js/library/fn/object/define-properties":50}],42:[function(_dereq_,module,exports){
+},{"core-js/library/fn/object/define-properties":44}],34:[function(_dereq_,module,exports){
 module.exports = { "default": _dereq_("core-js/library/fn/object/freeze"), __esModule: true };
-},{"core-js/library/fn/object/freeze":51}],43:[function(_dereq_,module,exports){
+},{"core-js/library/fn/object/freeze":45}],35:[function(_dereq_,module,exports){
+module.exports = { "default": _dereq_("core-js/library/fn/object/keys"), __esModule: true };
+},{"core-js/library/fn/object/keys":46}],36:[function(_dereq_,module,exports){
 module.exports = { "default": _dereq_("core-js/library/fn/promise"), __esModule: true };
-},{"core-js/library/fn/promise":52}],44:[function(_dereq_,module,exports){
+},{"core-js/library/fn/promise":47}],37:[function(_dereq_,module,exports){
 module.exports = { "default": _dereq_("core-js/library/fn/set"), __esModule: true };
-},{"core-js/library/fn/set":53}],45:[function(_dereq_,module,exports){
+},{"core-js/library/fn/set":48}],38:[function(_dereq_,module,exports){
 module.exports = { "default": _dereq_("core-js/library/fn/symbol"), __esModule: true };
-},{"core-js/library/fn/symbol":54}],46:[function(_dereq_,module,exports){
+},{"core-js/library/fn/symbol":49}],39:[function(_dereq_,module,exports){
 module.exports = { "default": _dereq_("core-js/library/fn/symbol/iterator"), __esModule: true };
-},{"core-js/library/fn/symbol/iterator":55}],47:[function(_dereq_,module,exports){
+},{"core-js/library/fn/symbol/iterator":50}],40:[function(_dereq_,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -7386,71 +6178,78 @@ exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.d
 } : function (obj) {
   return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
 };
-},{"babel-runtime/core-js/symbol":45,"babel-runtime/core-js/symbol/iterator":46}],48:[function(_dereq_,module,exports){
+},{"babel-runtime/core-js/symbol":38,"babel-runtime/core-js/symbol/iterator":39}],41:[function(_dereq_,module,exports){
+_dereq_('../modules/web.dom.iterable');
+_dereq_('../modules/es6.string.iterator');
+module.exports = _dereq_('../modules/core.get-iterator');
+},{"../modules/core.get-iterator":129,"../modules/es6.string.iterator":138,"../modules/web.dom.iterable":144}],42:[function(_dereq_,module,exports){
 var core  = _dereq_('../../modules/_core')
   , $JSON = core.JSON || (core.JSON = {stringify: JSON.stringify});
 module.exports = function stringify(it){ // eslint-disable-line no-unused-vars
   return $JSON.stringify.apply($JSON, arguments);
 };
-},{"../../modules/_core":70}],49:[function(_dereq_,module,exports){
+},{"../../modules/_core":65}],43:[function(_dereq_,module,exports){
 _dereq_('../modules/es6.object.to-string');
 _dereq_('../modules/es6.string.iterator');
 _dereq_('../modules/web.dom.iterable');
 _dereq_('../modules/es6.map');
 _dereq_('../modules/es7.map.to-json');
 module.exports = _dereq_('../modules/_core').Map;
-},{"../modules/_core":70,"../modules/es6.map":135,"../modules/es6.object.to-string":138,"../modules/es6.string.iterator":141,"../modules/es7.map.to-json":143,"../modules/web.dom.iterable":147}],50:[function(_dereq_,module,exports){
+},{"../modules/_core":65,"../modules/es6.map":131,"../modules/es6.object.to-string":135,"../modules/es6.string.iterator":138,"../modules/es7.map.to-json":140,"../modules/web.dom.iterable":144}],44:[function(_dereq_,module,exports){
 _dereq_('../../modules/es6.object.define-properties');
 var $Object = _dereq_('../../modules/_core').Object;
 module.exports = function defineProperties(T, D){
   return $Object.defineProperties(T, D);
 };
-},{"../../modules/_core":70,"../../modules/es6.object.define-properties":136}],51:[function(_dereq_,module,exports){
+},{"../../modules/_core":65,"../../modules/es6.object.define-properties":132}],45:[function(_dereq_,module,exports){
 _dereq_('../../modules/es6.object.freeze');
 module.exports = _dereq_('../../modules/_core').Object.freeze;
-},{"../../modules/_core":70,"../../modules/es6.object.freeze":137}],52:[function(_dereq_,module,exports){
+},{"../../modules/_core":65,"../../modules/es6.object.freeze":133}],46:[function(_dereq_,module,exports){
+_dereq_('../../modules/es6.object.keys');
+module.exports = _dereq_('../../modules/_core').Object.keys;
+},{"../../modules/_core":65,"../../modules/es6.object.keys":134}],47:[function(_dereq_,module,exports){
 _dereq_('../modules/es6.object.to-string');
 _dereq_('../modules/es6.string.iterator');
 _dereq_('../modules/web.dom.iterable');
 _dereq_('../modules/es6.promise');
 module.exports = _dereq_('../modules/_core').Promise;
-},{"../modules/_core":70,"../modules/es6.object.to-string":138,"../modules/es6.promise":139,"../modules/es6.string.iterator":141,"../modules/web.dom.iterable":147}],53:[function(_dereq_,module,exports){
+},{"../modules/_core":65,"../modules/es6.object.to-string":135,"../modules/es6.promise":136,"../modules/es6.string.iterator":138,"../modules/web.dom.iterable":144}],48:[function(_dereq_,module,exports){
 _dereq_('../modules/es6.object.to-string');
 _dereq_('../modules/es6.string.iterator');
 _dereq_('../modules/web.dom.iterable');
 _dereq_('../modules/es6.set');
 _dereq_('../modules/es7.set.to-json');
 module.exports = _dereq_('../modules/_core').Set;
-},{"../modules/_core":70,"../modules/es6.object.to-string":138,"../modules/es6.set":140,"../modules/es6.string.iterator":141,"../modules/es7.set.to-json":144,"../modules/web.dom.iterable":147}],54:[function(_dereq_,module,exports){
+},{"../modules/_core":65,"../modules/es6.object.to-string":135,"../modules/es6.set":137,"../modules/es6.string.iterator":138,"../modules/es7.set.to-json":141,"../modules/web.dom.iterable":144}],49:[function(_dereq_,module,exports){
 _dereq_('../../modules/es6.symbol');
 _dereq_('../../modules/es6.object.to-string');
 _dereq_('../../modules/es7.symbol.async-iterator');
 _dereq_('../../modules/es7.symbol.observable');
 module.exports = _dereq_('../../modules/_core').Symbol;
-},{"../../modules/_core":70,"../../modules/es6.object.to-string":138,"../../modules/es6.symbol":142,"../../modules/es7.symbol.async-iterator":145,"../../modules/es7.symbol.observable":146}],55:[function(_dereq_,module,exports){
+},{"../../modules/_core":65,"../../modules/es6.object.to-string":135,"../../modules/es6.symbol":139,"../../modules/es7.symbol.async-iterator":142,"../../modules/es7.symbol.observable":143}],50:[function(_dereq_,module,exports){
 _dereq_('../../modules/es6.string.iterator');
 _dereq_('../../modules/web.dom.iterable');
 module.exports = _dereq_('../../modules/_wks-ext').f('iterator');
-},{"../../modules/_wks-ext":131,"../../modules/es6.string.iterator":141,"../../modules/web.dom.iterable":147}],56:[function(_dereq_,module,exports){
+},{"../../modules/_wks-ext":126,"../../modules/es6.string.iterator":138,"../../modules/web.dom.iterable":144}],51:[function(_dereq_,module,exports){
 module.exports = function(it){
   if(typeof it != 'function')throw TypeError(it + ' is not a function!');
   return it;
 };
-},{}],57:[function(_dereq_,module,exports){
+},{}],52:[function(_dereq_,module,exports){
 module.exports = function(){ /* empty */ };
-},{}],58:[function(_dereq_,module,exports){
+},{}],53:[function(_dereq_,module,exports){
 module.exports = function(it, Constructor, name, forbiddenField){
   if(!(it instanceof Constructor) || (forbiddenField !== undefined && forbiddenField in it)){
     throw TypeError(name + ': incorrect invocation!');
   } return it;
 };
-},{}],59:[function(_dereq_,module,exports){
+},{}],54:[function(_dereq_,module,exports){
 var isObject = _dereq_('./_is-object');
 module.exports = function(it){
   if(!isObject(it))throw TypeError(it + ' is not an object!');
   return it;
 };
-},{"./_is-object":89}],60:[function(_dereq_,module,exports){
+},{"./_is-object":84}],55:[function(_dereq_,module,exports){
 var forOf = _dereq_('./_for-of');
 
 module.exports = function(iter, ITERATOR){
@@ -7459,7 +6258,7 @@ module.exports = function(iter, ITERATOR){
   return result;
 };
 
-},{"./_for-of":79}],61:[function(_dereq_,module,exports){
+},{"./_for-of":74}],56:[function(_dereq_,module,exports){
 // false -> Array#indexOf
 // true  -> Array#includes
 var toIObject = _dereq_('./_to-iobject')
@@ -7481,7 +6280,7 @@ module.exports = function(IS_INCLUDES){
     } return !IS_INCLUDES && -1;
   };
 };
-},{"./_to-index":123,"./_to-iobject":125,"./_to-length":126}],62:[function(_dereq_,module,exports){
+},{"./_to-index":118,"./_to-iobject":120,"./_to-length":121}],57:[function(_dereq_,module,exports){
 // 0 -> Array#forEach
 // 1 -> Array#map
 // 2 -> Array#filter
@@ -7526,7 +6325,7 @@ module.exports = function(TYPE, $create){
     return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : result;
   };
 };
-},{"./_array-species-create":64,"./_ctx":71,"./_iobject":86,"./_to-length":126,"./_to-object":127}],63:[function(_dereq_,module,exports){
+},{"./_array-species-create":59,"./_ctx":66,"./_iobject":81,"./_to-length":121,"./_to-object":122}],58:[function(_dereq_,module,exports){
 var isObject = _dereq_('./_is-object')
   , isArray  = _dereq_('./_is-array')
   , SPECIES  = _dereq_('./_wks')('species');
@@ -7543,14 +6342,14 @@ module.exports = function(original){
     }
   } return C === undefined ? Array : C;
 };
-},{"./_is-array":88,"./_is-object":89,"./_wks":132}],64:[function(_dereq_,module,exports){
+},{"./_is-array":83,"./_is-object":84,"./_wks":127}],59:[function(_dereq_,module,exports){
 // 9.4.2.3 ArraySpeciesCreate(originalArray, length)
 var speciesConstructor = _dereq_('./_array-species-constructor');
 
 module.exports = function(original, length){
   return new (speciesConstructor(original))(length);
 };
-},{"./_array-species-constructor":63}],65:[function(_dereq_,module,exports){
+},{"./_array-species-constructor":58}],60:[function(_dereq_,module,exports){
 // getting tag from 19.1.3.6 Object.prototype.toString()
 var cof = _dereq_('./_cof')
   , TAG = _dereq_('./_wks')('toStringTag')
@@ -7574,13 +6373,13 @@ module.exports = function(it){
     // ES3 arguments fallback
     : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
 };
-},{"./_cof":66,"./_wks":132}],66:[function(_dereq_,module,exports){
+},{"./_cof":61,"./_wks":127}],61:[function(_dereq_,module,exports){
 var toString = {}.toString;
 
 module.exports = function(it){
   return toString.call(it).slice(8, -1);
 };
-},{}],67:[function(_dereq_,module,exports){
+},{}],62:[function(_dereq_,module,exports){
 'use strict';
 var dP          = _dereq_('./_object-dp').f
   , create      = _dereq_('./_object-create')
@@ -7724,7 +6523,7 @@ module.exports = {
     setSpecies(NAME);
   }
 };
-},{"./_an-instance":58,"./_ctx":71,"./_defined":72,"./_descriptors":73,"./_for-of":79,"./_hide":82,"./_iter-define":92,"./_iter-step":94,"./_meta":98,"./_object-create":100,"./_object-dp":101,"./_redefine-all":113,"./_set-species":116}],68:[function(_dereq_,module,exports){
+},{"./_an-instance":53,"./_ctx":66,"./_defined":67,"./_descriptors":68,"./_for-of":74,"./_hide":77,"./_iter-define":87,"./_iter-step":89,"./_meta":93,"./_object-create":95,"./_object-dp":96,"./_redefine-all":108,"./_set-species":111}],63:[function(_dereq_,module,exports){
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
 var classof = _dereq_('./_classof')
   , from    = _dereq_('./_array-from-iterable');
@@ -7734,7 +6533,7 @@ module.exports = function(NAME){
     return from(this);
   };
 };
-},{"./_array-from-iterable":60,"./_classof":65}],69:[function(_dereq_,module,exports){
+},{"./_array-from-iterable":55,"./_classof":60}],64:[function(_dereq_,module,exports){
 'use strict';
 var global         = _dereq_('./_global')
   , $export        = _dereq_('./_export')
@@ -7794,10 +6593,10 @@ module.exports = function(NAME, wrapper, methods, common, IS_MAP, IS_WEAK){
 
   return C;
 };
-},{"./_an-instance":58,"./_array-methods":62,"./_descriptors":73,"./_export":77,"./_fails":78,"./_for-of":79,"./_global":80,"./_hide":82,"./_is-object":89,"./_meta":98,"./_object-dp":101,"./_redefine-all":113,"./_set-to-string-tag":117}],70:[function(_dereq_,module,exports){
+},{"./_an-instance":53,"./_array-methods":57,"./_descriptors":68,"./_export":72,"./_fails":73,"./_for-of":74,"./_global":75,"./_hide":77,"./_is-object":84,"./_meta":93,"./_object-dp":96,"./_redefine-all":108,"./_set-to-string-tag":112}],65:[function(_dereq_,module,exports){
 var core = module.exports = {version: '2.3.0'};
 if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
-},{}],71:[function(_dereq_,module,exports){
+},{}],66:[function(_dereq_,module,exports){
 // optional / simple context binding
 var aFunction = _dereq_('./_a-function');
 module.exports = function(fn, that, length){
@@ -7818,18 +6617,18 @@ module.exports = function(fn, that, length){
     return fn.apply(that, arguments);
   };
 };
-},{"./_a-function":56}],72:[function(_dereq_,module,exports){
+},{"./_a-function":51}],67:[function(_dereq_,module,exports){
 // 7.2.1 RequireObjectCoercible(argument)
 module.exports = function(it){
   if(it == undefined)throw TypeError("Can't call method on  " + it);
   return it;
 };
-},{}],73:[function(_dereq_,module,exports){
+},{}],68:[function(_dereq_,module,exports){
 // Thank's IE8 for his funny defineProperty
 module.exports = !_dereq_('./_fails')(function(){
   return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
 });
-},{"./_fails":78}],74:[function(_dereq_,module,exports){
+},{"./_fails":73}],69:[function(_dereq_,module,exports){
 var isObject = _dereq_('./_is-object')
   , document = _dereq_('./_global').document
   // in old IE typeof document.createElement is 'object'
@@ -7837,12 +6636,12 @@ var isObject = _dereq_('./_is-object')
 module.exports = function(it){
   return is ? document.createElement(it) : {};
 };
-},{"./_global":80,"./_is-object":89}],75:[function(_dereq_,module,exports){
+},{"./_global":75,"./_is-object":84}],70:[function(_dereq_,module,exports){
 // IE 8- don't enum bug keys
 module.exports = (
   'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
 ).split(',');
-},{}],76:[function(_dereq_,module,exports){
+},{}],71:[function(_dereq_,module,exports){
 // all enumerable object keys, includes symbols
 var getKeys = _dereq_('./_object-keys')
   , gOPS    = _dereq_('./_object-gops')
@@ -7858,7 +6657,7 @@ module.exports = function(it){
     while(symbols.length > i)if(isEnum.call(it, key = symbols[i++]))result.push(key);
   } return result;
 };
-},{"./_object-gops":106,"./_object-keys":109,"./_object-pie":110}],77:[function(_dereq_,module,exports){
+},{"./_object-gops":101,"./_object-keys":104,"./_object-pie":105}],72:[function(_dereq_,module,exports){
 var global    = _dereq_('./_global')
   , core      = _dereq_('./_core')
   , ctx       = _dereq_('./_ctx')
@@ -7920,7 +6719,7 @@ $export.W = 32;  // wrap
 $export.U = 64;  // safe
 $export.R = 128; // real proto method for `library` 
 module.exports = $export;
-},{"./_core":70,"./_ctx":71,"./_global":80,"./_hide":82}],78:[function(_dereq_,module,exports){
+},{"./_core":65,"./_ctx":66,"./_global":75,"./_hide":77}],73:[function(_dereq_,module,exports){
 module.exports = function(exec){
   try {
     return !!exec();
@@ -7928,7 +6727,7 @@ module.exports = function(exec){
     return true;
   }
 };
-},{}],79:[function(_dereq_,module,exports){
+},{}],74:[function(_dereq_,module,exports){
 var ctx         = _dereq_('./_ctx')
   , call        = _dereq_('./_iter-call')
   , isArrayIter = _dereq_('./_is-array-iter')
@@ -7948,17 +6747,17 @@ module.exports = function(iterable, entries, fn, that, ITERATOR){
     call(iterator, f, step.value, entries);
   }
 };
-},{"./_an-object":59,"./_ctx":71,"./_is-array-iter":87,"./_iter-call":90,"./_to-length":126,"./core.get-iterator-method":133}],80:[function(_dereq_,module,exports){
+},{"./_an-object":54,"./_ctx":66,"./_is-array-iter":82,"./_iter-call":85,"./_to-length":121,"./core.get-iterator-method":128}],75:[function(_dereq_,module,exports){
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 var global = module.exports = typeof window != 'undefined' && window.Math == Math
   ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
 if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
-},{}],81:[function(_dereq_,module,exports){
+},{}],76:[function(_dereq_,module,exports){
 var hasOwnProperty = {}.hasOwnProperty;
 module.exports = function(it, key){
   return hasOwnProperty.call(it, key);
 };
-},{}],82:[function(_dereq_,module,exports){
+},{}],77:[function(_dereq_,module,exports){
 var dP         = _dereq_('./_object-dp')
   , createDesc = _dereq_('./_property-desc');
 module.exports = _dereq_('./_descriptors') ? function(object, key, value){
@@ -7967,13 +6766,13 @@ module.exports = _dereq_('./_descriptors') ? function(object, key, value){
   object[key] = value;
   return object;
 };
-},{"./_descriptors":73,"./_object-dp":101,"./_property-desc":112}],83:[function(_dereq_,module,exports){
+},{"./_descriptors":68,"./_object-dp":96,"./_property-desc":107}],78:[function(_dereq_,module,exports){
 module.exports = _dereq_('./_global').document && document.documentElement;
-},{"./_global":80}],84:[function(_dereq_,module,exports){
+},{"./_global":75}],79:[function(_dereq_,module,exports){
 module.exports = !_dereq_('./_descriptors') && !_dereq_('./_fails')(function(){
   return Object.defineProperty(_dereq_('./_dom-create')('div'), 'a', {get: function(){ return 7; }}).a != 7;
 });
-},{"./_descriptors":73,"./_dom-create":74,"./_fails":78}],85:[function(_dereq_,module,exports){
+},{"./_descriptors":68,"./_dom-create":69,"./_fails":73}],80:[function(_dereq_,module,exports){
 // fast apply, http://jsperf.lnkit.com/fast-apply/5
 module.exports = function(fn, args, that){
   var un = that === undefined;
@@ -7990,13 +6789,13 @@ module.exports = function(fn, args, that){
                       : fn.call(that, args[0], args[1], args[2], args[3]);
   } return              fn.apply(that, args);
 };
-},{}],86:[function(_dereq_,module,exports){
+},{}],81:[function(_dereq_,module,exports){
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
 var cof = _dereq_('./_cof');
 module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
   return cof(it) == 'String' ? it.split('') : Object(it);
 };
-},{"./_cof":66}],87:[function(_dereq_,module,exports){
+},{"./_cof":61}],82:[function(_dereq_,module,exports){
 // check on default Array iterator
 var Iterators  = _dereq_('./_iterators')
   , ITERATOR   = _dereq_('./_wks')('iterator')
@@ -8005,17 +6804,17 @@ var Iterators  = _dereq_('./_iterators')
 module.exports = function(it){
   return it !== undefined && (Iterators.Array === it || ArrayProto[ITERATOR] === it);
 };
-},{"./_iterators":95,"./_wks":132}],88:[function(_dereq_,module,exports){
+},{"./_iterators":90,"./_wks":127}],83:[function(_dereq_,module,exports){
 // 7.2.2 IsArray(argument)
 var cof = _dereq_('./_cof');
 module.exports = Array.isArray || function isArray(arg){
   return cof(arg) == 'Array';
 };
-},{"./_cof":66}],89:[function(_dereq_,module,exports){
+},{"./_cof":61}],84:[function(_dereq_,module,exports){
 module.exports = function(it){
   return typeof it === 'object' ? it !== null : typeof it === 'function';
 };
-},{}],90:[function(_dereq_,module,exports){
+},{}],85:[function(_dereq_,module,exports){
 // call something on iterator step with safe closing on error
 var anObject = _dereq_('./_an-object');
 module.exports = function(iterator, fn, value, entries){
@@ -8028,7 +6827,7 @@ module.exports = function(iterator, fn, value, entries){
     throw e;
   }
 };
-},{"./_an-object":59}],91:[function(_dereq_,module,exports){
+},{"./_an-object":54}],86:[function(_dereq_,module,exports){
 'use strict';
 var create         = _dereq_('./_object-create')
   , descriptor     = _dereq_('./_property-desc')
@@ -8042,7 +6841,7 @@ module.exports = function(Constructor, NAME, next){
   Constructor.prototype = create(IteratorPrototype, {next: descriptor(1, next)});
   setToStringTag(Constructor, NAME + ' Iterator');
 };
-},{"./_hide":82,"./_object-create":100,"./_property-desc":112,"./_set-to-string-tag":117,"./_wks":132}],92:[function(_dereq_,module,exports){
+},{"./_hide":77,"./_object-create":95,"./_property-desc":107,"./_set-to-string-tag":112,"./_wks":127}],87:[function(_dereq_,module,exports){
 'use strict';
 var LIBRARY        = _dereq_('./_library')
   , $export        = _dereq_('./_export')
@@ -8113,7 +6912,7 @@ module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED
   }
   return methods;
 };
-},{"./_export":77,"./_has":81,"./_hide":82,"./_iter-create":91,"./_iterators":95,"./_library":97,"./_object-gpo":107,"./_redefine":114,"./_set-to-string-tag":117,"./_wks":132}],93:[function(_dereq_,module,exports){
+},{"./_export":72,"./_has":76,"./_hide":77,"./_iter-create":86,"./_iterators":90,"./_library":92,"./_object-gpo":102,"./_redefine":109,"./_set-to-string-tag":112,"./_wks":127}],88:[function(_dereq_,module,exports){
 var ITERATOR     = _dereq_('./_wks')('iterator')
   , SAFE_CLOSING = false;
 
@@ -8135,13 +6934,13 @@ module.exports = function(exec, skipClosing){
   } catch(e){ /* empty */ }
   return safe;
 };
-},{"./_wks":132}],94:[function(_dereq_,module,exports){
+},{"./_wks":127}],89:[function(_dereq_,module,exports){
 module.exports = function(done, value){
   return {value: value, done: !!done};
 };
-},{}],95:[function(_dereq_,module,exports){
+},{}],90:[function(_dereq_,module,exports){
 module.exports = {};
-},{}],96:[function(_dereq_,module,exports){
+},{}],91:[function(_dereq_,module,exports){
 var getKeys   = _dereq_('./_object-keys')
   , toIObject = _dereq_('./_to-iobject');
 module.exports = function(object, el){
@@ -8152,9 +6951,9 @@ module.exports = function(object, el){
     , key;
   while(length > index)if(O[key = keys[index++]] === el)return key;
 };
-},{"./_object-keys":109,"./_to-iobject":125}],97:[function(_dereq_,module,exports){
+},{"./_object-keys":104,"./_to-iobject":120}],92:[function(_dereq_,module,exports){
 module.exports = true;
-},{}],98:[function(_dereq_,module,exports){
+},{}],93:[function(_dereq_,module,exports){
 var META     = _dereq_('./_uid')('meta')
   , isObject = _dereq_('./_is-object')
   , has      = _dereq_('./_has')
@@ -8208,7 +7007,7 @@ var meta = module.exports = {
   getWeak:  getWeak,
   onFreeze: onFreeze
 };
-},{"./_fails":78,"./_has":81,"./_is-object":89,"./_object-dp":101,"./_uid":129}],99:[function(_dereq_,module,exports){
+},{"./_fails":73,"./_has":76,"./_is-object":84,"./_object-dp":96,"./_uid":124}],94:[function(_dereq_,module,exports){
 var global    = _dereq_('./_global')
   , macrotask = _dereq_('./_task').set
   , Observer  = global.MutationObserver || global.WebKitMutationObserver
@@ -8277,7 +7076,7 @@ module.exports = function(){
     } last = task;
   };
 };
-},{"./_cof":66,"./_global":80,"./_task":122}],100:[function(_dereq_,module,exports){
+},{"./_cof":61,"./_global":75,"./_task":117}],95:[function(_dereq_,module,exports){
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 var anObject    = _dereq_('./_an-object')
   , dPs         = _dereq_('./_object-dps')
@@ -8318,7 +7117,7 @@ module.exports = Object.create || function create(O, Properties){
   } else result = createDict();
   return Properties === undefined ? result : dPs(result, Properties);
 };
-},{"./_an-object":59,"./_dom-create":74,"./_enum-bug-keys":75,"./_html":83,"./_object-dps":102,"./_shared-key":118}],101:[function(_dereq_,module,exports){
+},{"./_an-object":54,"./_dom-create":69,"./_enum-bug-keys":70,"./_html":78,"./_object-dps":97,"./_shared-key":113}],96:[function(_dereq_,module,exports){
 var anObject       = _dereq_('./_an-object')
   , IE8_DOM_DEFINE = _dereq_('./_ie8-dom-define')
   , toPrimitive    = _dereq_('./_to-primitive')
@@ -8335,7 +7134,7 @@ exports.f = _dereq_('./_descriptors') ? Object.defineProperty : function defineP
   if('value' in Attributes)O[P] = Attributes.value;
   return O;
 };
-},{"./_an-object":59,"./_descriptors":73,"./_ie8-dom-define":84,"./_to-primitive":128}],102:[function(_dereq_,module,exports){
+},{"./_an-object":54,"./_descriptors":68,"./_ie8-dom-define":79,"./_to-primitive":123}],97:[function(_dereq_,module,exports){
 var dP       = _dereq_('./_object-dp')
   , anObject = _dereq_('./_an-object')
   , getKeys  = _dereq_('./_object-keys');
@@ -8349,7 +7148,7 @@ module.exports = _dereq_('./_descriptors') ? Object.defineProperties : function 
   while(length > i)dP.f(O, P = keys[i++], Properties[P]);
   return O;
 };
-},{"./_an-object":59,"./_descriptors":73,"./_object-dp":101,"./_object-keys":109}],103:[function(_dereq_,module,exports){
+},{"./_an-object":54,"./_descriptors":68,"./_object-dp":96,"./_object-keys":104}],98:[function(_dereq_,module,exports){
 var pIE            = _dereq_('./_object-pie')
   , createDesc     = _dereq_('./_property-desc')
   , toIObject      = _dereq_('./_to-iobject')
@@ -8366,7 +7165,7 @@ exports.f = _dereq_('./_descriptors') ? gOPD : function getOwnPropertyDescriptor
   } catch(e){ /* empty */ }
   if(has(O, P))return createDesc(!pIE.f.call(O, P), O[P]);
 };
-},{"./_descriptors":73,"./_has":81,"./_ie8-dom-define":84,"./_object-pie":110,"./_property-desc":112,"./_to-iobject":125,"./_to-primitive":128}],104:[function(_dereq_,module,exports){
+},{"./_descriptors":68,"./_has":76,"./_ie8-dom-define":79,"./_object-pie":105,"./_property-desc":107,"./_to-iobject":120,"./_to-primitive":123}],99:[function(_dereq_,module,exports){
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
 var toIObject = _dereq_('./_to-iobject')
   , gOPN      = _dereq_('./_object-gopn').f
@@ -8387,7 +7186,7 @@ module.exports.f = function getOwnPropertyNames(it){
   return windowNames && toString.call(it) == '[object Window]' ? getWindowNames(it) : gOPN(toIObject(it));
 };
 
-},{"./_object-gopn":105,"./_to-iobject":125}],105:[function(_dereq_,module,exports){
+},{"./_object-gopn":100,"./_to-iobject":120}],100:[function(_dereq_,module,exports){
 // 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
 var $keys      = _dereq_('./_object-keys-internal')
   , hiddenKeys = _dereq_('./_enum-bug-keys').concat('length', 'prototype');
@@ -8395,9 +7194,9 @@ var $keys      = _dereq_('./_object-keys-internal')
 exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O){
   return $keys(O, hiddenKeys);
 };
-},{"./_enum-bug-keys":75,"./_object-keys-internal":108}],106:[function(_dereq_,module,exports){
+},{"./_enum-bug-keys":70,"./_object-keys-internal":103}],101:[function(_dereq_,module,exports){
 exports.f = Object.getOwnPropertySymbols;
-},{}],107:[function(_dereq_,module,exports){
+},{}],102:[function(_dereq_,module,exports){
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
 var has         = _dereq_('./_has')
   , toObject    = _dereq_('./_to-object')
@@ -8411,7 +7210,7 @@ module.exports = Object.getPrototypeOf || function(O){
     return O.constructor.prototype;
   } return O instanceof Object ? ObjectProto : null;
 };
-},{"./_has":81,"./_shared-key":118,"./_to-object":127}],108:[function(_dereq_,module,exports){
+},{"./_has":76,"./_shared-key":113,"./_to-object":122}],103:[function(_dereq_,module,exports){
 var has          = _dereq_('./_has')
   , toIObject    = _dereq_('./_to-iobject')
   , arrayIndexOf = _dereq_('./_array-includes')(false)
@@ -8429,7 +7228,7 @@ module.exports = function(object, names){
   }
   return result;
 };
-},{"./_array-includes":61,"./_has":81,"./_shared-key":118,"./_to-iobject":125}],109:[function(_dereq_,module,exports){
+},{"./_array-includes":56,"./_has":76,"./_shared-key":113,"./_to-iobject":120}],104:[function(_dereq_,module,exports){
 // 19.1.2.14 / 15.2.3.14 Object.keys(O)
 var $keys       = _dereq_('./_object-keys-internal')
   , enumBugKeys = _dereq_('./_enum-bug-keys');
@@ -8437,9 +7236,9 @@ var $keys       = _dereq_('./_object-keys-internal')
 module.exports = Object.keys || function keys(O){
   return $keys(O, enumBugKeys);
 };
-},{"./_enum-bug-keys":75,"./_object-keys-internal":108}],110:[function(_dereq_,module,exports){
+},{"./_enum-bug-keys":70,"./_object-keys-internal":103}],105:[function(_dereq_,module,exports){
 exports.f = {}.propertyIsEnumerable;
-},{}],111:[function(_dereq_,module,exports){
+},{}],106:[function(_dereq_,module,exports){
 // most Object methods by ES6 should accept primitives
 var $export = _dereq_('./_export')
   , core    = _dereq_('./_core')
@@ -8450,7 +7249,7 @@ module.exports = function(KEY, exec){
   exp[KEY] = exec(fn);
   $export($export.S + $export.F * fails(function(){ fn(1); }), 'Object', exp);
 };
-},{"./_core":70,"./_export":77,"./_fails":78}],112:[function(_dereq_,module,exports){
+},{"./_core":65,"./_export":72,"./_fails":73}],107:[function(_dereq_,module,exports){
 module.exports = function(bitmap, value){
   return {
     enumerable  : !(bitmap & 1),
@@ -8459,7 +7258,7 @@ module.exports = function(bitmap, value){
     value       : value
   };
 };
-},{}],113:[function(_dereq_,module,exports){
+},{}],108:[function(_dereq_,module,exports){
 var hide = _dereq_('./_hide');
 module.exports = function(target, src, safe){
   for(var key in src){
@@ -8467,9 +7266,9 @@ module.exports = function(target, src, safe){
     else hide(target, key, src[key]);
   } return target;
 };
-},{"./_hide":82}],114:[function(_dereq_,module,exports){
+},{"./_hide":77}],109:[function(_dereq_,module,exports){
 module.exports = _dereq_('./_hide');
-},{"./_hide":82}],115:[function(_dereq_,module,exports){
+},{"./_hide":77}],110:[function(_dereq_,module,exports){
 // Works with __proto__ only. Old v8 can't work with null proto objects.
 /* eslint-disable no-proto */
 var isObject = _dereq_('./_is-object')
@@ -8495,7 +7294,7 @@ module.exports = {
     }({}, false) : undefined),
   check: check
 };
-},{"./_an-object":59,"./_ctx":71,"./_is-object":89,"./_object-gopd":103}],116:[function(_dereq_,module,exports){
+},{"./_an-object":54,"./_ctx":66,"./_is-object":84,"./_object-gopd":98}],111:[function(_dereq_,module,exports){
 'use strict';
 var global      = _dereq_('./_global')
   , core        = _dereq_('./_core')
@@ -8510,7 +7309,7 @@ module.exports = function(KEY){
     get: function(){ return this; }
   });
 };
-},{"./_core":70,"./_descriptors":73,"./_global":80,"./_object-dp":101,"./_wks":132}],117:[function(_dereq_,module,exports){
+},{"./_core":65,"./_descriptors":68,"./_global":75,"./_object-dp":96,"./_wks":127}],112:[function(_dereq_,module,exports){
 var def = _dereq_('./_object-dp').f
   , has = _dereq_('./_has')
   , TAG = _dereq_('./_wks')('toStringTag');
@@ -8518,20 +7317,20 @@ var def = _dereq_('./_object-dp').f
 module.exports = function(it, tag, stat){
   if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
 };
-},{"./_has":81,"./_object-dp":101,"./_wks":132}],118:[function(_dereq_,module,exports){
+},{"./_has":76,"./_object-dp":96,"./_wks":127}],113:[function(_dereq_,module,exports){
 var shared = _dereq_('./_shared')('keys')
   , uid    = _dereq_('./_uid');
 module.exports = function(key){
   return shared[key] || (shared[key] = uid(key));
 };
-},{"./_shared":119,"./_uid":129}],119:[function(_dereq_,module,exports){
+},{"./_shared":114,"./_uid":124}],114:[function(_dereq_,module,exports){
 var global = _dereq_('./_global')
   , SHARED = '__core-js_shared__'
   , store  = global[SHARED] || (global[SHARED] = {});
 module.exports = function(key){
   return store[key] || (store[key] = {});
 };
-},{"./_global":80}],120:[function(_dereq_,module,exports){
+},{"./_global":75}],115:[function(_dereq_,module,exports){
 // 7.3.20 SpeciesConstructor(O, defaultConstructor)
 var anObject  = _dereq_('./_an-object')
   , aFunction = _dereq_('./_a-function')
@@ -8540,7 +7339,7 @@ module.exports = function(O, D){
   var C = anObject(O).constructor, S;
   return C === undefined || (S = anObject(C)[SPECIES]) == undefined ? D : aFunction(S);
 };
-},{"./_a-function":56,"./_an-object":59,"./_wks":132}],121:[function(_dereq_,module,exports){
+},{"./_a-function":51,"./_an-object":54,"./_wks":127}],116:[function(_dereq_,module,exports){
 var toInteger = _dereq_('./_to-integer')
   , defined   = _dereq_('./_defined');
 // true  -> String#at
@@ -8558,7 +7357,7 @@ module.exports = function(TO_STRING){
       : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
   };
 };
-},{"./_defined":72,"./_to-integer":124}],122:[function(_dereq_,module,exports){
+},{"./_defined":67,"./_to-integer":119}],117:[function(_dereq_,module,exports){
 var ctx                = _dereq_('./_ctx')
   , invoke             = _dereq_('./_invoke')
   , html               = _dereq_('./_html')
@@ -8634,7 +7433,7 @@ module.exports = {
   set:   setTask,
   clear: clearTask
 };
-},{"./_cof":66,"./_ctx":71,"./_dom-create":74,"./_global":80,"./_html":83,"./_invoke":85}],123:[function(_dereq_,module,exports){
+},{"./_cof":61,"./_ctx":66,"./_dom-create":69,"./_global":75,"./_html":78,"./_invoke":80}],118:[function(_dereq_,module,exports){
 var toInteger = _dereq_('./_to-integer')
   , max       = Math.max
   , min       = Math.min;
@@ -8642,34 +7441,34 @@ module.exports = function(index, length){
   index = toInteger(index);
   return index < 0 ? max(index + length, 0) : min(index, length);
 };
-},{"./_to-integer":124}],124:[function(_dereq_,module,exports){
+},{"./_to-integer":119}],119:[function(_dereq_,module,exports){
 // 7.1.4 ToInteger
 var ceil  = Math.ceil
   , floor = Math.floor;
 module.exports = function(it){
   return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
 };
-},{}],125:[function(_dereq_,module,exports){
+},{}],120:[function(_dereq_,module,exports){
 // to indexed object, toObject with fallback for non-array-like ES3 strings
 var IObject = _dereq_('./_iobject')
   , defined = _dereq_('./_defined');
 module.exports = function(it){
   return IObject(defined(it));
 };
-},{"./_defined":72,"./_iobject":86}],126:[function(_dereq_,module,exports){
+},{"./_defined":67,"./_iobject":81}],121:[function(_dereq_,module,exports){
 // 7.1.15 ToLength
 var toInteger = _dereq_('./_to-integer')
   , min       = Math.min;
 module.exports = function(it){
   return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
 };
-},{"./_to-integer":124}],127:[function(_dereq_,module,exports){
+},{"./_to-integer":119}],122:[function(_dereq_,module,exports){
 // 7.1.13 ToObject(argument)
 var defined = _dereq_('./_defined');
 module.exports = function(it){
   return Object(defined(it));
 };
-},{"./_defined":72}],128:[function(_dereq_,module,exports){
+},{"./_defined":67}],123:[function(_dereq_,module,exports){
 // 7.1.1 ToPrimitive(input [, PreferredType])
 var isObject = _dereq_('./_is-object');
 // instead of the ES6 spec version, we didn't implement @@toPrimitive case
@@ -8682,13 +7481,13 @@ module.exports = function(it, S){
   if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
   throw TypeError("Can't convert object to primitive value");
 };
-},{"./_is-object":89}],129:[function(_dereq_,module,exports){
+},{"./_is-object":84}],124:[function(_dereq_,module,exports){
 var id = 0
   , px = Math.random();
 module.exports = function(key){
   return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
 };
-},{}],130:[function(_dereq_,module,exports){
+},{}],125:[function(_dereq_,module,exports){
 var global         = _dereq_('./_global')
   , core           = _dereq_('./_core')
   , LIBRARY        = _dereq_('./_library')
@@ -8698,9 +7497,9 @@ module.exports = function(name){
   var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
   if(name.charAt(0) != '_' && !(name in $Symbol))defineProperty($Symbol, name, {value: wksExt.f(name)});
 };
-},{"./_core":70,"./_global":80,"./_library":97,"./_object-dp":101,"./_wks-ext":131}],131:[function(_dereq_,module,exports){
+},{"./_core":65,"./_global":75,"./_library":92,"./_object-dp":96,"./_wks-ext":126}],126:[function(_dereq_,module,exports){
 exports.f = _dereq_('./_wks');
-},{"./_wks":132}],132:[function(_dereq_,module,exports){
+},{"./_wks":127}],127:[function(_dereq_,module,exports){
 var store      = _dereq_('./_shared')('wks')
   , uid        = _dereq_('./_uid')
   , Symbol     = _dereq_('./_global').Symbol
@@ -8712,7 +7511,7 @@ var $exports = module.exports = function(name){
 };
 
 $exports.store = store;
-},{"./_global":80,"./_shared":119,"./_uid":129}],133:[function(_dereq_,module,exports){
+},{"./_global":75,"./_shared":114,"./_uid":124}],128:[function(_dereq_,module,exports){
 var classof   = _dereq_('./_classof')
   , ITERATOR  = _dereq_('./_wks')('iterator')
   , Iterators = _dereq_('./_iterators');
@@ -8721,7 +7520,15 @@ module.exports = _dereq_('./_core').getIteratorMethod = function(it){
     || it['@@iterator']
     || Iterators[classof(it)];
 };
-},{"./_classof":65,"./_core":70,"./_iterators":95,"./_wks":132}],134:[function(_dereq_,module,exports){
+},{"./_classof":60,"./_core":65,"./_iterators":90,"./_wks":127}],129:[function(_dereq_,module,exports){
+var anObject = _dereq_('./_an-object')
+  , get      = _dereq_('./core.get-iterator-method');
+module.exports = _dereq_('./_core').getIterator = function(it){
+  var iterFn = get(it);
+  if(typeof iterFn != 'function')throw TypeError(it + ' is not iterable!');
+  return anObject(iterFn.call(it));
+};
+},{"./_an-object":54,"./_core":65,"./core.get-iterator-method":128}],130:[function(_dereq_,module,exports){
 'use strict';
 var addToUnscopables = _dereq_('./_add-to-unscopables')
   , step             = _dereq_('./_iter-step')
@@ -8756,7 +7563,7 @@ Iterators.Arguments = Iterators.Array;
 addToUnscopables('keys');
 addToUnscopables('values');
 addToUnscopables('entries');
-},{"./_add-to-unscopables":57,"./_iter-define":92,"./_iter-step":94,"./_iterators":95,"./_to-iobject":125}],135:[function(_dereq_,module,exports){
+},{"./_add-to-unscopables":52,"./_iter-define":87,"./_iter-step":89,"./_iterators":90,"./_to-iobject":120}],131:[function(_dereq_,module,exports){
 'use strict';
 var strong = _dereq_('./_collection-strong');
 
@@ -8774,11 +7581,11 @@ module.exports = _dereq_('./_collection')('Map', function(get){
     return strong.def(this, key === 0 ? 0 : key, value);
   }
 }, strong, true);
-},{"./_collection":69,"./_collection-strong":67}],136:[function(_dereq_,module,exports){
+},{"./_collection":64,"./_collection-strong":62}],132:[function(_dereq_,module,exports){
 var $export = _dereq_('./_export');
 // 19.1.2.3 / 15.2.3.7 Object.defineProperties(O, Properties)
 $export($export.S + $export.F * !_dereq_('./_descriptors'), 'Object', {defineProperties: _dereq_('./_object-dps')});
-},{"./_descriptors":73,"./_export":77,"./_object-dps":102}],137:[function(_dereq_,module,exports){
+},{"./_descriptors":68,"./_export":72,"./_object-dps":97}],133:[function(_dereq_,module,exports){
 // 19.1.2.5 Object.freeze(O)
 var isObject = _dereq_('./_is-object')
   , meta     = _dereq_('./_meta').onFreeze;
@@ -8788,9 +7595,19 @@ _dereq_('./_object-sap')('freeze', function($freeze){
     return $freeze && isObject(it) ? $freeze(meta(it)) : it;
   };
 });
-},{"./_is-object":89,"./_meta":98,"./_object-sap":111}],138:[function(_dereq_,module,exports){
+},{"./_is-object":84,"./_meta":93,"./_object-sap":106}],134:[function(_dereq_,module,exports){
+// 19.1.2.14 Object.keys(O)
+var toObject = _dereq_('./_to-object')
+  , $keys    = _dereq_('./_object-keys');
 
-},{}],139:[function(_dereq_,module,exports){
+_dereq_('./_object-sap')('keys', function(){
+  return function keys(it){
+    return $keys(toObject(it));
+  };
+});
+},{"./_object-keys":104,"./_object-sap":106,"./_to-object":122}],135:[function(_dereq_,module,exports){
+
+},{}],136:[function(_dereq_,module,exports){
 'use strict';
 var LIBRARY            = _dereq_('./_library')
   , global             = _dereq_('./_global')
@@ -9092,7 +7909,7 @@ $export($export.S + $export.F * !(USE_NATIVE && _dereq_('./_iter-detect')(functi
     return capability.promise;
   }
 });
-},{"./_a-function":56,"./_an-instance":58,"./_an-object":59,"./_classof":65,"./_core":70,"./_ctx":71,"./_export":77,"./_for-of":79,"./_global":80,"./_is-object":89,"./_iter-detect":93,"./_library":97,"./_microtask":99,"./_redefine-all":113,"./_set-proto":115,"./_set-species":116,"./_set-to-string-tag":117,"./_species-constructor":120,"./_task":122,"./_wks":132}],140:[function(_dereq_,module,exports){
+},{"./_a-function":51,"./_an-instance":53,"./_an-object":54,"./_classof":60,"./_core":65,"./_ctx":66,"./_export":72,"./_for-of":74,"./_global":75,"./_is-object":84,"./_iter-detect":88,"./_library":92,"./_microtask":94,"./_redefine-all":108,"./_set-proto":110,"./_set-species":111,"./_set-to-string-tag":112,"./_species-constructor":115,"./_task":117,"./_wks":127}],137:[function(_dereq_,module,exports){
 'use strict';
 var strong = _dereq_('./_collection-strong');
 
@@ -9105,7 +7922,7 @@ module.exports = _dereq_('./_collection')('Set', function(get){
     return strong.def(this, value = value === 0 ? 0 : value, value);
   }
 }, strong);
-},{"./_collection":69,"./_collection-strong":67}],141:[function(_dereq_,module,exports){
+},{"./_collection":64,"./_collection-strong":62}],138:[function(_dereq_,module,exports){
 'use strict';
 var $at  = _dereq_('./_string-at')(true);
 
@@ -9123,7 +7940,7 @@ _dereq_('./_iter-define')(String, 'String', function(iterated){
   this._i += point.length;
   return {value: point, done: false};
 });
-},{"./_iter-define":92,"./_string-at":121}],142:[function(_dereq_,module,exports){
+},{"./_iter-define":87,"./_string-at":116}],139:[function(_dereq_,module,exports){
 'use strict';
 // ECMAScript 6 symbols shim
 var global         = _dereq_('./_global')
@@ -9351,21 +8168,21 @@ setToStringTag($Symbol, 'Symbol');
 setToStringTag(Math, 'Math', true);
 // 24.3.3 JSON[@@toStringTag]
 setToStringTag(global.JSON, 'JSON', true);
-},{"./_an-object":59,"./_descriptors":73,"./_enum-keys":76,"./_export":77,"./_fails":78,"./_global":80,"./_has":81,"./_hide":82,"./_is-array":88,"./_keyof":96,"./_library":97,"./_meta":98,"./_object-create":100,"./_object-dp":101,"./_object-gopd":103,"./_object-gopn":105,"./_object-gopn-ext":104,"./_object-gops":106,"./_object-keys":109,"./_object-pie":110,"./_property-desc":112,"./_redefine":114,"./_set-to-string-tag":117,"./_shared":119,"./_to-iobject":125,"./_to-primitive":128,"./_uid":129,"./_wks":132,"./_wks-define":130,"./_wks-ext":131}],143:[function(_dereq_,module,exports){
+},{"./_an-object":54,"./_descriptors":68,"./_enum-keys":71,"./_export":72,"./_fails":73,"./_global":75,"./_has":76,"./_hide":77,"./_is-array":83,"./_keyof":91,"./_library":92,"./_meta":93,"./_object-create":95,"./_object-dp":96,"./_object-gopd":98,"./_object-gopn":100,"./_object-gopn-ext":99,"./_object-gops":101,"./_object-keys":104,"./_object-pie":105,"./_property-desc":107,"./_redefine":109,"./_set-to-string-tag":112,"./_shared":114,"./_to-iobject":120,"./_to-primitive":123,"./_uid":124,"./_wks":127,"./_wks-define":125,"./_wks-ext":126}],140:[function(_dereq_,module,exports){
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
 var $export  = _dereq_('./_export');
 
 $export($export.P + $export.R, 'Map', {toJSON: _dereq_('./_collection-to-json')('Map')});
-},{"./_collection-to-json":68,"./_export":77}],144:[function(_dereq_,module,exports){
+},{"./_collection-to-json":63,"./_export":72}],141:[function(_dereq_,module,exports){
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
 var $export  = _dereq_('./_export');
 
 $export($export.P + $export.R, 'Set', {toJSON: _dereq_('./_collection-to-json')('Set')});
-},{"./_collection-to-json":68,"./_export":77}],145:[function(_dereq_,module,exports){
+},{"./_collection-to-json":63,"./_export":72}],142:[function(_dereq_,module,exports){
 _dereq_('./_wks-define')('asyncIterator');
-},{"./_wks-define":130}],146:[function(_dereq_,module,exports){
+},{"./_wks-define":125}],143:[function(_dereq_,module,exports){
 _dereq_('./_wks-define')('observable');
-},{"./_wks-define":130}],147:[function(_dereq_,module,exports){
+},{"./_wks-define":125}],144:[function(_dereq_,module,exports){
 _dereq_('./es6.array.iterator');
 var global        = _dereq_('./_global')
   , hide          = _dereq_('./_hide')
@@ -9379,7 +8196,7 @@ for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList'
   if(proto && !proto[TO_STRING_TAG])hide(proto, TO_STRING_TAG, NAME);
   Iterators[NAME] = Iterators.Array;
 }
-},{"./_global":80,"./_hide":82,"./_iterators":95,"./_wks":132,"./es6.array.iterator":134}],148:[function(_dereq_,module,exports){
+},{"./_global":75,"./_hide":77,"./_iterators":90,"./_wks":127,"./es6.array.iterator":130}],145:[function(_dereq_,module,exports){
 //      Copyright (c) 2012 Mathieu Turcotte
 //      Licensed under the MIT license.
 
@@ -9412,7 +8229,7 @@ module.exports.call = function(fn, vargs, callback) {
     return new FunctionCall(fn, vargs, callback);
 };
 
-},{"./lib/backoff":149,"./lib/function_call.js":150,"./lib/strategy/exponential":151,"./lib/strategy/fibonacci":152}],149:[function(_dereq_,module,exports){
+},{"./lib/backoff":146,"./lib/function_call.js":147,"./lib/strategy/exponential":148,"./lib/strategy/fibonacci":149}],146:[function(_dereq_,module,exports){
 //      Copyright (c) 2012 Mathieu Turcotte
 //      Licensed under the MIT license.
 
@@ -9479,7 +8296,7 @@ Backoff.prototype.reset = function() {
 
 module.exports = Backoff;
 
-},{"events":163,"precond":171,"util":198}],150:[function(_dereq_,module,exports){
+},{"events":160,"precond":168,"util":205}],147:[function(_dereq_,module,exports){
 //      Copyright (c) 2012 Mathieu Turcotte
 //      Licensed under the MIT license.
 
@@ -9671,7 +8488,7 @@ FunctionCall.prototype.handleBackoff_ = function(number, delay, err) {
 
 module.exports = FunctionCall;
 
-},{"./backoff":149,"./strategy/fibonacci":152,"events":163,"precond":171,"util":198}],151:[function(_dereq_,module,exports){
+},{"./backoff":146,"./strategy/fibonacci":149,"events":160,"precond":168,"util":205}],148:[function(_dereq_,module,exports){
 //      Copyright (c) 2012 Mathieu Turcotte
 //      Licensed under the MIT license.
 
@@ -9714,7 +8531,7 @@ ExponentialBackoffStrategy.prototype.reset_ = function() {
 
 module.exports = ExponentialBackoffStrategy;
 
-},{"./strategy":153,"precond":171,"util":198}],152:[function(_dereq_,module,exports){
+},{"./strategy":150,"precond":168,"util":205}],149:[function(_dereq_,module,exports){
 //      Copyright (c) 2012 Mathieu Turcotte
 //      Licensed under the MIT license.
 
@@ -9744,7 +8561,7 @@ FibonacciBackoffStrategy.prototype.reset_ = function() {
 
 module.exports = FibonacciBackoffStrategy;
 
-},{"./strategy":153,"util":198}],153:[function(_dereq_,module,exports){
+},{"./strategy":150,"util":205}],150:[function(_dereq_,module,exports){
 //      Copyright (c) 2012 Mathieu Turcotte
 //      Licensed under the MIT license.
 
@@ -9826,7 +8643,7 @@ BackoffStrategy.prototype.reset_ = function() {
 
 module.exports = BackoffStrategy;
 
-},{"events":163,"util":198}],154:[function(_dereq_,module,exports){
+},{"events":160,"util":205}],151:[function(_dereq_,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -9952,11 +8769,11 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],155:[function(_dereq_,module,exports){
-arguments[4][138][0].apply(exports,arguments)
-},{"dup":138}],156:[function(_dereq_,module,exports){
-arguments[4][138][0].apply(exports,arguments)
-},{"dup":138}],157:[function(_dereq_,module,exports){
+},{}],152:[function(_dereq_,module,exports){
+arguments[4][135][0].apply(exports,arguments)
+},{"dup":135}],153:[function(_dereq_,module,exports){
+arguments[4][135][0].apply(exports,arguments)
+},{"dup":135}],154:[function(_dereq_,module,exports){
 (function (global){
 /*!
  * The buffer module from node.js, for the browser.
@@ -11508,14 +10325,14 @@ function blitBuffer (src, dst, offset, length) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"base64-js":154,"ieee754":165,"isarray":158}],158:[function(_dereq_,module,exports){
+},{"base64-js":151,"ieee754":162,"isarray":155}],155:[function(_dereq_,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],159:[function(_dereq_,module,exports){
+},{}],156:[function(_dereq_,module,exports){
 module.exports = {
   "100": "Continue",
   "101": "Switching Protocols",
@@ -11580,7 +10397,7 @@ module.exports = {
   "511": "Network Authentication Required"
 }
 
-},{}],160:[function(_dereq_,module,exports){
+},{}],157:[function(_dereq_,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -11691,10 +10508,10 @@ function objectToString(o) {
 }
 
 }).call(this,{"isBuffer":_dereq_("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":167}],161:[function(_dereq_,module,exports){
+},{"../../is-buffer/index.js":164}],158:[function(_dereq_,module,exports){
 module.exports = _dereq_('./lib');
 
-},{"./lib":162}],162:[function(_dereq_,module,exports){
+},{"./lib":159}],159:[function(_dereq_,module,exports){
 var FORMAT_REGEXP = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/;
 
 function matchToInteger(match){
@@ -11767,7 +10584,7 @@ exports.toSeconds = function(stringOrDuration) {
   return duration.hours * 3600 + duration.minutes * 60 + duration.seconds;
 };
 
-},{}],163:[function(_dereq_,module,exports){
+},{}],160:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12067,7 +10884,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],164:[function(_dereq_,module,exports){
+},{}],161:[function(_dereq_,module,exports){
 var http = _dereq_('http');
 
 var https = module.exports;
@@ -12083,7 +10900,7 @@ https.request = function (params, cb) {
     return http.request.call(this, params, cb);
 }
 
-},{"http":181}],165:[function(_dereq_,module,exports){
+},{"http":177}],162:[function(_dereq_,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -12169,7 +10986,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],166:[function(_dereq_,module,exports){
+},{}],163:[function(_dereq_,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -12194,7 +11011,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],167:[function(_dereq_,module,exports){
+},{}],164:[function(_dereq_,module,exports){
 /**
  * Determine if an object is Buffer
  *
@@ -12213,7 +11030,7 @@ module.exports = function (obj) {
     ))
 }
 
-},{}],168:[function(_dereq_,module,exports){
+},{}],165:[function(_dereq_,module,exports){
 /*
 
   Javascript State Machine Library - https://github.com/jakesgordon/javascript-state-machine
@@ -12442,7 +11259,7 @@ module.exports = function (obj) {
 
 }());
 
-},{}],169:[function(_dereq_,module,exports){
+},{}],166:[function(_dereq_,module,exports){
 /*
 * loglevel - https://github.com/pimterry/loglevel
 *
@@ -12667,7 +11484,7 @@ module.exports = function (obj) {
     return defaultLogger;
 }));
 
-},{}],170:[function(_dereq_,module,exports){
+},{}],167:[function(_dereq_,module,exports){
 (function (global){
 /*!
  * Platform.js v1.3.1 <http://mths.be/platform>
@@ -13806,14 +12623,14 @@ module.exports = function (obj) {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],171:[function(_dereq_,module,exports){
+},{}],168:[function(_dereq_,module,exports){
 /*
  * Copyright (c) 2012 Mathieu Turcotte
  * Licensed under the MIT license.
  */
 
 module.exports = _dereq_('./lib/checks');
-},{"./lib/checks":172}],172:[function(_dereq_,module,exports){
+},{"./lib/checks":169}],169:[function(_dereq_,module,exports){
 /*
  * Copyright (c) 2012 Mathieu Turcotte
  * Licensed under the MIT license.
@@ -13909,7 +12726,7 @@ module.exports.checkIsBoolean = typeCheck('boolean');
 module.exports.checkIsFunction = typeCheck('function');
 module.exports.checkIsObject = typeCheck('object');
 
-},{"./errors":173,"util":198}],173:[function(_dereq_,module,exports){
+},{"./errors":170,"util":205}],170:[function(_dereq_,module,exports){
 /*
  * Copyright (c) 2012 Mathieu Turcotte
  * Licensed under the MIT license.
@@ -13935,7 +12752,7 @@ IllegalStateError.prototype.name = 'IllegalStateError';
 
 module.exports.IllegalStateError = IllegalStateError;
 module.exports.IllegalArgumentError = IllegalArgumentError;
-},{"util":198}],174:[function(_dereq_,module,exports){
+},{"util":205}],171:[function(_dereq_,module,exports){
 (function (process){
 'use strict';
 
@@ -13959,7 +12776,7 @@ function nextTick(fn) {
 }
 
 }).call(this,_dereq_('_process'))
-},{"_process":175}],175:[function(_dereq_,module,exports){
+},{"_process":172}],172:[function(_dereq_,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -14052,7 +12869,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],176:[function(_dereq_,module,exports){
+},{}],173:[function(_dereq_,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
@@ -14589,2059 +13406,7 @@ process.umask = function() { return 0; };
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],177:[function(_dereq_,module,exports){
-(function (process){
-// vim:ts=4:sts=4:sw=4:
-/*!
- *
- * Copyright 2009-2012 Kris Kowal under the terms of the MIT
- * license found at http://github.com/kriskowal/q/raw/master/LICENSE
- *
- * With parts by Tyler Close
- * Copyright 2007-2009 Tyler Close under the terms of the MIT X license found
- * at http://www.opensource.org/licenses/mit-license.html
- * Forked at ref_send.js version: 2009-05-11
- *
- * With parts by Mark Miller
- * Copyright (C) 2011 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-
-(function (definition) {
-    "use strict";
-
-    // This file will function properly as a <script> tag, or a module
-    // using CommonJS and NodeJS or RequireJS module formats.  In
-    // Common/Node/RequireJS, the module exports the Q API and when
-    // executed as a simple <script>, it creates a Q global instead.
-
-    // Montage Require
-    if (typeof bootstrap === "function") {
-        bootstrap("promise", definition);
-
-    // CommonJS
-    } else if (typeof exports === "object" && typeof module === "object") {
-        module.exports = definition();
-
-    // RequireJS
-    } else if (typeof define === "function" && define.amd) {
-        define(definition);
-
-    // SES (Secure EcmaScript)
-    } else if (typeof ses !== "undefined") {
-        if (!ses.ok()) {
-            return;
-        } else {
-            ses.makeQ = definition;
-        }
-
-    // <script>
-    } else if (typeof window !== "undefined" || typeof self !== "undefined") {
-        // Prefer window over self for add-on scripts. Use self for
-        // non-windowed contexts.
-        var global = typeof window !== "undefined" ? window : self;
-
-        // Get the `window` object, save the previous Q global
-        // and initialize Q as a global.
-        var previousQ = global.Q;
-        global.Q = definition();
-
-        // Add a noConflict function so Q can be removed from the
-        // global namespace.
-        global.Q.noConflict = function () {
-            global.Q = previousQ;
-            return this;
-        };
-
-    } else {
-        throw new Error("This environment was not anticipated by Q. Please file a bug.");
-    }
-
-})(function () {
-"use strict";
-
-var hasStacks = false;
-try {
-    throw new Error();
-} catch (e) {
-    hasStacks = !!e.stack;
-}
-
-// All code after this point will be filtered from stack traces reported
-// by Q.
-var qStartingLine = captureLine();
-var qFileName;
-
-// shims
-
-// used for fallback in "allResolved"
-var noop = function () {};
-
-// Use the fastest possible means to execute a task in a future turn
-// of the event loop.
-var nextTick =(function () {
-    // linked list of tasks (single, with head node)
-    var head = {task: void 0, next: null};
-    var tail = head;
-    var flushing = false;
-    var requestTick = void 0;
-    var isNodeJS = false;
-    // queue for late tasks, used by unhandled rejection tracking
-    var laterQueue = [];
-
-    function flush() {
-        /* jshint loopfunc: true */
-        var task, domain;
-
-        while (head.next) {
-            head = head.next;
-            task = head.task;
-            head.task = void 0;
-            domain = head.domain;
-
-            if (domain) {
-                head.domain = void 0;
-                domain.enter();
-            }
-            runSingle(task, domain);
-
-        }
-        while (laterQueue.length) {
-            task = laterQueue.pop();
-            runSingle(task);
-        }
-        flushing = false;
-    }
-    // runs a single function in the async queue
-    function runSingle(task, domain) {
-        try {
-            task();
-
-        } catch (e) {
-            if (isNodeJS) {
-                // In node, uncaught exceptions are considered fatal errors.
-                // Re-throw them synchronously to interrupt flushing!
-
-                // Ensure continuation if the uncaught exception is suppressed
-                // listening "uncaughtException" events (as domains does).
-                // Continue in next event to avoid tick recursion.
-                if (domain) {
-                    domain.exit();
-                }
-                setTimeout(flush, 0);
-                if (domain) {
-                    domain.enter();
-                }
-
-                throw e;
-
-            } else {
-                // In browsers, uncaught exceptions are not fatal.
-                // Re-throw them asynchronously to avoid slow-downs.
-                setTimeout(function () {
-                    throw e;
-                }, 0);
-            }
-        }
-
-        if (domain) {
-            domain.exit();
-        }
-    }
-
-    nextTick = function (task) {
-        tail = tail.next = {
-            task: task,
-            domain: isNodeJS && process.domain,
-            next: null
-        };
-
-        if (!flushing) {
-            flushing = true;
-            requestTick();
-        }
-    };
-
-    if (typeof process === "object" &&
-        process.toString() === "[object process]" && process.nextTick) {
-        // Ensure Q is in a real Node environment, with a `process.nextTick`.
-        // To see through fake Node environments:
-        // * Mocha test runner - exposes a `process` global without a `nextTick`
-        // * Browserify - exposes a `process.nexTick` function that uses
-        //   `setTimeout`. In this case `setImmediate` is preferred because
-        //    it is faster. Browserify's `process.toString()` yields
-        //   "[object Object]", while in a real Node environment
-        //   `process.nextTick()` yields "[object process]".
-        isNodeJS = true;
-
-        requestTick = function () {
-            process.nextTick(flush);
-        };
-
-    } else if (typeof setImmediate === "function") {
-        // In IE10, Node.js 0.9+, or https://github.com/NobleJS/setImmediate
-        if (typeof window !== "undefined") {
-            requestTick = setImmediate.bind(window, flush);
-        } else {
-            requestTick = function () {
-                setImmediate(flush);
-            };
-        }
-
-    } else if (typeof MessageChannel !== "undefined") {
-        // modern browsers
-        // http://www.nonblocking.io/2011/06/windownexttick.html
-        var channel = new MessageChannel();
-        // At least Safari Version 6.0.5 (8536.30.1) intermittently cannot create
-        // working message ports the first time a page loads.
-        channel.port1.onmessage = function () {
-            requestTick = requestPortTick;
-            channel.port1.onmessage = flush;
-            flush();
-        };
-        var requestPortTick = function () {
-            // Opera requires us to provide a message payload, regardless of
-            // whether we use it.
-            channel.port2.postMessage(0);
-        };
-        requestTick = function () {
-            setTimeout(flush, 0);
-            requestPortTick();
-        };
-
-    } else {
-        // old browsers
-        requestTick = function () {
-            setTimeout(flush, 0);
-        };
-    }
-    // runs a task after all other tasks have been run
-    // this is useful for unhandled rejection tracking that needs to happen
-    // after all `then`d tasks have been run.
-    nextTick.runAfter = function (task) {
-        laterQueue.push(task);
-        if (!flushing) {
-            flushing = true;
-            requestTick();
-        }
-    };
-    return nextTick;
-})();
-
-// Attempt to make generics safe in the face of downstream
-// modifications.
-// There is no situation where this is necessary.
-// If you need a security guarantee, these primordials need to be
-// deeply frozen anyway, and if you don’t need a security guarantee,
-// this is just plain paranoid.
-// However, this **might** have the nice side-effect of reducing the size of
-// the minified code by reducing x.call() to merely x()
-// See Mark Miller’s explanation of what this does.
-// http://wiki.ecmascript.org/doku.php?id=conventions:safe_meta_programming
-var call = Function.call;
-function uncurryThis(f) {
-    return function () {
-        return call.apply(f, arguments);
-    };
-}
-// This is equivalent, but slower:
-// uncurryThis = Function_bind.bind(Function_bind.call);
-// http://jsperf.com/uncurrythis
-
-var array_slice = uncurryThis(Array.prototype.slice);
-
-var array_reduce = uncurryThis(
-    Array.prototype.reduce || function (callback, basis) {
-        var index = 0,
-            length = this.length;
-        // concerning the initial value, if one is not provided
-        if (arguments.length === 1) {
-            // seek to the first value in the array, accounting
-            // for the possibility that is is a sparse array
-            do {
-                if (index in this) {
-                    basis = this[index++];
-                    break;
-                }
-                if (++index >= length) {
-                    throw new TypeError();
-                }
-            } while (1);
-        }
-        // reduce
-        for (; index < length; index++) {
-            // account for the possibility that the array is sparse
-            if (index in this) {
-                basis = callback(basis, this[index], index);
-            }
-        }
-        return basis;
-    }
-);
-
-var array_indexOf = uncurryThis(
-    Array.prototype.indexOf || function (value) {
-        // not a very good shim, but good enough for our one use of it
-        for (var i = 0; i < this.length; i++) {
-            if (this[i] === value) {
-                return i;
-            }
-        }
-        return -1;
-    }
-);
-
-var array_map = uncurryThis(
-    Array.prototype.map || function (callback, thisp) {
-        var self = this;
-        var collect = [];
-        array_reduce(self, function (undefined, value, index) {
-            collect.push(callback.call(thisp, value, index, self));
-        }, void 0);
-        return collect;
-    }
-);
-
-var object_create = Object.create || function (prototype) {
-    function Type() { }
-    Type.prototype = prototype;
-    return new Type();
-};
-
-var object_hasOwnProperty = uncurryThis(Object.prototype.hasOwnProperty);
-
-var object_keys = Object.keys || function (object) {
-    var keys = [];
-    for (var key in object) {
-        if (object_hasOwnProperty(object, key)) {
-            keys.push(key);
-        }
-    }
-    return keys;
-};
-
-var object_toString = uncurryThis(Object.prototype.toString);
-
-function isObject(value) {
-    return value === Object(value);
-}
-
-// generator related shims
-
-// FIXME: Remove this function once ES6 generators are in SpiderMonkey.
-function isStopIteration(exception) {
-    return (
-        object_toString(exception) === "[object StopIteration]" ||
-        exception instanceof QReturnValue
-    );
-}
-
-// FIXME: Remove this helper and Q.return once ES6 generators are in
-// SpiderMonkey.
-var QReturnValue;
-if (typeof ReturnValue !== "undefined") {
-    QReturnValue = ReturnValue;
-} else {
-    QReturnValue = function (value) {
-        this.value = value;
-    };
-}
-
-// long stack traces
-
-var STACK_JUMP_SEPARATOR = "From previous event:";
-
-function makeStackTraceLong(error, promise) {
-    // If possible, transform the error stack trace by removing Node and Q
-    // cruft, then concatenating with the stack trace of `promise`. See #57.
-    if (hasStacks &&
-        promise.stack &&
-        typeof error === "object" &&
-        error !== null &&
-        error.stack &&
-        error.stack.indexOf(STACK_JUMP_SEPARATOR) === -1
-    ) {
-        var stacks = [];
-        for (var p = promise; !!p; p = p.source) {
-            if (p.stack) {
-                stacks.unshift(p.stack);
-            }
-        }
-        stacks.unshift(error.stack);
-
-        var concatedStacks = stacks.join("\n" + STACK_JUMP_SEPARATOR + "\n");
-        error.stack = filterStackString(concatedStacks);
-    }
-}
-
-function filterStackString(stackString) {
-    var lines = stackString.split("\n");
-    var desiredLines = [];
-    for (var i = 0; i < lines.length; ++i) {
-        var line = lines[i];
-
-        if (!isInternalFrame(line) && !isNodeFrame(line) && line) {
-            desiredLines.push(line);
-        }
-    }
-    return desiredLines.join("\n");
-}
-
-function isNodeFrame(stackLine) {
-    return stackLine.indexOf("(module.js:") !== -1 ||
-           stackLine.indexOf("(node.js:") !== -1;
-}
-
-function getFileNameAndLineNumber(stackLine) {
-    // Named functions: "at functionName (filename:lineNumber:columnNumber)"
-    // In IE10 function name can have spaces ("Anonymous function") O_o
-    var attempt1 = /at .+ \((.+):(\d+):(?:\d+)\)$/.exec(stackLine);
-    if (attempt1) {
-        return [attempt1[1], Number(attempt1[2])];
-    }
-
-    // Anonymous functions: "at filename:lineNumber:columnNumber"
-    var attempt2 = /at ([^ ]+):(\d+):(?:\d+)$/.exec(stackLine);
-    if (attempt2) {
-        return [attempt2[1], Number(attempt2[2])];
-    }
-
-    // Firefox style: "function@filename:lineNumber or @filename:lineNumber"
-    var attempt3 = /.*@(.+):(\d+)$/.exec(stackLine);
-    if (attempt3) {
-        return [attempt3[1], Number(attempt3[2])];
-    }
-}
-
-function isInternalFrame(stackLine) {
-    var fileNameAndLineNumber = getFileNameAndLineNumber(stackLine);
-
-    if (!fileNameAndLineNumber) {
-        return false;
-    }
-
-    var fileName = fileNameAndLineNumber[0];
-    var lineNumber = fileNameAndLineNumber[1];
-
-    return fileName === qFileName &&
-        lineNumber >= qStartingLine &&
-        lineNumber <= qEndingLine;
-}
-
-// discover own file name and line number range for filtering stack
-// traces
-function captureLine() {
-    if (!hasStacks) {
-        return;
-    }
-
-    try {
-        throw new Error();
-    } catch (e) {
-        var lines = e.stack.split("\n");
-        var firstLine = lines[0].indexOf("@") > 0 ? lines[1] : lines[2];
-        var fileNameAndLineNumber = getFileNameAndLineNumber(firstLine);
-        if (!fileNameAndLineNumber) {
-            return;
-        }
-
-        qFileName = fileNameAndLineNumber[0];
-        return fileNameAndLineNumber[1];
-    }
-}
-
-function deprecate(callback, name, alternative) {
-    return function () {
-        if (typeof console !== "undefined" &&
-            typeof console.warn === "function") {
-            console.warn(name + " is deprecated, use " + alternative +
-                         " instead.", new Error("").stack);
-        }
-        return callback.apply(callback, arguments);
-    };
-}
-
-// end of shims
-// beginning of real work
-
-/**
- * Constructs a promise for an immediate reference, passes promises through, or
- * coerces promises from different systems.
- * @param value immediate reference or promise
- */
-function Q(value) {
-    // If the object is already a Promise, return it directly.  This enables
-    // the resolve function to both be used to created references from objects,
-    // but to tolerably coerce non-promises to promises.
-    if (value instanceof Promise) {
-        return value;
-    }
-
-    // assimilate thenables
-    if (isPromiseAlike(value)) {
-        return coerce(value);
-    } else {
-        return fulfill(value);
-    }
-}
-Q.resolve = Q;
-
-/**
- * Performs a task in a future turn of the event loop.
- * @param {Function} task
- */
-Q.nextTick = nextTick;
-
-/**
- * Controls whether or not long stack traces will be on
- */
-Q.longStackSupport = false;
-
-// enable long stacks if Q_DEBUG is set
-if (typeof process === "object" && process && process.env && process.env.Q_DEBUG) {
-    Q.longStackSupport = true;
-}
-
-/**
- * Constructs a {promise, resolve, reject} object.
- *
- * `resolve` is a callback to invoke with a more resolved value for the
- * promise. To fulfill the promise, invoke `resolve` with any value that is
- * not a thenable. To reject the promise, invoke `resolve` with a rejected
- * thenable, or invoke `reject` with the reason directly. To resolve the
- * promise to another thenable, thus putting it in the same state, invoke
- * `resolve` with that other thenable.
- */
-Q.defer = defer;
-function defer() {
-    // if "messages" is an "Array", that indicates that the promise has not yet
-    // been resolved.  If it is "undefined", it has been resolved.  Each
-    // element of the messages array is itself an array of complete arguments to
-    // forward to the resolved promise.  We coerce the resolution value to a
-    // promise using the `resolve` function because it handles both fully
-    // non-thenable values and other thenables gracefully.
-    var messages = [], progressListeners = [], resolvedPromise;
-
-    var deferred = object_create(defer.prototype);
-    var promise = object_create(Promise.prototype);
-
-    promise.promiseDispatch = function (resolve, op, operands) {
-        var args = array_slice(arguments);
-        if (messages) {
-            messages.push(args);
-            if (op === "when" && operands[1]) { // progress operand
-                progressListeners.push(operands[1]);
-            }
-        } else {
-            Q.nextTick(function () {
-                resolvedPromise.promiseDispatch.apply(resolvedPromise, args);
-            });
-        }
-    };
-
-    // XXX deprecated
-    promise.valueOf = function () {
-        if (messages) {
-            return promise;
-        }
-        var nearerValue = nearer(resolvedPromise);
-        if (isPromise(nearerValue)) {
-            resolvedPromise = nearerValue; // shorten chain
-        }
-        return nearerValue;
-    };
-
-    promise.inspect = function () {
-        if (!resolvedPromise) {
-            return { state: "pending" };
-        }
-        return resolvedPromise.inspect();
-    };
-
-    if (Q.longStackSupport && hasStacks) {
-        try {
-            throw new Error();
-        } catch (e) {
-            // NOTE: don't try to use `Error.captureStackTrace` or transfer the
-            // accessor around; that causes memory leaks as per GH-111. Just
-            // reify the stack trace as a string ASAP.
-            //
-            // At the same time, cut off the first line; it's always just
-            // "[object Promise]\n", as per the `toString`.
-            promise.stack = e.stack.substring(e.stack.indexOf("\n") + 1);
-        }
-    }
-
-    // NOTE: we do the checks for `resolvedPromise` in each method, instead of
-    // consolidating them into `become`, since otherwise we'd create new
-    // promises with the lines `become(whatever(value))`. See e.g. GH-252.
-
-    function become(newPromise) {
-        resolvedPromise = newPromise;
-        promise.source = newPromise;
-
-        array_reduce(messages, function (undefined, message) {
-            Q.nextTick(function () {
-                newPromise.promiseDispatch.apply(newPromise, message);
-            });
-        }, void 0);
-
-        messages = void 0;
-        progressListeners = void 0;
-    }
-
-    deferred.promise = promise;
-    deferred.resolve = function (value) {
-        if (resolvedPromise) {
-            return;
-        }
-
-        become(Q(value));
-    };
-
-    deferred.fulfill = function (value) {
-        if (resolvedPromise) {
-            return;
-        }
-
-        become(fulfill(value));
-    };
-    deferred.reject = function (reason) {
-        if (resolvedPromise) {
-            return;
-        }
-
-        become(reject(reason));
-    };
-    deferred.notify = function (progress) {
-        if (resolvedPromise) {
-            return;
-        }
-
-        array_reduce(progressListeners, function (undefined, progressListener) {
-            Q.nextTick(function () {
-                progressListener(progress);
-            });
-        }, void 0);
-    };
-
-    return deferred;
-}
-
-/**
- * Creates a Node-style callback that will resolve or reject the deferred
- * promise.
- * @returns a nodeback
- */
-defer.prototype.makeNodeResolver = function () {
-    var self = this;
-    return function (error, value) {
-        if (error) {
-            self.reject(error);
-        } else if (arguments.length > 2) {
-            self.resolve(array_slice(arguments, 1));
-        } else {
-            self.resolve(value);
-        }
-    };
-};
-
-/**
- * @param resolver {Function} a function that returns nothing and accepts
- * the resolve, reject, and notify functions for a deferred.
- * @returns a promise that may be resolved with the given resolve and reject
- * functions, or rejected by a thrown exception in resolver
- */
-Q.Promise = promise; // ES6
-Q.promise = promise;
-function promise(resolver) {
-    if (typeof resolver !== "function") {
-        throw new TypeError("resolver must be a function.");
-    }
-    var deferred = defer();
-    try {
-        resolver(deferred.resolve, deferred.reject, deferred.notify);
-    } catch (reason) {
-        deferred.reject(reason);
-    }
-    return deferred.promise;
-}
-
-promise.race = race; // ES6
-promise.all = all; // ES6
-promise.reject = reject; // ES6
-promise.resolve = Q; // ES6
-
-// XXX experimental.  This method is a way to denote that a local value is
-// serializable and should be immediately dispatched to a remote upon request,
-// instead of passing a reference.
-Q.passByCopy = function (object) {
-    //freeze(object);
-    //passByCopies.set(object, true);
-    return object;
-};
-
-Promise.prototype.passByCopy = function () {
-    //freeze(object);
-    //passByCopies.set(object, true);
-    return this;
-};
-
-/**
- * If two promises eventually fulfill to the same value, promises that value,
- * but otherwise rejects.
- * @param x {Any*}
- * @param y {Any*}
- * @returns {Any*} a promise for x and y if they are the same, but a rejection
- * otherwise.
- *
- */
-Q.join = function (x, y) {
-    return Q(x).join(y);
-};
-
-Promise.prototype.join = function (that) {
-    return Q([this, that]).spread(function (x, y) {
-        if (x === y) {
-            // TODO: "===" should be Object.is or equiv
-            return x;
-        } else {
-            throw new Error("Can't join: not the same: " + x + " " + y);
-        }
-    });
-};
-
-/**
- * Returns a promise for the first of an array of promises to become settled.
- * @param answers {Array[Any*]} promises to race
- * @returns {Any*} the first promise to be settled
- */
-Q.race = race;
-function race(answerPs) {
-    return promise(function (resolve, reject) {
-        // Switch to this once we can assume at least ES5
-        // answerPs.forEach(function (answerP) {
-        //     Q(answerP).then(resolve, reject);
-        // });
-        // Use this in the meantime
-        for (var i = 0, len = answerPs.length; i < len; i++) {
-            Q(answerPs[i]).then(resolve, reject);
-        }
-    });
-}
-
-Promise.prototype.race = function () {
-    return this.then(Q.race);
-};
-
-/**
- * Constructs a Promise with a promise descriptor object and optional fallback
- * function.  The descriptor contains methods like when(rejected), get(name),
- * set(name, value), post(name, args), and delete(name), which all
- * return either a value, a promise for a value, or a rejection.  The fallback
- * accepts the operation name, a resolver, and any further arguments that would
- * have been forwarded to the appropriate method above had a method been
- * provided with the proper name.  The API makes no guarantees about the nature
- * of the returned object, apart from that it is usable whereever promises are
- * bought and sold.
- */
-Q.makePromise = Promise;
-function Promise(descriptor, fallback, inspect) {
-    if (fallback === void 0) {
-        fallback = function (op) {
-            return reject(new Error(
-                "Promise does not support operation: " + op
-            ));
-        };
-    }
-    if (inspect === void 0) {
-        inspect = function () {
-            return {state: "unknown"};
-        };
-    }
-
-    var promise = object_create(Promise.prototype);
-
-    promise.promiseDispatch = function (resolve, op, args) {
-        var result;
-        try {
-            if (descriptor[op]) {
-                result = descriptor[op].apply(promise, args);
-            } else {
-                result = fallback.call(promise, op, args);
-            }
-        } catch (exception) {
-            result = reject(exception);
-        }
-        if (resolve) {
-            resolve(result);
-        }
-    };
-
-    promise.inspect = inspect;
-
-    // XXX deprecated `valueOf` and `exception` support
-    if (inspect) {
-        var inspected = inspect();
-        if (inspected.state === "rejected") {
-            promise.exception = inspected.reason;
-        }
-
-        promise.valueOf = function () {
-            var inspected = inspect();
-            if (inspected.state === "pending" ||
-                inspected.state === "rejected") {
-                return promise;
-            }
-            return inspected.value;
-        };
-    }
-
-    return promise;
-}
-
-Promise.prototype.toString = function () {
-    return "[object Promise]";
-};
-
-Promise.prototype.then = function (fulfilled, rejected, progressed) {
-    var self = this;
-    var deferred = defer();
-    var done = false;   // ensure the untrusted promise makes at most a
-                        // single call to one of the callbacks
-
-    function _fulfilled(value) {
-        try {
-            return typeof fulfilled === "function" ? fulfilled(value) : value;
-        } catch (exception) {
-            return reject(exception);
-        }
-    }
-
-    function _rejected(exception) {
-        if (typeof rejected === "function") {
-            makeStackTraceLong(exception, self);
-            try {
-                return rejected(exception);
-            } catch (newException) {
-                return reject(newException);
-            }
-        }
-        return reject(exception);
-    }
-
-    function _progressed(value) {
-        return typeof progressed === "function" ? progressed(value) : value;
-    }
-
-    Q.nextTick(function () {
-        self.promiseDispatch(function (value) {
-            if (done) {
-                return;
-            }
-            done = true;
-
-            deferred.resolve(_fulfilled(value));
-        }, "when", [function (exception) {
-            if (done) {
-                return;
-            }
-            done = true;
-
-            deferred.resolve(_rejected(exception));
-        }]);
-    });
-
-    // Progress propagator need to be attached in the current tick.
-    self.promiseDispatch(void 0, "when", [void 0, function (value) {
-        var newValue;
-        var threw = false;
-        try {
-            newValue = _progressed(value);
-        } catch (e) {
-            threw = true;
-            if (Q.onerror) {
-                Q.onerror(e);
-            } else {
-                throw e;
-            }
-        }
-
-        if (!threw) {
-            deferred.notify(newValue);
-        }
-    }]);
-
-    return deferred.promise;
-};
-
-Q.tap = function (promise, callback) {
-    return Q(promise).tap(callback);
-};
-
-/**
- * Works almost like "finally", but not called for rejections.
- * Original resolution value is passed through callback unaffected.
- * Callback may return a promise that will be awaited for.
- * @param {Function} callback
- * @returns {Q.Promise}
- * @example
- * doSomething()
- *   .then(...)
- *   .tap(console.log)
- *   .then(...);
- */
-Promise.prototype.tap = function (callback) {
-    callback = Q(callback);
-
-    return this.then(function (value) {
-        return callback.fcall(value).thenResolve(value);
-    });
-};
-
-/**
- * Registers an observer on a promise.
- *
- * Guarantees:
- *
- * 1. that fulfilled and rejected will be called only once.
- * 2. that either the fulfilled callback or the rejected callback will be
- *    called, but not both.
- * 3. that fulfilled and rejected will not be called in this turn.
- *
- * @param value      promise or immediate reference to observe
- * @param fulfilled  function to be called with the fulfilled value
- * @param rejected   function to be called with the rejection exception
- * @param progressed function to be called on any progress notifications
- * @return promise for the return value from the invoked callback
- */
-Q.when = when;
-function when(value, fulfilled, rejected, progressed) {
-    return Q(value).then(fulfilled, rejected, progressed);
-}
-
-Promise.prototype.thenResolve = function (value) {
-    return this.then(function () { return value; });
-};
-
-Q.thenResolve = function (promise, value) {
-    return Q(promise).thenResolve(value);
-};
-
-Promise.prototype.thenReject = function (reason) {
-    return this.then(function () { throw reason; });
-};
-
-Q.thenReject = function (promise, reason) {
-    return Q(promise).thenReject(reason);
-};
-
-/**
- * If an object is not a promise, it is as "near" as possible.
- * If a promise is rejected, it is as "near" as possible too.
- * If it’s a fulfilled promise, the fulfillment value is nearer.
- * If it’s a deferred promise and the deferred has been resolved, the
- * resolution is "nearer".
- * @param object
- * @returns most resolved (nearest) form of the object
- */
-
-// XXX should we re-do this?
-Q.nearer = nearer;
-function nearer(value) {
-    if (isPromise(value)) {
-        var inspected = value.inspect();
-        if (inspected.state === "fulfilled") {
-            return inspected.value;
-        }
-    }
-    return value;
-}
-
-/**
- * @returns whether the given object is a promise.
- * Otherwise it is a fulfilled value.
- */
-Q.isPromise = isPromise;
-function isPromise(object) {
-    return object instanceof Promise;
-}
-
-Q.isPromiseAlike = isPromiseAlike;
-function isPromiseAlike(object) {
-    return isObject(object) && typeof object.then === "function";
-}
-
-/**
- * @returns whether the given object is a pending promise, meaning not
- * fulfilled or rejected.
- */
-Q.isPending = isPending;
-function isPending(object) {
-    return isPromise(object) && object.inspect().state === "pending";
-}
-
-Promise.prototype.isPending = function () {
-    return this.inspect().state === "pending";
-};
-
-/**
- * @returns whether the given object is a value or fulfilled
- * promise.
- */
-Q.isFulfilled = isFulfilled;
-function isFulfilled(object) {
-    return !isPromise(object) || object.inspect().state === "fulfilled";
-}
-
-Promise.prototype.isFulfilled = function () {
-    return this.inspect().state === "fulfilled";
-};
-
-/**
- * @returns whether the given object is a rejected promise.
- */
-Q.isRejected = isRejected;
-function isRejected(object) {
-    return isPromise(object) && object.inspect().state === "rejected";
-}
-
-Promise.prototype.isRejected = function () {
-    return this.inspect().state === "rejected";
-};
-
-//// BEGIN UNHANDLED REJECTION TRACKING
-
-// This promise library consumes exceptions thrown in handlers so they can be
-// handled by a subsequent promise.  The exceptions get added to this array when
-// they are created, and removed when they are handled.  Note that in ES6 or
-// shimmed environments, this would naturally be a `Set`.
-var unhandledReasons = [];
-var unhandledRejections = [];
-var reportedUnhandledRejections = [];
-var trackUnhandledRejections = true;
-
-function resetUnhandledRejections() {
-    unhandledReasons.length = 0;
-    unhandledRejections.length = 0;
-
-    if (!trackUnhandledRejections) {
-        trackUnhandledRejections = true;
-    }
-}
-
-function trackRejection(promise, reason) {
-    if (!trackUnhandledRejections) {
-        return;
-    }
-    if (typeof process === "object" && typeof process.emit === "function") {
-        Q.nextTick.runAfter(function () {
-            if (array_indexOf(unhandledRejections, promise) !== -1) {
-                process.emit("unhandledRejection", reason, promise);
-                reportedUnhandledRejections.push(promise);
-            }
-        });
-    }
-
-    unhandledRejections.push(promise);
-    if (reason && typeof reason.stack !== "undefined") {
-        unhandledReasons.push(reason.stack);
-    } else {
-        unhandledReasons.push("(no stack) " + reason);
-    }
-}
-
-function untrackRejection(promise) {
-    if (!trackUnhandledRejections) {
-        return;
-    }
-
-    var at = array_indexOf(unhandledRejections, promise);
-    if (at !== -1) {
-        if (typeof process === "object" && typeof process.emit === "function") {
-            Q.nextTick.runAfter(function () {
-                var atReport = array_indexOf(reportedUnhandledRejections, promise);
-                if (atReport !== -1) {
-                    process.emit("rejectionHandled", unhandledReasons[at], promise);
-                    reportedUnhandledRejections.splice(atReport, 1);
-                }
-            });
-        }
-        unhandledRejections.splice(at, 1);
-        unhandledReasons.splice(at, 1);
-    }
-}
-
-Q.resetUnhandledRejections = resetUnhandledRejections;
-
-Q.getUnhandledReasons = function () {
-    // Make a copy so that consumers can't interfere with our internal state.
-    return unhandledReasons.slice();
-};
-
-Q.stopUnhandledRejectionTracking = function () {
-    resetUnhandledRejections();
-    trackUnhandledRejections = false;
-};
-
-resetUnhandledRejections();
-
-//// END UNHANDLED REJECTION TRACKING
-
-/**
- * Constructs a rejected promise.
- * @param reason value describing the failure
- */
-Q.reject = reject;
-function reject(reason) {
-    var rejection = Promise({
-        "when": function (rejected) {
-            // note that the error has been handled
-            if (rejected) {
-                untrackRejection(this);
-            }
-            return rejected ? rejected(reason) : this;
-        }
-    }, function fallback() {
-        return this;
-    }, function inspect() {
-        return { state: "rejected", reason: reason };
-    });
-
-    // Note that the reason has not been handled.
-    trackRejection(rejection, reason);
-
-    return rejection;
-}
-
-/**
- * Constructs a fulfilled promise for an immediate reference.
- * @param value immediate reference
- */
-Q.fulfill = fulfill;
-function fulfill(value) {
-    return Promise({
-        "when": function () {
-            return value;
-        },
-        "get": function (name) {
-            return value[name];
-        },
-        "set": function (name, rhs) {
-            value[name] = rhs;
-        },
-        "delete": function (name) {
-            delete value[name];
-        },
-        "post": function (name, args) {
-            // Mark Miller proposes that post with no name should apply a
-            // promised function.
-            if (name === null || name === void 0) {
-                return value.apply(void 0, args);
-            } else {
-                return value[name].apply(value, args);
-            }
-        },
-        "apply": function (thisp, args) {
-            return value.apply(thisp, args);
-        },
-        "keys": function () {
-            return object_keys(value);
-        }
-    }, void 0, function inspect() {
-        return { state: "fulfilled", value: value };
-    });
-}
-
-/**
- * Converts thenables to Q promises.
- * @param promise thenable promise
- * @returns a Q promise
- */
-function coerce(promise) {
-    var deferred = defer();
-    Q.nextTick(function () {
-        try {
-            promise.then(deferred.resolve, deferred.reject, deferred.notify);
-        } catch (exception) {
-            deferred.reject(exception);
-        }
-    });
-    return deferred.promise;
-}
-
-/**
- * Annotates an object such that it will never be
- * transferred away from this process over any promise
- * communication channel.
- * @param object
- * @returns promise a wrapping of that object that
- * additionally responds to the "isDef" message
- * without a rejection.
- */
-Q.master = master;
-function master(object) {
-    return Promise({
-        "isDef": function () {}
-    }, function fallback(op, args) {
-        return dispatch(object, op, args);
-    }, function () {
-        return Q(object).inspect();
-    });
-}
-
-/**
- * Spreads the values of a promised array of arguments into the
- * fulfillment callback.
- * @param fulfilled callback that receives variadic arguments from the
- * promised array
- * @param rejected callback that receives the exception if the promise
- * is rejected.
- * @returns a promise for the return value or thrown exception of
- * either callback.
- */
-Q.spread = spread;
-function spread(value, fulfilled, rejected) {
-    return Q(value).spread(fulfilled, rejected);
-}
-
-Promise.prototype.spread = function (fulfilled, rejected) {
-    return this.all().then(function (array) {
-        return fulfilled.apply(void 0, array);
-    }, rejected);
-};
-
-/**
- * The async function is a decorator for generator functions, turning
- * them into asynchronous generators.  Although generators are only part
- * of the newest ECMAScript 6 drafts, this code does not cause syntax
- * errors in older engines.  This code should continue to work and will
- * in fact improve over time as the language improves.
- *
- * ES6 generators are currently part of V8 version 3.19 with the
- * --harmony-generators runtime flag enabled.  SpiderMonkey has had them
- * for longer, but under an older Python-inspired form.  This function
- * works on both kinds of generators.
- *
- * Decorates a generator function such that:
- *  - it may yield promises
- *  - execution will continue when that promise is fulfilled
- *  - the value of the yield expression will be the fulfilled value
- *  - it returns a promise for the return value (when the generator
- *    stops iterating)
- *  - the decorated function returns a promise for the return value
- *    of the generator or the first rejected promise among those
- *    yielded.
- *  - if an error is thrown in the generator, it propagates through
- *    every following yield until it is caught, or until it escapes
- *    the generator function altogether, and is translated into a
- *    rejection for the promise returned by the decorated generator.
- */
-Q.async = async;
-function async(makeGenerator) {
-    return function () {
-        // when verb is "send", arg is a value
-        // when verb is "throw", arg is an exception
-        function continuer(verb, arg) {
-            var result;
-
-            // Until V8 3.19 / Chromium 29 is released, SpiderMonkey is the only
-            // engine that has a deployed base of browsers that support generators.
-            // However, SM's generators use the Python-inspired semantics of
-            // outdated ES6 drafts.  We would like to support ES6, but we'd also
-            // like to make it possible to use generators in deployed browsers, so
-            // we also support Python-style generators.  At some point we can remove
-            // this block.
-
-            if (typeof StopIteration === "undefined") {
-                // ES6 Generators
-                try {
-                    result = generator[verb](arg);
-                } catch (exception) {
-                    return reject(exception);
-                }
-                if (result.done) {
-                    return Q(result.value);
-                } else {
-                    return when(result.value, callback, errback);
-                }
-            } else {
-                // SpiderMonkey Generators
-                // FIXME: Remove this case when SM does ES6 generators.
-                try {
-                    result = generator[verb](arg);
-                } catch (exception) {
-                    if (isStopIteration(exception)) {
-                        return Q(exception.value);
-                    } else {
-                        return reject(exception);
-                    }
-                }
-                return when(result, callback, errback);
-            }
-        }
-        var generator = makeGenerator.apply(this, arguments);
-        var callback = continuer.bind(continuer, "next");
-        var errback = continuer.bind(continuer, "throw");
-        return callback();
-    };
-}
-
-/**
- * The spawn function is a small wrapper around async that immediately
- * calls the generator and also ends the promise chain, so that any
- * unhandled errors are thrown instead of forwarded to the error
- * handler. This is useful because it's extremely common to run
- * generators at the top-level to work with libraries.
- */
-Q.spawn = spawn;
-function spawn(makeGenerator) {
-    Q.done(Q.async(makeGenerator)());
-}
-
-// FIXME: Remove this interface once ES6 generators are in SpiderMonkey.
-/**
- * Throws a ReturnValue exception to stop an asynchronous generator.
- *
- * This interface is a stop-gap measure to support generator return
- * values in older Firefox/SpiderMonkey.  In browsers that support ES6
- * generators like Chromium 29, just use "return" in your generator
- * functions.
- *
- * @param value the return value for the surrounding generator
- * @throws ReturnValue exception with the value.
- * @example
- * // ES6 style
- * Q.async(function* () {
- *      var foo = yield getFooPromise();
- *      var bar = yield getBarPromise();
- *      return foo + bar;
- * })
- * // Older SpiderMonkey style
- * Q.async(function () {
- *      var foo = yield getFooPromise();
- *      var bar = yield getBarPromise();
- *      Q.return(foo + bar);
- * })
- */
-Q["return"] = _return;
-function _return(value) {
-    throw new QReturnValue(value);
-}
-
-/**
- * The promised function decorator ensures that any promise arguments
- * are settled and passed as values (`this` is also settled and passed
- * as a value).  It will also ensure that the result of a function is
- * always a promise.
- *
- * @example
- * var add = Q.promised(function (a, b) {
- *     return a + b;
- * });
- * add(Q(a), Q(B));
- *
- * @param {function} callback The function to decorate
- * @returns {function} a function that has been decorated.
- */
-Q.promised = promised;
-function promised(callback) {
-    return function () {
-        return spread([this, all(arguments)], function (self, args) {
-            return callback.apply(self, args);
-        });
-    };
-}
-
-/**
- * sends a message to a value in a future turn
- * @param object* the recipient
- * @param op the name of the message operation, e.g., "when",
- * @param args further arguments to be forwarded to the operation
- * @returns result {Promise} a promise for the result of the operation
- */
-Q.dispatch = dispatch;
-function dispatch(object, op, args) {
-    return Q(object).dispatch(op, args);
-}
-
-Promise.prototype.dispatch = function (op, args) {
-    var self = this;
-    var deferred = defer();
-    Q.nextTick(function () {
-        self.promiseDispatch(deferred.resolve, op, args);
-    });
-    return deferred.promise;
-};
-
-/**
- * Gets the value of a property in a future turn.
- * @param object    promise or immediate reference for target object
- * @param name      name of property to get
- * @return promise for the property value
- */
-Q.get = function (object, key) {
-    return Q(object).dispatch("get", [key]);
-};
-
-Promise.prototype.get = function (key) {
-    return this.dispatch("get", [key]);
-};
-
-/**
- * Sets the value of a property in a future turn.
- * @param object    promise or immediate reference for object object
- * @param name      name of property to set
- * @param value     new value of property
- * @return promise for the return value
- */
-Q.set = function (object, key, value) {
-    return Q(object).dispatch("set", [key, value]);
-};
-
-Promise.prototype.set = function (key, value) {
-    return this.dispatch("set", [key, value]);
-};
-
-/**
- * Deletes a property in a future turn.
- * @param object    promise or immediate reference for target object
- * @param name      name of property to delete
- * @return promise for the return value
- */
-Q.del = // XXX legacy
-Q["delete"] = function (object, key) {
-    return Q(object).dispatch("delete", [key]);
-};
-
-Promise.prototype.del = // XXX legacy
-Promise.prototype["delete"] = function (key) {
-    return this.dispatch("delete", [key]);
-};
-
-/**
- * Invokes a method in a future turn.
- * @param object    promise or immediate reference for target object
- * @param name      name of method to invoke
- * @param value     a value to post, typically an array of
- *                  invocation arguments for promises that
- *                  are ultimately backed with `resolve` values,
- *                  as opposed to those backed with URLs
- *                  wherein the posted value can be any
- *                  JSON serializable object.
- * @return promise for the return value
- */
-// bound locally because it is used by other methods
-Q.mapply = // XXX As proposed by "Redsandro"
-Q.post = function (object, name, args) {
-    return Q(object).dispatch("post", [name, args]);
-};
-
-Promise.prototype.mapply = // XXX As proposed by "Redsandro"
-Promise.prototype.post = function (name, args) {
-    return this.dispatch("post", [name, args]);
-};
-
-/**
- * Invokes a method in a future turn.
- * @param object    promise or immediate reference for target object
- * @param name      name of method to invoke
- * @param ...args   array of invocation arguments
- * @return promise for the return value
- */
-Q.send = // XXX Mark Miller's proposed parlance
-Q.mcall = // XXX As proposed by "Redsandro"
-Q.invoke = function (object, name /*...args*/) {
-    return Q(object).dispatch("post", [name, array_slice(arguments, 2)]);
-};
-
-Promise.prototype.send = // XXX Mark Miller's proposed parlance
-Promise.prototype.mcall = // XXX As proposed by "Redsandro"
-Promise.prototype.invoke = function (name /*...args*/) {
-    return this.dispatch("post", [name, array_slice(arguments, 1)]);
-};
-
-/**
- * Applies the promised function in a future turn.
- * @param object    promise or immediate reference for target function
- * @param args      array of application arguments
- */
-Q.fapply = function (object, args) {
-    return Q(object).dispatch("apply", [void 0, args]);
-};
-
-Promise.prototype.fapply = function (args) {
-    return this.dispatch("apply", [void 0, args]);
-};
-
-/**
- * Calls the promised function in a future turn.
- * @param object    promise or immediate reference for target function
- * @param ...args   array of application arguments
- */
-Q["try"] =
-Q.fcall = function (object /* ...args*/) {
-    return Q(object).dispatch("apply", [void 0, array_slice(arguments, 1)]);
-};
-
-Promise.prototype.fcall = function (/*...args*/) {
-    return this.dispatch("apply", [void 0, array_slice(arguments)]);
-};
-
-/**
- * Binds the promised function, transforming return values into a fulfilled
- * promise and thrown errors into a rejected one.
- * @param object    promise or immediate reference for target function
- * @param ...args   array of application arguments
- */
-Q.fbind = function (object /*...args*/) {
-    var promise = Q(object);
-    var args = array_slice(arguments, 1);
-    return function fbound() {
-        return promise.dispatch("apply", [
-            this,
-            args.concat(array_slice(arguments))
-        ]);
-    };
-};
-Promise.prototype.fbind = function (/*...args*/) {
-    var promise = this;
-    var args = array_slice(arguments);
-    return function fbound() {
-        return promise.dispatch("apply", [
-            this,
-            args.concat(array_slice(arguments))
-        ]);
-    };
-};
-
-/**
- * Requests the names of the owned properties of a promised
- * object in a future turn.
- * @param object    promise or immediate reference for target object
- * @return promise for the keys of the eventually settled object
- */
-Q.keys = function (object) {
-    return Q(object).dispatch("keys", []);
-};
-
-Promise.prototype.keys = function () {
-    return this.dispatch("keys", []);
-};
-
-/**
- * Turns an array of promises into a promise for an array.  If any of
- * the promises gets rejected, the whole array is rejected immediately.
- * @param {Array*} an array (or promise for an array) of values (or
- * promises for values)
- * @returns a promise for an array of the corresponding values
- */
-// By Mark Miller
-// http://wiki.ecmascript.org/doku.php?id=strawman:concurrency&rev=1308776521#allfulfilled
-Q.all = all;
-function all(promises) {
-    return when(promises, function (promises) {
-        var pendingCount = 0;
-        var deferred = defer();
-        array_reduce(promises, function (undefined, promise, index) {
-            var snapshot;
-            if (
-                isPromise(promise) &&
-                (snapshot = promise.inspect()).state === "fulfilled"
-            ) {
-                promises[index] = snapshot.value;
-            } else {
-                ++pendingCount;
-                when(
-                    promise,
-                    function (value) {
-                        promises[index] = value;
-                        if (--pendingCount === 0) {
-                            deferred.resolve(promises);
-                        }
-                    },
-                    deferred.reject,
-                    function (progress) {
-                        deferred.notify({ index: index, value: progress });
-                    }
-                );
-            }
-        }, void 0);
-        if (pendingCount === 0) {
-            deferred.resolve(promises);
-        }
-        return deferred.promise;
-    });
-}
-
-Promise.prototype.all = function () {
-    return all(this);
-};
-
-/**
- * Returns the first resolved promise of an array. Prior rejected promises are
- * ignored.  Rejects only if all promises are rejected.
- * @param {Array*} an array containing values or promises for values
- * @returns a promise fulfilled with the value of the first resolved promise,
- * or a rejected promise if all promises are rejected.
- */
-Q.any = any;
-
-function any(promises) {
-    if (promises.length === 0) {
-        return Q.resolve();
-    }
-
-    var deferred = Q.defer();
-    var pendingCount = 0;
-    array_reduce(promises, function (prev, current, index) {
-        var promise = promises[index];
-
-        pendingCount++;
-
-        when(promise, onFulfilled, onRejected, onProgress);
-        function onFulfilled(result) {
-            deferred.resolve(result);
-        }
-        function onRejected() {
-            pendingCount--;
-            if (pendingCount === 0) {
-                deferred.reject(new Error(
-                    "Can't get fulfillment value from any promise, all " +
-                    "promises were rejected."
-                ));
-            }
-        }
-        function onProgress(progress) {
-            deferred.notify({
-                index: index,
-                value: progress
-            });
-        }
-    }, undefined);
-
-    return deferred.promise;
-}
-
-Promise.prototype.any = function () {
-    return any(this);
-};
-
-/**
- * Waits for all promises to be settled, either fulfilled or
- * rejected.  This is distinct from `all` since that would stop
- * waiting at the first rejection.  The promise returned by
- * `allResolved` will never be rejected.
- * @param promises a promise for an array (or an array) of promises
- * (or values)
- * @return a promise for an array of promises
- */
-Q.allResolved = deprecate(allResolved, "allResolved", "allSettled");
-function allResolved(promises) {
-    return when(promises, function (promises) {
-        promises = array_map(promises, Q);
-        return when(all(array_map(promises, function (promise) {
-            return when(promise, noop, noop);
-        })), function () {
-            return promises;
-        });
-    });
-}
-
-Promise.prototype.allResolved = function () {
-    return allResolved(this);
-};
-
-/**
- * @see Promise#allSettled
- */
-Q.allSettled = allSettled;
-function allSettled(promises) {
-    return Q(promises).allSettled();
-}
-
-/**
- * Turns an array of promises into a promise for an array of their states (as
- * returned by `inspect`) when they have all settled.
- * @param {Array[Any*]} values an array (or promise for an array) of values (or
- * promises for values)
- * @returns {Array[State]} an array of states for the respective values.
- */
-Promise.prototype.allSettled = function () {
-    return this.then(function (promises) {
-        return all(array_map(promises, function (promise) {
-            promise = Q(promise);
-            function regardless() {
-                return promise.inspect();
-            }
-            return promise.then(regardless, regardless);
-        }));
-    });
-};
-
-/**
- * Captures the failure of a promise, giving an oportunity to recover
- * with a callback.  If the given promise is fulfilled, the returned
- * promise is fulfilled.
- * @param {Any*} promise for something
- * @param {Function} callback to fulfill the returned promise if the
- * given promise is rejected
- * @returns a promise for the return value of the callback
- */
-Q.fail = // XXX legacy
-Q["catch"] = function (object, rejected) {
-    return Q(object).then(void 0, rejected);
-};
-
-Promise.prototype.fail = // XXX legacy
-Promise.prototype["catch"] = function (rejected) {
-    return this.then(void 0, rejected);
-};
-
-/**
- * Attaches a listener that can respond to progress notifications from a
- * promise's originating deferred. This listener receives the exact arguments
- * passed to ``deferred.notify``.
- * @param {Any*} promise for something
- * @param {Function} callback to receive any progress notifications
- * @returns the given promise, unchanged
- */
-Q.progress = progress;
-function progress(object, progressed) {
-    return Q(object).then(void 0, void 0, progressed);
-}
-
-Promise.prototype.progress = function (progressed) {
-    return this.then(void 0, void 0, progressed);
-};
-
-/**
- * Provides an opportunity to observe the settling of a promise,
- * regardless of whether the promise is fulfilled or rejected.  Forwards
- * the resolution to the returned promise when the callback is done.
- * The callback can return a promise to defer completion.
- * @param {Any*} promise
- * @param {Function} callback to observe the resolution of the given
- * promise, takes no arguments.
- * @returns a promise for the resolution of the given promise when
- * ``fin`` is done.
- */
-Q.fin = // XXX legacy
-Q["finally"] = function (object, callback) {
-    return Q(object)["finally"](callback);
-};
-
-Promise.prototype.fin = // XXX legacy
-Promise.prototype["finally"] = function (callback) {
-    callback = Q(callback);
-    return this.then(function (value) {
-        return callback.fcall().then(function () {
-            return value;
-        });
-    }, function (reason) {
-        // TODO attempt to recycle the rejection with "this".
-        return callback.fcall().then(function () {
-            throw reason;
-        });
-    });
-};
-
-/**
- * Terminates a chain of promises, forcing rejections to be
- * thrown as exceptions.
- * @param {Any*} promise at the end of a chain of promises
- * @returns nothing
- */
-Q.done = function (object, fulfilled, rejected, progress) {
-    return Q(object).done(fulfilled, rejected, progress);
-};
-
-Promise.prototype.done = function (fulfilled, rejected, progress) {
-    var onUnhandledError = function (error) {
-        // forward to a future turn so that ``when``
-        // does not catch it and turn it into a rejection.
-        Q.nextTick(function () {
-            makeStackTraceLong(error, promise);
-            if (Q.onerror) {
-                Q.onerror(error);
-            } else {
-                throw error;
-            }
-        });
-    };
-
-    // Avoid unnecessary `nextTick`ing via an unnecessary `when`.
-    var promise = fulfilled || rejected || progress ?
-        this.then(fulfilled, rejected, progress) :
-        this;
-
-    if (typeof process === "object" && process && process.domain) {
-        onUnhandledError = process.domain.bind(onUnhandledError);
-    }
-
-    promise.then(void 0, onUnhandledError);
-};
-
-/**
- * Causes a promise to be rejected if it does not get fulfilled before
- * some milliseconds time out.
- * @param {Any*} promise
- * @param {Number} milliseconds timeout
- * @param {Any*} custom error message or Error object (optional)
- * @returns a promise for the resolution of the given promise if it is
- * fulfilled before the timeout, otherwise rejected.
- */
-Q.timeout = function (object, ms, error) {
-    return Q(object).timeout(ms, error);
-};
-
-Promise.prototype.timeout = function (ms, error) {
-    var deferred = defer();
-    var timeoutId = setTimeout(function () {
-        if (!error || "string" === typeof error) {
-            error = new Error(error || "Timed out after " + ms + " ms");
-            error.code = "ETIMEDOUT";
-        }
-        deferred.reject(error);
-    }, ms);
-
-    this.then(function (value) {
-        clearTimeout(timeoutId);
-        deferred.resolve(value);
-    }, function (exception) {
-        clearTimeout(timeoutId);
-        deferred.reject(exception);
-    }, deferred.notify);
-
-    return deferred.promise;
-};
-
-/**
- * Returns a promise for the given value (or promised value), some
- * milliseconds after it resolved. Passes rejections immediately.
- * @param {Any*} promise
- * @param {Number} milliseconds
- * @returns a promise for the resolution of the given promise after milliseconds
- * time has elapsed since the resolution of the given promise.
- * If the given promise rejects, that is passed immediately.
- */
-Q.delay = function (object, timeout) {
-    if (timeout === void 0) {
-        timeout = object;
-        object = void 0;
-    }
-    return Q(object).delay(timeout);
-};
-
-Promise.prototype.delay = function (timeout) {
-    return this.then(function (value) {
-        var deferred = defer();
-        setTimeout(function () {
-            deferred.resolve(value);
-        }, timeout);
-        return deferred.promise;
-    });
-};
-
-/**
- * Passes a continuation to a Node function, which is called with the given
- * arguments provided as an array, and returns a promise.
- *
- *      Q.nfapply(FS.readFile, [__filename])
- *      .then(function (content) {
- *      })
- *
- */
-Q.nfapply = function (callback, args) {
-    return Q(callback).nfapply(args);
-};
-
-Promise.prototype.nfapply = function (args) {
-    var deferred = defer();
-    var nodeArgs = array_slice(args);
-    nodeArgs.push(deferred.makeNodeResolver());
-    this.fapply(nodeArgs).fail(deferred.reject);
-    return deferred.promise;
-};
-
-/**
- * Passes a continuation to a Node function, which is called with the given
- * arguments provided individually, and returns a promise.
- * @example
- * Q.nfcall(FS.readFile, __filename)
- * .then(function (content) {
- * })
- *
- */
-Q.nfcall = function (callback /*...args*/) {
-    var args = array_slice(arguments, 1);
-    return Q(callback).nfapply(args);
-};
-
-Promise.prototype.nfcall = function (/*...args*/) {
-    var nodeArgs = array_slice(arguments);
-    var deferred = defer();
-    nodeArgs.push(deferred.makeNodeResolver());
-    this.fapply(nodeArgs).fail(deferred.reject);
-    return deferred.promise;
-};
-
-/**
- * Wraps a NodeJS continuation passing function and returns an equivalent
- * version that returns a promise.
- * @example
- * Q.nfbind(FS.readFile, __filename)("utf-8")
- * .then(console.log)
- * .done()
- */
-Q.nfbind =
-Q.denodeify = function (callback /*...args*/) {
-    var baseArgs = array_slice(arguments, 1);
-    return function () {
-        var nodeArgs = baseArgs.concat(array_slice(arguments));
-        var deferred = defer();
-        nodeArgs.push(deferred.makeNodeResolver());
-        Q(callback).fapply(nodeArgs).fail(deferred.reject);
-        return deferred.promise;
-    };
-};
-
-Promise.prototype.nfbind =
-Promise.prototype.denodeify = function (/*...args*/) {
-    var args = array_slice(arguments);
-    args.unshift(this);
-    return Q.denodeify.apply(void 0, args);
-};
-
-Q.nbind = function (callback, thisp /*...args*/) {
-    var baseArgs = array_slice(arguments, 2);
-    return function () {
-        var nodeArgs = baseArgs.concat(array_slice(arguments));
-        var deferred = defer();
-        nodeArgs.push(deferred.makeNodeResolver());
-        function bound() {
-            return callback.apply(thisp, arguments);
-        }
-        Q(bound).fapply(nodeArgs).fail(deferred.reject);
-        return deferred.promise;
-    };
-};
-
-Promise.prototype.nbind = function (/*thisp, ...args*/) {
-    var args = array_slice(arguments, 0);
-    args.unshift(this);
-    return Q.nbind.apply(void 0, args);
-};
-
-/**
- * Calls a method of a Node-style object that accepts a Node-style
- * callback with a given array of arguments, plus a provided callback.
- * @param object an object that has the named method
- * @param {String} name name of the method of object
- * @param {Array} args arguments to pass to the method; the callback
- * will be provided by Q and appended to these arguments.
- * @returns a promise for the value or error
- */
-Q.nmapply = // XXX As proposed by "Redsandro"
-Q.npost = function (object, name, args) {
-    return Q(object).npost(name, args);
-};
-
-Promise.prototype.nmapply = // XXX As proposed by "Redsandro"
-Promise.prototype.npost = function (name, args) {
-    var nodeArgs = array_slice(args || []);
-    var deferred = defer();
-    nodeArgs.push(deferred.makeNodeResolver());
-    this.dispatch("post", [name, nodeArgs]).fail(deferred.reject);
-    return deferred.promise;
-};
-
-/**
- * Calls a method of a Node-style object that accepts a Node-style
- * callback, forwarding the given variadic arguments, plus a provided
- * callback argument.
- * @param object an object that has the named method
- * @param {String} name name of the method of object
- * @param ...args arguments to pass to the method; the callback will
- * be provided by Q and appended to these arguments.
- * @returns a promise for the value or error
- */
-Q.nsend = // XXX Based on Mark Miller's proposed "send"
-Q.nmcall = // XXX Based on "Redsandro's" proposal
-Q.ninvoke = function (object, name /*...args*/) {
-    var nodeArgs = array_slice(arguments, 2);
-    var deferred = defer();
-    nodeArgs.push(deferred.makeNodeResolver());
-    Q(object).dispatch("post", [name, nodeArgs]).fail(deferred.reject);
-    return deferred.promise;
-};
-
-Promise.prototype.nsend = // XXX Based on Mark Miller's proposed "send"
-Promise.prototype.nmcall = // XXX Based on "Redsandro's" proposal
-Promise.prototype.ninvoke = function (name /*...args*/) {
-    var nodeArgs = array_slice(arguments, 1);
-    var deferred = defer();
-    nodeArgs.push(deferred.makeNodeResolver());
-    this.dispatch("post", [name, nodeArgs]).fail(deferred.reject);
-    return deferred.promise;
-};
-
-/**
- * If a function would like to support both Node continuation-passing-style and
- * promise-returning-style, it can end its internal promise chain with
- * `nodeify(nodeback)`, forwarding the optional nodeback argument.  If the user
- * elects to use a nodeback, the result will be sent there.  If they do not
- * pass a nodeback, they will receive the result promise.
- * @param object a result (or a promise for a result)
- * @param {Function} nodeback a Node.js-style callback
- * @returns either the promise or nothing
- */
-Q.nodeify = nodeify;
-function nodeify(object, nodeback) {
-    return Q(object).nodeify(nodeback);
-}
-
-Promise.prototype.nodeify = function (nodeback) {
-    if (nodeback) {
-        this.then(function (value) {
-            Q.nextTick(function () {
-                nodeback(null, value);
-            });
-        }, function (error) {
-            Q.nextTick(function () {
-                nodeback(error);
-            });
-        });
-    } else {
-        return this;
-    }
-};
-
-Q.noConflict = function() {
-    throw new Error("Q.noConflict only works when Q is used as a global");
-};
-
-// All code before this point will be filtered from stack traces.
-var qEndingLine = captureLine();
-
-return Q;
-
-});
-
-}).call(this,_dereq_('_process'))
-},{"_process":175}],178:[function(_dereq_,module,exports){
+},{}],174:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -16727,7 +13492,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],179:[function(_dereq_,module,exports){
+},{}],175:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -16814,13 +13579,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],180:[function(_dereq_,module,exports){
+},{}],176:[function(_dereq_,module,exports){
 'use strict';
 
 exports.decode = exports.parse = _dereq_('./decode');
 exports.encode = exports.stringify = _dereq_('./encode');
 
-},{"./decode":178,"./encode":179}],181:[function(_dereq_,module,exports){
+},{"./decode":174,"./encode":175}],177:[function(_dereq_,module,exports){
 (function (global){
 var ClientRequest = _dereq_('./lib/request')
 var extend = _dereq_('xtend')
@@ -16902,7 +13667,7 @@ http.METHODS = [
 	'UNSUBSCRIBE'
 ]
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./lib/request":183,"builtin-status-codes":159,"url":194,"xtend":201}],182:[function(_dereq_,module,exports){
+},{"./lib/request":179,"builtin-status-codes":156,"url":201,"xtend":210}],178:[function(_dereq_,module,exports){
 (function (global){
 exports.fetch = isFunction(global.fetch) && isFunction(global.ReadableByteStream)
 
@@ -16946,7 +13711,7 @@ function isFunction (value) {
 xhr = null // Help gc
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],183:[function(_dereq_,module,exports){
+},{}],179:[function(_dereq_,module,exports){
 (function (process,global,Buffer){
 var capability = _dereq_('./capability')
 var inherits = _dereq_('inherits')
@@ -17227,7 +13992,7 @@ var unsafeHeaders = [
 ]
 
 }).call(this,_dereq_('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},_dereq_("buffer").Buffer)
-},{"./capability":182,"./response":184,"_process":175,"buffer":157,"inherits":166,"readable-stream":191,"to-arraybuffer":193}],184:[function(_dereq_,module,exports){
+},{"./capability":178,"./response":180,"_process":172,"buffer":154,"inherits":163,"readable-stream":187,"to-arraybuffer":189}],180:[function(_dereq_,module,exports){
 (function (process,global,Buffer){
 var capability = _dereq_('./capability')
 var inherits = _dereq_('inherits')
@@ -17411,9 +14176,9 @@ IncomingMessage.prototype._onXHRProgress = function () {
 }
 
 }).call(this,_dereq_('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},_dereq_("buffer").Buffer)
-},{"./capability":182,"_process":175,"buffer":157,"inherits":166,"readable-stream":191}],185:[function(_dereq_,module,exports){
-arguments[4][158][0].apply(exports,arguments)
-},{"dup":158}],186:[function(_dereq_,module,exports){
+},{"./capability":178,"_process":172,"buffer":154,"inherits":163,"readable-stream":187}],181:[function(_dereq_,module,exports){
+arguments[4][155][0].apply(exports,arguments)
+},{"dup":155}],182:[function(_dereq_,module,exports){
 // a duplex stream is just a stream that is both readable and writable.
 // Since JS doesn't have multiple prototypal inheritance, this class
 // prototypally inherits from Readable, and then parasitically from
@@ -17489,7 +14254,7 @@ function forEach(xs, f) {
     f(xs[i], i);
   }
 }
-},{"./_stream_readable":188,"./_stream_writable":190,"core-util-is":160,"inherits":166,"process-nextick-args":174}],187:[function(_dereq_,module,exports){
+},{"./_stream_readable":184,"./_stream_writable":186,"core-util-is":157,"inherits":163,"process-nextick-args":171}],183:[function(_dereq_,module,exports){
 // a passthrough stream.
 // basically just the most minimal sort of Transform stream.
 // Every written chunk gets output as-is.
@@ -17516,7 +14281,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":189,"core-util-is":160,"inherits":166}],188:[function(_dereq_,module,exports){
+},{"./_stream_transform":185,"core-util-is":157,"inherits":163}],184:[function(_dereq_,module,exports){
 (function (process){
 'use strict';
 
@@ -18399,7 +15164,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,_dereq_('_process'))
-},{"./_stream_duplex":186,"_process":175,"buffer":157,"core-util-is":160,"events":163,"inherits":166,"isarray":185,"process-nextick-args":174,"string_decoder/":192,"util":155}],189:[function(_dereq_,module,exports){
+},{"./_stream_duplex":182,"_process":172,"buffer":154,"core-util-is":157,"events":160,"inherits":163,"isarray":181,"process-nextick-args":171,"string_decoder/":188,"util":152}],185:[function(_dereq_,module,exports){
 // a transform stream is a readable/writable stream where you do
 // something with the data.  Sometimes it's called a "filter",
 // but that's not a great name for it, since that implies a thing where
@@ -18580,7 +15345,7 @@ function done(stream, er) {
 
   return stream.push(null);
 }
-},{"./_stream_duplex":186,"core-util-is":160,"inherits":166}],190:[function(_dereq_,module,exports){
+},{"./_stream_duplex":182,"core-util-is":157,"inherits":163}],186:[function(_dereq_,module,exports){
 (function (process){
 // A bit simpler than readable streams.
 // Implement an async ._write(chunk, encoding, cb), and it'll handle all
@@ -19099,7 +15864,7 @@ function CorkedRequest(state) {
   };
 }
 }).call(this,_dereq_('_process'))
-},{"./_stream_duplex":186,"_process":175,"buffer":157,"core-util-is":160,"events":163,"inherits":166,"process-nextick-args":174,"util-deprecate":196}],191:[function(_dereq_,module,exports){
+},{"./_stream_duplex":182,"_process":172,"buffer":154,"core-util-is":157,"events":160,"inherits":163,"process-nextick-args":171,"util-deprecate":203}],187:[function(_dereq_,module,exports){
 (function (process){
 var Stream = (function (){
   try {
@@ -19119,7 +15884,7 @@ if (!process.browser && process.env.READABLE_STREAM === 'disable' && Stream) {
 }
 
 }).call(this,_dereq_('_process'))
-},{"./lib/_stream_duplex.js":186,"./lib/_stream_passthrough.js":187,"./lib/_stream_readable.js":188,"./lib/_stream_transform.js":189,"./lib/_stream_writable.js":190,"_process":175}],192:[function(_dereq_,module,exports){
+},{"./lib/_stream_duplex.js":182,"./lib/_stream_passthrough.js":183,"./lib/_stream_readable.js":184,"./lib/_stream_transform.js":185,"./lib/_stream_writable.js":186,"_process":172}],188:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -19342,7 +16107,7 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":157}],193:[function(_dereq_,module,exports){
+},{"buffer":154}],189:[function(_dereq_,module,exports){
 var Buffer = _dereq_('buffer').Buffer
 
 module.exports = function (buf) {
@@ -19371,7 +16136,1959 @@ module.exports = function (buf) {
 	}
 }
 
-},{"buffer":157}],194:[function(_dereq_,module,exports){
+},{"buffer":154}],190:[function(_dereq_,module,exports){
+'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
+var log = _dereq_('loglevel');
+
+var NotificationsConfig = _dereq_('./configuration');
+var Registrar = _dereq_('./registrar');
+
+/**
+ * @class
+ * @alias Notifications
+ * @classdesc The helper library for the notification service.
+ * Provides high level api for creating and managing notification subscriptions and receiving messages
+ * Creates the instance of Notification helper library
+ *
+ * @constructor
+ * @param {string} productId id of a product, which uses notification library
+ * @param {AccessManager} accessManager - Twilio Access Manager instance
+ */
+function NotificationsClient(productId, accessManager, options) {
+  var _this = this;
+
+  if (!accessManager) {
+    throw new Error('AccessManager is required for Notifications client');
+  }
+
+  var transport = options.transport;
+  var twilsock = options.twilsockClient;
+
+  var reliableTransportState = {
+    overall: false,
+    transport: false,
+    registration: false
+  };
+
+  var config = new NotificationsConfig(accessManager, options);
+  (0, _defineProperties2.default)(this, {
+    _config: { value: config },
+    _registrar: { value: new Registrar(productId, transport, twilsock, config) },
+    _twilsock: { value: twilsock },
+    _reliableTransportState: { value: reliableTransportState }
+  });
+
+  EventEmitter.call(this);
+
+  accessManager.on('tokenExpired', function () {
+    return _this.emit('tokenExpired', accessManager);
+  });
+  accessManager.on('tokenUpdated', function () {
+    return _this._updateAuthToken(accessManager.token);
+  });
+
+  this._twilsock.on('message', function (type, message) {
+    return _this._routeMessage(type, message);
+  });
+
+  this._registrar.on('transportReady', function (state) {
+    return _this.emit('transportReady', state);
+  });
+
+  this._registrar.on('stateChanged', function (state) {
+    _this._onRegistrationStateChange(state);
+  });
+  this._registrar.on('needReliableTransport', this._onNeedReliableTransport.bind(this));
+
+  this._twilsock.on('connected', function (notificationId) {
+    _this._onTransportStateChange(true);
+    _this._registrar.setNotificationId('twilsock', notificationId);
+  });
+  this._twilsock.on('disconnected', function () {
+    _this._onTransportStateChange(false);
+  });
+}
+
+inherits(NotificationsClient, EventEmitter);
+
+/**
+ * Routes messages to the external subscribers
+ * @private
+ */
+NotificationsClient.prototype._routeMessage = function (type, message) {
+  log.trace('Message arrived: ', type, message);
+  this.emit('message', type, message);
+};
+
+NotificationsClient.prototype._onNeedReliableTransport = function (isNeeded) {
+  if (isNeeded) {
+    this._twilsock.connect();
+  } else {
+    this._twilsock.disconnect();
+  }
+};
+
+NotificationsClient.prototype._onRegistrationStateChange = function (state) {
+  this._reliableTransportState.registration = state === 'registered';
+  this._updateTransportState();
+};
+
+NotificationsClient.prototype._onTransportStateChange = function (connected) {
+  this._reliableTransportState.transport = connected;
+  this._updateTransportState();
+};
+
+NotificationsClient.prototype._updateTransportState = function () {
+  var overallState = this._reliableTransportState.transport && this._reliableTransportState.registration;
+
+  if (this._reliableTransportState.overall !== overallState) {
+    this._reliableTransportState.overall = overallState;
+
+    log.info('NTFCN I: Transport ready ' + overallState);
+    this.emit('transportReady', overallState);
+  }
+};
+
+/**
+ * Adds the subscription for the given message type
+ * @param {string} messageType The type of message that you want to receive
+ * @param {string} channelType. Supported are 'twilsock' and 'gcm'
+ * @public
+ */
+NotificationsClient.prototype.subscribe = function (messageType, channelType) {
+  channelType = channelType || 'twilsock';
+  log.trace('Add subscriptions for message type: ', messageType, channelType);
+
+  return this._registrar.subscribe(messageType, channelType);
+};
+
+/**
+ * Remove the subscription for the particular message type
+ * @param {string} messageType The type of message that you don't want to receive anymore
+ * @param {string} Channel type. Supported are 'twilsock' and 'gcm'
+ * @public
+ */
+NotificationsClient.prototype.unsubscribe = function (messageType, channelType) {
+  channelType = channelType || 'twilsock';
+  log.trace('Remove subscriptions for message type: ', messageType, channelType);
+
+  return this._registrar.unsubscribe(messageType, channelType);
+};
+
+/**
+ * Handle incoming push notification.
+ * Client application should call this method when it receives push notifications and pass the received data
+ * @param {Object} pushMessage - push message object
+ * @public
+ */
+NotificationsClient.prototype.handlePushNotification = function (msg) {
+  log.warn('Push message passed, but no functionality implemented yet: ' + msg);
+};
+
+/**
+ * Set GCM token to enable application register for a push messages
+ * @param {string} gcmToken Token received from GCM system
+ * @public
+ */
+NotificationsClient.prototype.setGCMToken = function (gcmToken) {
+  this._registrar.setNotificationId('gcm', gcmToken);
+};
+
+/**
+ * Updates auth token for GCM registration
+ * @private
+ */
+NotificationsClient.prototype._updateAuthToken = function () {
+  log.info('NTFCN I: authTokenUpdated');
+  this._registrar.updateToken();
+};
+
+(0, _freeze2.default)(NotificationsClient);
+
+/**
+ * Fired when new message arrived.
+ * @param {Object} message`
+ * @event NotificationsClient#message
+ */
+
+/**
+ * Fired when a Channel's attributes or metadata have been updated.
+ * @param {boolean} transport state
+ * @event NotificationsClient#transportReady
+ */
+
+module.exports = NotificationsClient;
+
+},{"./configuration":191,"./registrar":193,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"events":160,"loglevel":166,"util":205}],191:[function(_dereq_,module,exports){
+'use strict';
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var ERS_URI = 'https://ers.twilio.com';
+var ERS_PATH = '/v1/registrations';
+
+/**
+ * Notification library configuration provider
+ */
+function NotificationConfig(accessManager, options) {
+  var _this = this;
+
+  options = (options || {}).Notification || {};
+  var uri = options.ersUri || ERS_URI;
+
+  (0, _defineProperties2.default)(this, {
+    _registrarUri: { value: uri + ERS_PATH },
+    _accessManager: { value: accessManager },
+
+    registrarUri: { get: function get() {
+        return _this._registrarUri;
+      } },
+    token: { get: function get() {
+        return _this._accessManager.token;
+      } }
+  });
+}
+
+module.exports = NotificationConfig;
+
+},{"babel-runtime/core-js/object/define-properties":33}],192:[function(_dereq_,module,exports){
+'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _set2 = _dereq_('babel-runtime/core-js/set');
+
+var _set3 = _interopRequireDefault(_set2);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
+var StateMachine = _dereq_('javascript-state-machine');
+var Backoff = _dereq_('backoff');
+var log = _dereq_('loglevel');
+
+function toArray(_set) {
+  var arr = [];
+  _set.forEach(function (v) {
+    return arr.push(v);
+  });
+  return arr;
+}
+
+/**
+ * Creates new instance of the ERS registrar
+ *
+ * @class RegistrarConnector
+ * @classdesc Manages the registrations on ERS service.
+ * It deduplicates registrations and manages them automatically
+ *
+ * @param Object configuration
+ * @param string notificationId
+ * @param string channelType
+ * @param Array messageTypes
+ */
+function RegistrarConnector(context, transport, config, channelType) {
+  var _this = this;
+
+  var fsm = StateMachine.create({
+    initial: { state: 'unregistered', event: 'init', defer: true },
+    events: [{ name: 'userUpdate', from: ['unregistered'], to: 'registering' }, { name: 'userUpdate', from: ['registered'], to: 'unregistering' }, { name: 'registered', from: ['registering', 'retrying'], to: 'registered' }, { name: 'unregistered', from: ['unregistering'], to: 'unregistered' }, { name: 'retry', from: ['retrying'], to: 'retrying' }, { name: 'failure', from: ['registering'], to: 'retrying' }, { name: 'failure', from: ['retrying'], to: 'retrying' }, { name: 'failure', from: ['unregistering'], to: 'unregistered' }],
+    callbacks: {
+      onregistering: function onregistering(event, from, to, arg) {
+        return _this._register(arg);
+      },
+      onunregistering: function onunregistering() {
+        return _this._unregister();
+      },
+      onregistered: function onregistered() {
+        return _this._onRegistered();
+      },
+      onunregistered: function onunregistered() {
+        return _this._onUnregistered();
+      },
+      onretrying: function onretrying(event, from, to, arg) {
+        return _this._initRetry(arg);
+      },
+      onfailure: function onfailure(event, from, to, arg) {
+        if (from === 'retrying') {
+          _this._initRetry(arg);
+        }
+      }
+    }
+  });
+
+  var backoff = Backoff.exponential({
+    randomisationFactor: 0.2,
+    initialDelay: 2 * 1000,
+    maxDelay: 2 * 60 * 1000
+  });
+
+  backoff.on('ready', function () {
+    _this._retry();
+  });
+
+  (0, _defineProperties2.default)(this, {
+    _transport: { value: transport },
+    _context: { value: context },
+    _url: { value: config.registrarUri, writable: false },
+    _config: { value: config },
+    _fsm: { value: fsm },
+    _backoff: { value: backoff },
+    _channelType: { value: channelType },
+    _registrationId: { value: false, writable: true },
+    _notificationId: { value: false, writable: true },
+    _messageTypes: { value: new _set3.default(), writable: true },
+    _pendingUpdate: { value: null, writable: true }
+  });
+
+  EventEmitter.call(this);
+  fsm.init();
+}
+
+inherits(RegistrarConnector, EventEmitter);
+
+RegistrarConnector.prototype.setNotificationId = function (notificationId) {
+  if (this._notificationId === notificationId) {
+    return;
+  }
+
+  this._notificationId = notificationId;
+  this._updateRegistration();
+};
+
+RegistrarConnector.prototype.updateToken = function () {
+  return this._updateRegistration();
+};
+
+RegistrarConnector.prototype.has = function (messageType) {
+  return this._messageTypes.has(messageType);
+};
+
+RegistrarConnector.prototype.subscribe = function (messageType) {
+  if (this._messageTypes.has(messageType)) {
+    log.warn('Message type already registered ', messageType);
+    return false;
+  }
+
+  this._messageTypes.add(messageType);
+  this._updateRegistration();
+  return true;
+};
+
+RegistrarConnector.prototype.unsubscribe = function (messageType) {
+  if (!this._messageTypes.has(messageType)) {
+    return false;
+  }
+
+  this._messageTypes.delete(messageType);
+
+  if (this._messageTypes.size > 0) {
+    this._updateRegistration();
+  } else {
+    this._removeRegistration();
+  }
+  return true;
+};
+
+RegistrarConnector.prototype._updateRegistration = function () {
+  if (this._notificationId) {
+    this._update(this._notificationId, toArray(this._messageTypes));
+  }
+};
+
+RegistrarConnector.prototype._removeRegistration = function () {
+  if (this._notificationId) {
+    this._update(this._notificationId, toArray(this._messageTypes));
+  }
+};
+
+/**
+ * Update service registration
+ * @param Array messageTypes Array of message type names
+ * @private
+ */
+RegistrarConnector.prototype._update = function (notificationId, messageTypes) {
+  var regData = { notificationId: notificationId, messageTypes: messageTypes };
+
+  if (this._fsm.is('unregistered')) {
+    if (regData.notificationId && regData.messageTypes.length > 0) {
+      this._fsm.userUpdate(regData);
+    }
+  } else if (this._fsm.is('registered')) {
+    this._fsm.userUpdate(regData);
+    this._setPendingUpdate(regData);
+  } else {
+    this._setPendingUpdate(regData);
+  }
+};
+
+RegistrarConnector.prototype._setPendingUpdate = function (regData) {
+  this._pendingUpdate = regData;
+};
+
+RegistrarConnector.prototype._checkPendingUpdate = function () {
+  if (!this._pendingUpdate) {
+    return;
+  }
+
+  var pendingUpdate = this._pendingUpdate;
+  this._pendingUpdate = null;
+
+  this._updateRegistration(pendingUpdate.notificationId, pendingUpdate.messageTypes);
+};
+
+RegistrarConnector.prototype._initRetry = function (regData) {
+  if (!this._pendingUpdate) {
+    this._setPendingUpdate(regData);
+  }
+
+  this._backoff.backoff();
+};
+
+RegistrarConnector.prototype._retry = function () {
+  if (!this._pendingUpdate) {
+    return;
+  }
+
+  var pendingUpdate = this._pendingUpdate;
+  this._pendingUpdate = null;
+
+  this._register(pendingUpdate);
+};
+
+RegistrarConnector.prototype._onRegistered = function () {
+  this._backoff.reset();
+  this.emit('stateChanged', 'registered');
+  this._checkPendingUpdate();
+};
+
+RegistrarConnector.prototype._onUnregistered = function () {
+  this._backoff.reset();
+  this.emit('stateChanged', 'unregistered');
+  this._checkPendingUpdate();
+};
+
+RegistrarConnector.prototype._register = function (regData) {
+  var _this2 = this;
+
+  /* eslint-disable camelcase */
+  var registrarRequest = {
+    endpoint_platform: this._context.platform,
+    channel_type: this._channelType,
+    version: '2',
+    message_types: regData.messageTypes,
+    data: {},
+    ttl: 'PT24H'
+  };
+
+  if (this._channelType === 'twilsock') {
+    registrarRequest.data.url = regData.notificationId;
+  } else {
+    registrarRequest.data.registration_id = regData.notificationId;
+  }
+
+  var uri = this._url + '?productId=' + this._context.productId;
+  var headers = {
+    'Content-Type': 'application/json',
+    'X-Twilio-Token': this._config.token
+  };
+  /* eslint-enable camelcase */
+
+  log.trace('NTFCN I: Creating registration for channel ', this._channelType);
+  return this._transport.post(uri, headers, registrarRequest).then(function (response) {
+    _this2._registrationId = response.body.id;
+    _this2._registrationData = regData;
+
+    log.debug('NTFCN I: Registration created: ', response);
+    _this2._fsm.registered();
+  }).catch(function (error) {
+    log.error('NTFCN E: Registration failed: ', error);
+    _this2._fsm.failure(regData);
+    return error;
+  });
+};
+
+RegistrarConnector.prototype._unregister = function () {
+  var _this3 = this;
+
+  if (!this._registrationId) {
+    return _promise2.default.resolve();
+  }
+
+  var uri = this._url + '/' + this._registrationId + '?productId=' + this._context.productId;
+  var headers = {
+    'Content-Type': 'application/json',
+    'X-Twilio-Token': this._config.token
+  };
+
+  log.trace('NTFCN I: removing registration for ', this._channelType);
+  this._transport.delete(uri, headers).then(function () {
+    log.debug('NTFCN I: registration removed for ', _this3._channelType);
+    _this3._registrationId = false;
+    _this3._fsm.unregistered();
+  }).catch(function (reason) {
+    // failure to remove registration since being treated as "unregistered" state
+    // because it is indicates that something wrong with server/connection
+    log.error('NTFCN E: failed to remove of registration ', _this3.channelType, reason);
+    _this3._fsm.failure();
+    return reason;
+  });
+};
+
+(0, _freeze2.default)(RegistrarConnector);
+
+module.exports = RegistrarConnector;
+
+},{"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"babel-runtime/core-js/promise":36,"babel-runtime/core-js/set":37,"backoff":145,"events":160,"javascript-state-machine":165,"loglevel":166,"util":205}],193:[function(_dereq_,module,exports){
+'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _map = _dereq_('babel-runtime/core-js/map');
+
+var _map2 = _interopRequireDefault(_map);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
+
+var ErsConnector = _dereq_('./registrar.connector');
+var TwilsockConnector = _dereq_('./twilsock.connector');
+
+/**
+ * Creates the new instance of ERS registrar client
+ *
+ * @class Registrar
+ * @classdesc Provides an interface to the ERS registrar
+ */
+function Registrar(productId, transport, twilsock, config) {
+  var _this = this;
+
+  (0, _defineProperties2.default)(this, {
+    _conf: { value: config },
+    _connectors: { value: new _map2.default() }
+  });
+
+  var platform = (typeof navigator !== 'undefined' ? navigator.userAgent : 'web').substring(0, 128);
+
+  this._connectors.set('twilsock', new TwilsockConnector({ productId: productId, platform: platform }, twilsock, config));
+  this._connectors.set('gcm', new ErsConnector({ productId: productId, platform: platform }, transport, config, 'gcm'));
+
+  this._connectors.get('twilsock').on('transportReady', function (state) {
+    return _this.emit('transportReady', state);
+  });
+
+  EventEmitter.call(this);
+}
+
+inherits(Registrar, EventEmitter);
+
+/**
+ *  Sets notification ID.
+ *  If new URI is different from previous, it triggers updating of registration for given channel
+ *
+ *  @param {string} uri The notification ID
+ */
+Registrar.prototype.setNotificationId = function (channelType, notificationId) {
+  this._connector(channelType).setNotificationId(notificationId);
+};
+
+/**
+ * Checks if subscription for given message and channel already exists
+ */
+Registrar.prototype.hasSubscription = function (messageType, channelType) {
+  this._connector(channelType).has(messageType);
+};
+
+/**
+ * Subscribe for given type of message
+ *
+ * @param {String} messageType Message type identifier
+ * @param {String} channelType Channel type, can be 'twilsock' or 'gcm'
+ * @public
+ */
+Registrar.prototype.subscribe = function (messageType, channelType) {
+  this._connector(channelType).subscribe(messageType);
+};
+
+/**
+ * Remove subscription
+ * @param {String} messageType Message type
+ * @param {String} channelType Channel type (twilsock or gcm)
+ * @public
+ */
+Registrar.prototype.unsubscribe = function (messageType, channelType) {
+  this._connector(channelType).unsubscribe(messageType);
+};
+
+Registrar.prototype.updateToken = function () {
+  this._connectors.forEach(function (connector) {
+    return connector.updateToken();
+  });
+};
+
+/**
+ * @param {Strint} channelType Channel type
+ * @throws {Error} Error with description
+ * @private
+ */
+Registrar.prototype._connector = function (type) {
+  var connector = this._connectors.get(type);
+  if (!connector) {
+    throw new Error('Unknown channel type: ' + type);
+  }
+  return connector;
+};
+
+(0, _freeze2.default)(Registrar);
+
+module.exports = Registrar;
+
+},{"./registrar.connector":192,"./twilsock.connector":194,"babel-runtime/core-js/map":32,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"events":160,"util":205}],194:[function(_dereq_,module,exports){
+'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _set2 = _dereq_('babel-runtime/core-js/set');
+
+var _set3 = _interopRequireDefault(_set2);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
+
+var uuid = _dereq_('uuid');
+var log = _dereq_('loglevel');
+
+var DEFAULT_TTL = 60 * 60 * 48;
+
+function toArray(_set) {
+  var arr = [];
+  _set.forEach(function (v) {
+    return arr.push(v);
+  });
+  return arr;
+}
+
+/**
+ * @class
+ * @classdesc Registrar connector implementation for twilsock
+ *
+ * @constructor
+ */
+function TwilsockConnector(context, twilsock, config) {
+  var _this = this;
+
+  context.id = uuid.v4();
+  (0, _defineProperties2.default)(this, {
+    _twilsock: { value: twilsock },
+    _messageTypes: { value: new _set3.default() },
+
+    config: { value: config },
+    context: { value: context }
+  });
+
+  twilsock.on('disconnected', function () {
+    return _this.emit('transportReady', false);
+  });
+  twilsock.on('registered', function (id) {
+    if (context && id === context.id) {
+      _this.emit('transportReady', true);
+    }
+  });
+
+  EventEmitter.call(this);
+}
+inherits(TwilsockConnector, EventEmitter);
+
+TwilsockConnector.prototype.setNotificationId = function () {
+  return false;
+};
+
+TwilsockConnector.prototype.updateToken = function () {
+  this._twilsock.removeNotificationsContext(this.context.id);
+  this.context.id = uuid.v4();
+  this._updateContext();
+};
+
+TwilsockConnector.prototype.has = function (messageType) {
+  return this._messageTypes.has(messageType);
+};
+
+TwilsockConnector.prototype.subscribe = function (messageType) {
+  if (this._messageTypes.has(messageType)) {
+    log.warn('Message type already registered ', messageType);
+    return false;
+  }
+
+  this._messageTypes.add(messageType);
+  this._updateContext();
+  return true;
+};
+
+TwilsockConnector.prototype.unsubscribe = function (messageType) {
+  if (!this._messageTypes.has(messageType)) {
+    return false;
+  }
+
+  this._messageTypes.delete(messageType);
+
+  if (this._messageTypes.size > 0) {
+    this._updateContext();
+  } else {
+    this._twilsock.removeNotificationsContext(this.context.id);
+  }
+
+  return true;
+};
+
+TwilsockConnector.prototype._updateContext = function () {
+  var messageTypes = toArray(this._messageTypes);
+
+  /* eslint-disable camelcase */
+  var context = {
+    product_id: this.context.productId,
+    notification_protocol_version: 4,
+    endpoint_platform: this.context.platform,
+    ttl: DEFAULT_TTL,
+    token: this.config.token,
+    message_types: messageTypes
+  };
+  /* eslint-enable camelcase */
+
+  this._twilsock.setNotificationsContext(this.context.id, context);
+};
+
+(0, _freeze2.default)(TwilsockConnector);
+
+module.exports = TwilsockConnector;
+
+},{"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"babel-runtime/core-js/set":37,"events":160,"loglevel":166,"util":205,"uuid":207}],195:[function(_dereq_,module,exports){
+'use strict';
+
+var _stringify = _dereq_('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var XHR = typeof XMLHttpRequest === 'undefined' ? _dereq_('xmlhttprequest').XMLHttpRequest : XMLHttpRequest;
+
+function parseResponseHeaders(headerString) {
+  return headerString.split('\r\n').map(function (el) {
+    return el.split(': ');
+  }).filter(function (el) {
+    return el.length === 2 && el[1].length > 0;
+  }).reduce(function (prev, curr) {
+    prev[curr[0]] = curr[1];return prev;
+  }, {});
+}
+
+function extractBody(xhr) {
+  var contentType = xhr.getResponseHeader('Content-Type');
+  if (!contentType || contentType.indexOf('application/json') !== 0 || xhr.responseText.length === 0) {
+    return xhr.responseText;
+  }
+
+  try {
+    return JSON.parse(xhr.responseText);
+  } catch (e) {
+    return xhr.responseText;
+  }
+}
+
+function request(method, params) {
+  return new _promise2.default(function (resolve, reject) {
+    var xhr = new XHR();
+    xhr.open(method, params.url, true);
+
+    xhr.onreadystatechange = function onreadystatechange() {
+      if (xhr.readyState !== 4) {
+        return;
+      }
+
+      var headers = parseResponseHeaders(xhr.getAllResponseHeaders());
+      var body = extractBody(xhr);
+
+      if (200 <= xhr.status && xhr.status < 300) {
+        resolve({ status: xhr.status, headers: headers, body: body });
+      } else {
+        reject({ status: xhr.status, description: xhr.statusText, headers: headers, body: body });
+      }
+    };
+
+    for (var headerName in params.headers) {
+      xhr.setRequestHeader(headerName, params.headers[headerName]);
+      if (headerName === 'Content-Type' && params.headers[headerName] === 'application/json') {
+        params.body = (0, _stringify2.default)(params.body);
+      }
+    }
+
+    xhr.send(params.body);
+  });
+}
+
+/**
+ * Use XMLHttpRequest to get a network resource.
+ * @param {String} method - HTTP Method
+ * @param {Object} params - Request parameters
+ * @param {String} params.url - URL of the resource
+ * @param {Array}  params.headers - An array of headers to pass [{ headerName : headerBody }]
+ * @param {Object} params.body - A JSON body to send to the resource
+ * @returns {Promise}
+ **/
+var Request = request;
+
+/**
+ * Sugar function for request('GET', params);
+ * @param {Object} params - Request parameters
+ * @returns {Promise}
+ */
+Request.get = function (params) {
+  return request('GET', params);
+};
+
+/**
+ * Sugar function for request('POST', params);
+ * @param {Object} params - Request parameters
+ * @returns {Promise}
+ */
+Request.post = function (params) {
+  return request('POST', params);
+};
+
+/**
+ * Sugar function for request('PUT', params);
+ * @param {Object} params - Request parameters
+ * @returns {Promise}
+ */
+Request.put = function (params) {
+  return request('PUT', params);
+};
+
+/**
+ * Sugar function for request('DELETE', params);
+ * @param {Object} params - Request parameters
+ * @returns {Promise}
+ */
+Request.delete = function (params) {
+  return request('DELETE', params);
+};
+
+module.exports = Request;
+
+},{"babel-runtime/core-js/json/stringify":31,"babel-runtime/core-js/promise":36,"xmlhttprequest":209}],196:[function(_dereq_,module,exports){
+'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _map = _dereq_('babel-runtime/core-js/map');
+
+var _map2 = _interopRequireDefault(_map);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+var _keys = _dereq_('babel-runtime/core-js/object/keys');
+
+var _keys2 = _interopRequireDefault(_keys);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var request = _dereq_('./request');
+
+function parseUri(uri) {
+  var match = uri.match(/^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)(\/[^?#]*)(\?[^#]*|)(#.*|)$/);
+  if (match) {
+    var uriStruct = {
+      protocol: match[1],
+      host: match[2],
+      hostname: match[3],
+      port: match[4],
+      pathname: match[5],
+      search: match[6],
+      hash: match[7]
+    };
+
+    if (uriStruct.search.length > 0) {
+      var paramsString = uriStruct.search.substring(1);
+      uriStruct.params = paramsString.split('&').map(function (el) {
+        return el.split('=');
+      }).reduce(function (prev, curr) {
+        if (!prev.hasOwnProperty(curr[0])) {
+          prev[curr[0]] = curr[1];
+        } else if (Array.isArray(prev[curr[0]])) {
+          prev[curr[0]].push(curr[1]);
+        } else {
+          prev[curr[0]] = [prev[curr[0]], curr[1]];
+        }
+        return prev;
+      }, {});
+    }
+    return uriStruct;
+  }
+  throw new Error('Incorrect URI: ' + uri);
+}
+
+function twilsockAddress(method, uri) {
+  var parsedUri = parseUri(uri);
+  var to = {
+    method: method,
+    host: parsedUri.host,
+    path: parsedUri.pathname
+  };
+  if (parsedUri.params) {
+    to.params = parsedUri.params;
+  }
+  return to;
+}
+
+function twilsockParams(type, uri, headers, body) {
+  return {
+    to: twilsockAddress(type, uri),
+    headers: headers,
+    body: body
+  };
+}
+
+function adaptTwilsockResponse(response) {
+  return { status: response.status,
+    headers: response.header.http_headers,
+    body: response.body };
+}
+
+function httpParams(uri, headers, body) {
+  return {
+    url: uri,
+    headers: headers,
+    body: body
+  };
+}
+
+function adaptHttpResponse(response) {
+  try {
+    response.body = JSON.parse(response.body);
+  } finally {
+    return response;
+  }
+}
+
+/**
+ * By RFC header names are case-insensitive
+ * though it is much easier to work with them in code
+ * when they have any specific case.
+ * So we forcefully lowercase all headers
+ */
+function lowercaseHeaders(response) {
+  var keys = (0, _keys2.default)(response.headers);
+  var n = keys.length;
+  var headers = {};
+  while (n--) {
+    var key = keys[n];
+    headers[key.toLowerCase()] = response.headers[key];
+  }
+  response.headers = headers;
+  return response;
+}
+
+/**
+ * @class Transport
+ * @classdesc Provides generic network interface
+ */
+function Transport(twilsock) {
+  var _this = this;
+
+  (0, _defineProperties2.default)(this, {
+    _activeGetRequests: { value: new _map2.default() },
+    _twilsock: { value: twilsock },
+    _http: { value: request },
+    _useTwilsock: { get: function get() {
+        return _this._twilsock && _this._twilsock.isConnected;
+      } }
+  });
+
+  if (twilsock) {
+    twilsock.connect();
+  }
+}
+
+/**
+ * Make a GET request by given URI
+ *
+ * This function applies "multiplexing" optimization.
+ * If several requests for the same URI happen on the same time,
+ * only one will really happen, but all clients will see th result.
+ *
+ * @Returns Promise<Response> Result of successful get request
+ */
+Transport.prototype.get = function get(uri, headers) {
+  var _this2 = this;
+
+  if (this._activeGetRequests.has(uri)) {
+    return this._activeGetRequests.get(uri);
+  }
+
+  var promise = this._get(uri, headers).then(function (response) {
+    _this2._activeGetRequests.delete(uri);
+    return response;
+  }).catch(function (error) {
+    _this2._activeGetRequests.delete(uri);
+    throw error;
+  });
+
+  this._activeGetRequests.set(uri, promise);
+  return promise;
+};
+
+/**
+ * @private
+ */
+Transport.prototype._get = function _get(uri, headers) {
+  return (this._useTwilsock ? this._twilsock.send(twilsockParams('GET', uri, headers)).then(adaptTwilsockResponse) : this._http.get(httpParams(uri, headers)).then(adaptHttpResponse)).then(lowercaseHeaders);
+};
+
+/**
+ * Make a POST request by given URI
+ * @Returns Promise<Response> Result of successful request
+ */
+Transport.prototype.post = function post(uri, headers, body) {
+  return (this._useTwilsock ? this._twilsock.send(twilsockParams('POST', uri, headers, body)).then(adaptTwilsockResponse) : this._http.post(httpParams(uri, headers, body)).then(adaptHttpResponse)).then(lowercaseHeaders);
+};
+
+/**
+ * Make a PUT request by given URI
+ * @Returns Promise<Response> Result of successful request
+ */
+Transport.prototype.put = function put(uri, headers, body) {
+  return (this._useTwilsock ? this._twilsock.send(twilsockParams('PUT', uri, headers, body)).then(adaptTwilsockResponse) : this._http.put(httpParams(uri, headers, body)).then(adaptHttpResponse)).then(lowercaseHeaders);
+};
+
+/**
+ * Make a DELETE request by given URI
+ * @Returns Promise<Response> Result of successful request
+ */
+Transport.prototype.delete = function del(uri, headers) {
+  return (this._useTwilsock ? this._twilsock.send(twilsockParams('DELETE', uri, headers)).then(adaptTwilsockResponse) : this._http.delete(httpParams(uri, headers)).then(adaptHttpResponse)).then(lowercaseHeaders);
+};
+
+(0, _freeze2.default)(Transport);
+
+module.exports = Transport;
+
+},{"./request":195,"babel-runtime/core-js/map":32,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"babel-runtime/core-js/object/keys":35}],197:[function(_dereq_,module,exports){
+'use strict';
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _set = _dereq_('babel-runtime/core-js/set');
+
+var _set2 = _interopRequireDefault(_set);
+
+var _map = _dereq_('babel-runtime/core-js/map');
+
+var _map2 = _interopRequireDefault(_map);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
+var log = _dereq_('loglevel');
+var uuid = _dereq_('uuid');
+
+var Configuration = _dereq_('./configuration');
+var TwilsockChannel = _dereq_('./twilsock');
+var PacketInterface = _dereq_('./packetinterface');
+
+/**
+ * @class
+ * @alias Twilsock
+ * @classdesc Client library for the Twilsock protocol
+ * @property {Boolean} connected Indicates the twilsock connection state
+ *
+ * @constructor
+ * @param {AccessManager} AccessManager Twilio access manager instance
+ */
+function TwilsockClient(accessManager, options) {
+  var _this = this;
+
+  var config = new Configuration(accessManager, options);
+  var twilsock = new TwilsockChannel(config);
+  var packetInterface = new PacketInterface(twilsock);
+
+  (0, _defineProperties2.default)(this, {
+    _activeToken: { value: null, writable: true },
+    _config: { value: config },
+    _socket: { value: twilsock },
+    _packet: { value: packetInterface },
+    _registrations: { value: new _map2.default() },
+    _registrationsInProgress: { value: new _map2.default() },
+
+    isConnected: { get: function get() {
+        return _this._socket.isConnected;
+      } },
+    connected: { get: function get() {
+        return _this._socket.isConnected;
+      } }
+  });
+
+  EventEmitter.call(this);
+
+  accessManager.on('tokenExpired', function () {
+    return _this.emit('tokenExpired', accessManager);
+  });
+  accessManager.on('tokenUpdated', function () {
+    return _this._updateAuthToken();
+  });
+
+  this._socket.on('message', function (type, message) {
+    return setTimeout(function () {
+      _this.emit('message', type, message);
+    }, 0);
+  });
+  this._socket.on('connected', function () {
+    return _this._updateRegistrations();
+  });
+  this._socket.on('connected', function (uri) {
+    return _this.emit('connected', uri);
+  });
+  this._socket.on('disconnected', function () {
+    return _this.emit('disconnected');
+  });
+}
+
+inherits(TwilsockClient, EventEmitter);
+
+/**
+ * Send a message
+ * @param {Twilsock#Message} message Message structure with header, body and remote address
+ * @public
+ * @returns {Promise<Result>} Result from remote side
+ */
+TwilsockClient.prototype.send = function (message) {
+  return this._packet.send(message.to, message.headers, message.body);
+};
+
+/**
+ * @param {String} token authentification token
+ * @private
+ */
+TwilsockClient.prototype._updateAuthToken = function () {
+  var _this2 = this;
+
+  log.info('Twilsock I: authTokenUpdated');
+
+  // It's a hack to avoid reconnect on start
+  // Since accessManager always emits 'tokenUpdated' on start.
+  if (this._socket.activeToken === this._config.token) {
+    return;
+  }
+
+  if (this._socket.state === TwilsockChannel.state.CONNECTED || this._socket.state === TwilsockChannel.state.CONNECTING) {
+    this._socket.disconnect().then(function () {
+      return _this2._socket.connect();
+    });
+  }
+};
+
+TwilsockClient.prototype._updateRegistration = function (contextId, context) {
+  var _this3 = this;
+
+  log.info('Twilsock: Update registration for context', contextId);
+  var registrationAttempts = this._registrationsInProgress.get(contextId);
+  if (!registrationAttempts) {
+    registrationAttempts = new _set2.default();
+    this._registrationsInProgress.set(contextId, registrationAttempts);
+  }
+
+  var attemptId = uuid.v4();
+  registrationAttempts.add(attemptId);
+
+  this._packet.putNotificationContext(contextId, context).then(function () {
+    log.info('Twilsock: registration attempt succeeded for context', context);
+    registrationAttempts.delete(attemptId);
+    if (registrationAttempts.size === 0) {
+      _this3._registrationsInProgress.delete(contextId);
+      _this3.emit('registered', contextId);
+    }
+  }).catch(function (err) {
+    log.info('Twilsock: registration attempt failed for context', context);
+    log.debug(err);
+
+    registrationAttempts.delete(attemptId);
+    if (registrationAttempts.size === 0) {
+      _this3._registrationsInProgress.delete(contextId);
+      _this3.emit('registrationFailed', contextId, err);
+    }
+  });
+};
+
+TwilsockClient.prototype._updateRegistrations = function () {
+  var _this4 = this;
+
+  log.info('Twilsock: refreshing all registrations');
+  this._registrations.forEach(function (context, id) {
+    _this4._updateRegistration(id, context);
+  });
+};
+
+TwilsockClient.prototype.setNotificationsContext = function (contextId, context) {
+  if (!contextId || !context) {
+    throw new Error('Invalid arguments provided');
+  }
+
+  this._registrations.set(contextId, context);
+  if (this._socket.isConnected) {
+    this._updateRegistration(contextId, context);
+  }
+};
+
+TwilsockClient.prototype.removeNotificationsContext = function (contextId) {
+  if (!this._registrations.has(contextId)) {
+    return;
+  }
+
+  this._registrations.delete(contextId);
+  if (this._socket.isConnected) {
+    this._packet.deleteNotificationContext(contextId);
+  }
+};
+
+/**
+ * Connect to the server
+ * @fires TwilsockClient#connected
+ * @public
+ */
+TwilsockClient.prototype.connect = function () {
+  return this._socket.connect();
+};
+
+/**
+ * Connect to the server
+ * @fires TwilsockClient#disconnected
+ * @public
+ */
+TwilsockClient.prototype.disconnect = function () {
+  return this._socket.disconnect();
+};
+
+(0, _freeze2.default)(TwilsockClient);
+
+/**
+ * Twilsock destination address descriptor
+ * @typedef {Object} Twilsock#Address
+ * @property {String} method - HTTP method. (POST, PUT, etc)
+ * @property {String} host - host name without path. (e.g. my.comany.com)
+ * @property {String} path - path on the host (e.g. /my/app/to/call.php)
+ */
+
+/**
+ * Twilsock upstream message
+ * @typedef {Object} Twilsock#Message
+ * @property {Twilsock#Address} to - destination address
+ * @property {Object} headers - HTTP headers
+ * @property {Object} body - Body
+ */
+
+/**
+ * Fired when new message received
+ * @param {Object} message
+ * @event TwilsockClient#message
+ */
+
+/**
+ * Fired when socket connected
+ * @param {String} URI of endpoint
+ * @event TwilsockClient#connected
+ */
+
+/**
+ * Fired when socket disconnected
+ * @event TwilsockClient#disconnected
+ */
+
+module.exports = TwilsockClient;
+
+},{"./configuration":198,"./packetinterface":199,"./twilsock":200,"babel-runtime/core-js/map":32,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"babel-runtime/core-js/set":37,"events":160,"loglevel":166,"util":205,"uuid":207}],198:[function(_dereq_,module,exports){
+'use strict';
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var TWILSOCK_URI = 'wss://tsock.twilio.com';
+var TWILSOCK_PATH = '/v2/wsconnect';
+
+/**
+ * @param {String} token - authentication token
+ * @param {Object} options - options to override defaults
+ *
+ * @class TwilsockConfig
+ * @classdesc Settings container for the Twilsock client library
+ */
+function TwilsockConfig(accessManager, options) {
+  var _this = this;
+
+  options = options || {};
+  var _options = options.Twilsock || {};
+  var twilsockUri = _options.uri || options.wsServer || TWILSOCK_URI;
+
+  (0, _defineProperties2.default)(this, {
+    _twilsockWsHost: { value: twilsockUri + TWILSOCK_PATH },
+    _accessManager: { value: accessManager },
+
+    twilsockUri: { get: function get() {
+        return _this._twilsockWsHost;
+      } },
+    token: { get: function get() {
+        return _this._accessManager.token;
+      } }
+  });
+}
+
+module.exports = TwilsockConfig;
+
+},{"babel-runtime/core-js/object/define-properties":33}],199:[function(_dereq_,module,exports){
+'use strict';
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _map = _dereq_('babel-runtime/core-js/map');
+
+var _map2 = _interopRequireDefault(_map);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var log = _dereq_('loglevel');
+var REQUEST_TIMEOUT = 30000;
+
+function PacketInterface(socket) {
+  (0, _defineProperties2.default)(this, {
+    _activeRequests: { value: new _map2.default() },
+    _socket: { value: socket }
+  });
+
+  this._socket.on('reply', this._processReply.bind(this));
+}
+
+function isHttpSuccess(code) {
+  return [200, 201, 204].indexOf(code) !== -1;
+}
+
+function isHttpReply(packet) {
+  return packet && packet.header && packet.header.http_status;
+}
+
+PacketInterface.prototype._processReply = function (reply) {
+  var request = this._activeRequests.get(reply.id);
+  if (request) {
+    clearTimeout(request.timeout);
+    this._activeRequests.delete(reply.id);
+
+    setTimeout(function () {
+      // User shouldn't intercept connection handling, thus making it asynchronous
+      if (!isHttpSuccess(reply.status.code)) {
+        request.reject(new Error('Transport failure: ' + reply.status.status));
+      } else if (isHttpReply(reply) && !isHttpSuccess(reply.header.http_status.code)) {
+        request.reject({ status: reply.header.http_status.code,
+          description: reply.header.http_status.status,
+          body: reply.body });
+      } else {
+        request.resolve(reply);
+      }
+    }, 0);
+  }
+};
+
+PacketInterface.prototype._storeRequest = function (id, resolve, reject) {
+  var requestDescriptor = { resolve: resolve,
+    reject: reject,
+    timeout: setTimeout(function () {
+      log.debug('Request', id, 'is timed out');
+      reject(new Error('Twilsock: request timeout: ' + id));
+    }, REQUEST_TIMEOUT)
+  };
+  this._activeRequests.set(id, requestDescriptor);
+};
+
+PacketInterface.prototype.send = function (address, headers, body) {
+  var _this = this;
+
+  return new _promise2.default(function (resolve, reject) {
+    var id = _this._socket.sendUpstreamMessage(address, headers, body);
+    log.trace('Twilsock: message sent: ', { id: id, address: address, headers: headers, body: body });
+    _this._storeRequest(id, resolve, reject);
+  });
+};
+
+PacketInterface.prototype.putNotificationContext = function (contextId, context) {
+  var _this2 = this;
+
+  return new _promise2.default(function (resolve, reject) {
+    var header = { method: 'put_notification_ctx', notification_ctx_id: contextId }; // eslint-disable-line camelcase
+    var id = _this2._socket.send(header, context);
+    _this2._storeRequest(id, resolve, reject);
+  });
+};
+
+PacketInterface.prototype.deleteNotificationContext = function (contextId) {
+  var _this3 = this;
+
+  return new _promise2.default(function (resolve, reject) {
+    var packet = { method: 'delete_notification_ctx', notification_ctx_id: contextId }; // eslint-disable-line camelcase
+    var id = _this3._socket.send(packet);
+    _this3._storeRequest(id, resolve, reject);
+  });
+};
+
+PacketInterface.prototype.shutdown = function () {
+  this._activeRequests.forEach(function (descriptor) {
+    clearTimeout(descriptor.timeout);
+  });
+  this._activeRequests.clear();
+};
+
+module.exports = PacketInterface;
+
+},{"babel-runtime/core-js/map":32,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/promise":36,"loglevel":166}],200:[function(_dereq_,module,exports){
+(function (Buffer){
+'use strict';
+
+var _promise = _dereq_('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _stringify = _dereq_('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+var _typeof2 = _dereq_('babel-runtime/helpers/typeof');
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+var _freeze = _dereq_('babel-runtime/core-js/object/freeze');
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _defineProperties = _dereq_('babel-runtime/core-js/object/define-properties');
+
+var _defineProperties2 = _interopRequireDefault(_defineProperties);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var EventEmitter = _dereq_('events').EventEmitter;
+var inherits = _dereq_('util').inherits;
+var log = _dereq_('loglevel');
+
+var uuid = _dereq_('uuid');
+var Backoff = _dereq_('backoff');
+var WebSocket = _dereq_('ws');
+var StateMachine = _dereq_('javascript-state-machine');
+
+var ACTIVITY_CHECK_INTERVAL = 5000;
+var ACTIVITY_TIMEOUT = 43000;
+
+/**
+ * @class TwilsockChannel
+ * @classdesc Twilsock connection
+ *
+ * @param config
+ */
+function TwilsockChannel(config) {
+  var _this = this,
+      _arguments = arguments;
+
+  EventEmitter.call(this);
+
+  var fsm = StateMachine.create({
+    initial: 'disconnected',
+    events: [{ name: 'userConnect', from: ['disconnected'], to: 'connecting' }, { name: 'userDisconnect', from: ['connecting', 'connected', 'retrying'], to: 'disconnecting' }, { name: 'userRetry', from: ['retrying'], to: 'connecting' }, { name: 'socketConnected', from: ['connecting'], to: 'connected' }, { name: 'socketClosed', from: ['connecting', 'connected'], to: 'retrying' }, { name: 'socketClosed', from: ['disconnecting'], to: 'disconnected' }, { name: 'socketRejected', from: ['connecting', 'connected'], to: 'disconnecting' }],
+    callbacks: {
+      onconnecting: function onconnecting() {
+        _this._startWatchdogTimer();
+        _this._setupSocket();
+        _this.emit('connecting');
+      },
+      onretrying: function onretrying() {
+        _this._initRetry();
+        _this.emit('connecting');
+      },
+      onenterconnected: this._onConnected.bind(this),
+      onuserDisconnect: this._closeSocket.bind(this),
+      ondisconnected: function ondisconnected() {
+        _this._stopWatchdogTimer();
+        _this._onDisconnected();
+        if (_this._disconnectedPromiseResolve) {
+          var resolve = _this._disconnectedPromiseResolve;
+          _this._disconnectedPromiseResolve = null;
+          resolve();
+        }
+      },
+      onsocketRejected: function onsocketRejected() {
+        var args = Array.prototype.slice.call(_arguments, 3, _arguments.length);
+        _this._onSocketRejected(args);
+      }
+    },
+    error: function error() {
+      log.trace('Twilsock FSM: unexpected transition', arguments);
+    }
+  });
+
+  var backoff = Backoff.exponential({
+    randomisationFactor: 0.2,
+    initialDelay: 2 * 1000,
+    maxDelay: 2 * 60 * 1000
+  });
+
+  backoff.on('ready', function () {
+    _this._retry();
+  });
+
+  (0, _defineProperties2.default)(this, {
+    _config: { value: config },
+    _transportReady: { value: false, writable: true },
+    _disconnectedPromiseResolve: { value: null, writable: true },
+    _backoff: { value: backoff },
+    _fsm: { value: fsm },
+    _watchTimer: { value: null, writable: true },
+    _timestamp: { value: 0, writable: true },
+    _socket: { value: null, writable: true },
+    _activeToken: { value: null, writable: true },
+    activeToken: { enumerable: true, get: function get() {
+        return _this._activeToken;
+      } },
+    state: { enumberable: true, get: function get() {
+        return _this._getState();
+      } },
+    isConnected: { enumberable: true, get: function get() {
+        return _this._isConnected();
+      } }
+  });
+}
+
+inherits(TwilsockChannel, EventEmitter);
+
+/**
+ * Enum for connection state values.
+ * @readonly
+ * @enum {number}
+ */
+TwilsockChannel.state = {
+  DISCONNECTED: 'disconnected',
+  CONNECTING: 'connecting',
+  CONNECTED: 'connected',
+  DISCONNECTING: 'disconnecting'
+};
+(0, _freeze2.default)(TwilsockChannel.state);
+
+/**
+ * Checks if connection established
+ * @public
+ */
+TwilsockChannel.prototype._isConnected = function () {
+  return this.state === TwilsockChannel.state.CONNECTED && this._socket && this._socket.readyState === 1;
+};
+
+/**
+ * @returns {Number} Connection state
+ * @public
+ */
+TwilsockChannel.prototype._getState = function () {
+  switch (this._fsm.current) {
+    case 'connecting':
+    case 'retrying':
+      return TwilsockChannel.state.CONNECTING;
+    case 'connected':
+      return TwilsockChannel.state.CONNECTED;
+    case 'disconnecting':
+      return TwilsockChannel.state.DISCONNECTING;
+    case 'disconnected':
+    default:
+      return TwilsockChannel.state.DISCONNECTED;
+  }
+};
+
+TwilsockChannel.prototype._initRetry = function () {
+  this._backoff.backoff();
+};
+
+TwilsockChannel.prototype._retry = function () {
+  this._socket = null;
+  this._token = null;
+  this._fsm.userRetry();
+};
+
+TwilsockChannel.prototype._onConnected = function () {
+  this._backoff.reset();
+  this.emit('connected', this._wschannelUrl);
+};
+
+TwilsockChannel.prototype._onDisconnected = function () {
+  this._backoff.reset();
+  this._wschannelUrl = null;
+  this._socket = null;
+  this._token = null;
+  this.emit('disconnected');
+};
+
+function getMagic(buffer) {
+  var strMagic = '';
+  var idx = 0;
+  for (; idx < buffer.length; ++idx) {
+    var chr = String.fromCharCode(buffer[idx]);
+    strMagic += chr;
+    if (chr === '\r') {
+      idx += 2;
+      break;
+    }
+  }
+
+  var magics = strMagic.split(' ');
+  return {
+    size: idx,
+    protocol: magics[0],
+    version: magics[1],
+    headerSize: Number(magics[2])
+  };
+}
+
+/**
+ * @param {Uint8Array} array
+ * @returns {Object}
+ */
+function getJsonObject(array) {
+  var str = new Buffer(array).toString();
+  try {
+    return JSON.parse(str);
+  } catch (e) {
+    log.error('Twilsock E: Failed to parse input: ', str);
+    throw e;
+  }
+}
+
+TwilsockChannel.prototype._setupSocket = function () {
+  var self = this;
+  var token = this._config.token;
+  var uri = this._config.twilsockUri + '?token=' + token;
+
+  var socket = new WebSocket(uri);
+  socket.binaryType = 'arraybuffer';
+
+  socket.onopen = function () {
+    log.info('Twilsock I: Twilsock socket opened');
+  };
+
+  socket.onclose = function () {
+    log.info('Twilsock I: socket closed');
+    self._fsm.socketClosed();
+  };
+
+  socket.onerror = function (error) {
+    log.debug('Twilsock E: ', error);
+    // self._fsm.socketError();
+  };
+
+  // Log messages from the server
+  socket.onmessage = function (message) {
+    log.trace('Twilsock: ', message.data);
+
+    var fieldMargin = 2;
+
+    var dataView = new Uint8Array(message.data);
+    var magic = getMagic(dataView);
+    if (magic.protocol !== 'TWILSOCK' || magic.version !== 'V1.0') {
+      throw new Error('Unsupported protocol: ' + magic.protocol + ' ver ' + magic.version);
+    }
+
+    var header = getJsonObject(dataView.subarray(magic.size, magic.size + magic.headerSize));
+    log.trace('Twilsock: message received: ', header);
+
+    var payload = null;
+    if (header.payload_size > 0) {
+      var payloadOffset = fieldMargin + magic.size + magic.headerSize;
+      if (!header.hasOwnProperty('payload_type') || header.payload_type.indexOf('application/json') === 0) {
+        payload = getJsonObject(dataView.subarray(payloadOffset));
+      } else if (header.payload_type.indexOf('text/plain') === 0) {
+        payload = new Buffer(dataView.subarray(payloadOffset)).toString();
+      }
+    }
+
+    self._updateActivityTimestamp();
+
+    if (header.method === 'ready') {
+      log.trace('Twilsock ready', payload);
+      self._wschannelUrl = payload.wschannel_url;
+      self._confirmReceiving(header);
+      self._fsm.socketConnected();
+    } else if (header.method === 'notification') {
+      self._confirmReceiving(header);
+      self.emit('message', header.message_type, payload);
+    } else if (header.method === 'reply') {
+      self.emit('reply', { id: header.id,
+        status: header.status,
+        header: header,
+        body: payload });
+    } else if (header.method === 'ping') {
+      self._confirmReceiving(header);
+    } else if (header.method === 'close') {
+      log.trace('Twilsock connection close initated by server');
+      self._confirmReceiving(header);
+      self._fsm.socketRejected(payload);
+    }
+  };
+
+  this._activeToken = token;
+  this._socket = socket;
+};
+
+/**
+ * Should be called for each message to confirm it received
+ */
+TwilsockChannel.prototype._confirmReceiving = function (messageHeader) {
+  /* eslint-disable camelcase */
+  var header = {
+    method: 'reply',
+    id: messageHeader.id,
+    payload_type: 'application/json',
+    status: { code: 200, status: 'OK' }
+  };
+  /* eslint-enable camelcase */
+
+  try {
+    this._sendPacket(header);
+  } catch (e) {
+    log.debug('Twilsock: Failed to confirm packet receiving', e);
+  }
+};
+
+/**
+ * Makes sure that body is properly stringified
+ */
+function preparePayload(payload) {
+  switch (typeof payload === 'undefined' ? 'undefined' : (0, _typeof3.default)(payload)) {
+    case 'undefined':
+      return '';
+    case 'object':
+      return (0, _stringify2.default)(payload);
+    default:
+      return payload;
+  }
+}
+
+/**
+ * Prepare binary packet and send it over the network
+ */
+TwilsockChannel.prototype._sendPacket = function (header, payload) {
+  /* eslint-disable camelcase */
+  var payloadString = preparePayload(payload);
+
+  header.payload_size = Buffer.byteLength(payloadString);
+  var headerString = (0, _stringify2.default)(header) + '\r\n';
+  var magicString = 'TWILSOCK V1.0 ' + (Buffer.byteLength(headerString) - 2) + '\r\n';
+  var message = new Uint8Array(new Buffer(magicString + headerString + payloadString));
+
+  try {
+    this._socket.send(message.buffer);
+  } catch (e) {
+    log.info('Failed to send ', header, e);
+    log.info(e.stack);
+    throw e;
+  }
+  /* eslint-enable camelcase */
+};
+
+/**
+ * Cancels pending retry attempt if it exists
+ * @private
+ */
+TwilsockChannel.prototype._cancelRetryAttempt = function () {
+  this._backoff.reset();
+};
+
+/**
+ * Shutdown connection
+ * @private
+ */
+TwilsockChannel.prototype._closeSocket = function () {
+  this._cancelRetryAttempt();
+  if (this._socket) {
+    this._socket.close();
+  }
+};
+
+/**
+ * Initiate the twilsock connection
+ * If already connected, it does nothing
+ */
+TwilsockChannel.prototype.connect = function () {
+  this._fsm.userConnect();
+};
+
+/**
+ * Close twilsock connection
+ * If already disconnected, it does nothing
+ */
+TwilsockChannel.prototype.disconnect = function () {
+  var _this2 = this;
+
+  if (this._fsm.is('disconnected')) {
+    return _promise2.default.resolve();
+  }
+
+  return new _promise2.default(function (resolve) {
+    _this2._fsm.userDisconnect();
+    _this2._disconnectedPromiseResolve = resolve;
+  });
+};
+
+/**
+ * Send upstream message
+ * @returns {String} id of sent message
+ */
+TwilsockChannel.prototype.sendUpstreamMessage = function (address, headers, body) {
+  var id = uuid.v4();
+
+  var httpHeader = {
+    host: address.host,
+    path: address.path,
+    method: address.method
+  };
+
+  if (address.hasOwnProperty('params')) {
+    httpHeader.params = address.params;
+  }
+
+  /* eslint-disable camelcase */
+  var twilsockHeader = {
+    method: 'message',
+    id: id,
+    http_header: httpHeader
+  };
+
+  if (headers) {
+    twilsockHeader.http_header.headers = headers;
+  }
+
+  if (headers && headers.hasOwnProperty('Content-Type')) {
+    twilsockHeader.payload_type = headers['Content-Type'];
+  }
+
+  this._sendPacket(twilsockHeader, body);
+  return id;
+  /* eslint-enable camelcase */
+};
+
+TwilsockChannel.prototype.send = function (header, body) {
+  header.id = header.id || uuid.v4();
+  this._sendPacket(header, body);
+  return header.id;
+};
+
+/**
+ * @private
+ */
+TwilsockChannel.prototype._onSocketRejected = function socketRejected(reason) {
+  log.error('Twilsock connection closed by server', reason);
+  this.emit('remoteClose', reason);
+  this._closeSocket();
+};
+
+/**
+ * @private
+ */
+TwilsockChannel.prototype._startWatchdogTimer = function () {
+  var _this3 = this;
+
+  this._timestamp = Date.now();
+  this._watchTimer = setInterval(function () {
+    if (Date.now() - _this3._timestamp > ACTIVITY_TIMEOUT && _this3._socket) {
+      _this3._socket.close();
+    }
+  }, ACTIVITY_CHECK_INTERVAL);
+};
+
+/**
+ * @private
+ */
+TwilsockChannel.prototype._stopWatchdogTimer = function () {
+  clearInterval(this._watchTimer);
+};
+
+/**
+ * @private
+ */
+TwilsockChannel.prototype._updateActivityTimestamp = function () {
+  this._timestamp = Date.now();
+};
+
+(0, _freeze2.default)(TwilsockChannel);
+
+module.exports = TwilsockChannel;
+
+}).call(this,_dereq_("buffer").Buffer)
+},{"babel-runtime/core-js/json/stringify":31,"babel-runtime/core-js/object/define-properties":33,"babel-runtime/core-js/object/freeze":34,"babel-runtime/core-js/promise":36,"babel-runtime/helpers/typeof":40,"backoff":145,"buffer":154,"events":160,"javascript-state-machine":165,"loglevel":166,"util":205,"uuid":207,"ws":208}],201:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -20105,7 +18822,7 @@ Url.prototype.parseHost = function() {
   if (host) this.hostname = host;
 };
 
-},{"./util":195,"punycode":176,"querystring":180}],195:[function(_dereq_,module,exports){
+},{"./util":202,"punycode":173,"querystring":176}],202:[function(_dereq_,module,exports){
 'use strict';
 
 module.exports = {
@@ -20123,7 +18840,7 @@ module.exports = {
   }
 };
 
-},{}],196:[function(_dereq_,module,exports){
+},{}],203:[function(_dereq_,module,exports){
 (function (global){
 
 /**
@@ -20194,14 +18911,14 @@ function config (name) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],197:[function(_dereq_,module,exports){
+},{}],204:[function(_dereq_,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],198:[function(_dereq_,module,exports){
+},{}],205:[function(_dereq_,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -20791,7 +19508,227 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,_dereq_('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":197,"_process":175,"inherits":166}],199:[function(_dereq_,module,exports){
+},{"./support/isBuffer":204,"_process":172,"inherits":163}],206:[function(_dereq_,module,exports){
+(function (global){
+
+var rng;
+
+if (global.crypto && crypto.getRandomValues) {
+  // WHATWG crypto-based RNG - http://wiki.whatwg.org/wiki/Crypto
+  // Moderately fast, high quality
+  var _rnds8 = new Uint8Array(16);
+  rng = function whatwgRNG() {
+    crypto.getRandomValues(_rnds8);
+    return _rnds8;
+  };
+}
+
+if (!rng) {
+  // Math.random()-based (RNG)
+  //
+  // If all else fails, use Math.random().  It's fast, but is of unspecified
+  // quality.
+  var  _rnds = new Array(16);
+  rng = function() {
+    for (var i = 0, r; i < 16; i++) {
+      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
+      _rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
+    }
+
+    return _rnds;
+  };
+}
+
+module.exports = rng;
+
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],207:[function(_dereq_,module,exports){
+//     uuid.js
+//
+//     Copyright (c) 2010-2012 Robert Kieffer
+//     MIT License - http://opensource.org/licenses/mit-license.php
+
+// Unique ID creation requires a high quality random # generator.  We feature
+// detect to determine the best RNG source, normalizing to a function that
+// returns 128-bits of randomness, since that's what's usually required
+var _rng = _dereq_('./rng');
+
+// Maps for number <-> hex string conversion
+var _byteToHex = [];
+var _hexToByte = {};
+for (var i = 0; i < 256; i++) {
+  _byteToHex[i] = (i + 0x100).toString(16).substr(1);
+  _hexToByte[_byteToHex[i]] = i;
+}
+
+// **`parse()` - Parse a UUID into it's component bytes**
+function parse(s, buf, offset) {
+  var i = (buf && offset) || 0, ii = 0;
+
+  buf = buf || [];
+  s.toLowerCase().replace(/[0-9a-f]{2}/g, function(oct) {
+    if (ii < 16) { // Don't overflow!
+      buf[i + ii++] = _hexToByte[oct];
+    }
+  });
+
+  // Zero out remaining bytes if string was short
+  while (ii < 16) {
+    buf[i + ii++] = 0;
+  }
+
+  return buf;
+}
+
+// **`unparse()` - Convert UUID byte array (ala parse()) into a string**
+function unparse(buf, offset) {
+  var i = offset || 0, bth = _byteToHex;
+  return  bth[buf[i++]] + bth[buf[i++]] +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] +
+          bth[buf[i++]] + bth[buf[i++]] +
+          bth[buf[i++]] + bth[buf[i++]];
+}
+
+// **`v1()` - Generate time-based UUID**
+//
+// Inspired by https://github.com/LiosK/UUID.js
+// and http://docs.python.org/library/uuid.html
+
+// random #'s we need to init node and clockseq
+var _seedBytes = _rng();
+
+// Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
+var _nodeId = [
+  _seedBytes[0] | 0x01,
+  _seedBytes[1], _seedBytes[2], _seedBytes[3], _seedBytes[4], _seedBytes[5]
+];
+
+// Per 4.2.2, randomize (14 bit) clockseq
+var _clockseq = (_seedBytes[6] << 8 | _seedBytes[7]) & 0x3fff;
+
+// Previous uuid creation time
+var _lastMSecs = 0, _lastNSecs = 0;
+
+// See https://github.com/broofa/node-uuid for API details
+function v1(options, buf, offset) {
+  var i = buf && offset || 0;
+  var b = buf || [];
+
+  options = options || {};
+
+  var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq;
+
+  // UUID timestamps are 100 nano-second units since the Gregorian epoch,
+  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
+  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
+  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
+  var msecs = options.msecs !== undefined ? options.msecs : new Date().getTime();
+
+  // Per 4.2.1.2, use count of uuid's generated during the current clock
+  // cycle to simulate higher resolution clock
+  var nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1;
+
+  // Time since last uuid creation (in msecs)
+  var dt = (msecs - _lastMSecs) + (nsecs - _lastNSecs)/10000;
+
+  // Per 4.2.1.2, Bump clockseq on clock regression
+  if (dt < 0 && options.clockseq === undefined) {
+    clockseq = clockseq + 1 & 0x3fff;
+  }
+
+  // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
+  // time interval
+  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
+    nsecs = 0;
+  }
+
+  // Per 4.2.1.2 Throw error if too many uuids are requested
+  if (nsecs >= 10000) {
+    throw new Error('uuid.v1(): Can\'t create more than 10M uuids/sec');
+  }
+
+  _lastMSecs = msecs;
+  _lastNSecs = nsecs;
+  _clockseq = clockseq;
+
+  // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
+  msecs += 12219292800000;
+
+  // `time_low`
+  var tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
+  b[i++] = tl >>> 24 & 0xff;
+  b[i++] = tl >>> 16 & 0xff;
+  b[i++] = tl >>> 8 & 0xff;
+  b[i++] = tl & 0xff;
+
+  // `time_mid`
+  var tmh = (msecs / 0x100000000 * 10000) & 0xfffffff;
+  b[i++] = tmh >>> 8 & 0xff;
+  b[i++] = tmh & 0xff;
+
+  // `time_high_and_version`
+  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
+  b[i++] = tmh >>> 16 & 0xff;
+
+  // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
+  b[i++] = clockseq >>> 8 | 0x80;
+
+  // `clock_seq_low`
+  b[i++] = clockseq & 0xff;
+
+  // `node`
+  var node = options.node || _nodeId;
+  for (var n = 0; n < 6; n++) {
+    b[i + n] = node[n];
+  }
+
+  return buf ? buf : unparse(b);
+}
+
+// **`v4()` - Generate random UUID**
+
+// See https://github.com/broofa/node-uuid for API details
+function v4(options, buf, offset) {
+  // Deprecated - 'format' argument, as supported in v1.2
+  var i = buf && offset || 0;
+
+  if (typeof(options) == 'string') {
+    buf = options == 'binary' ? new Array(16) : null;
+    options = null;
+  }
+  options = options || {};
+
+  var rnds = options.random || (options.rng || _rng)();
+
+  // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+  rnds[6] = (rnds[6] & 0x0f) | 0x40;
+  rnds[8] = (rnds[8] & 0x3f) | 0x80;
+
+  // Copy bytes to buffer, if provided
+  if (buf) {
+    for (var ii = 0; ii < 16; ii++) {
+      buf[i + ii] = rnds[ii];
+    }
+  }
+
+  return buf || unparse(rnds);
+}
+
+// Export public API
+var uuid = v4;
+uuid.v1 = v1;
+uuid.v4 = v4;
+uuid.parse = parse;
+uuid.unparse = unparse;
+
+module.exports = uuid;
+
+},{"./rng":206}],208:[function(_dereq_,module,exports){
 
 /**
  * Module dependencies.
@@ -20836,7 +19773,7 @@ function ws(uri, protocols, opts) {
 
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
-},{}],200:[function(_dereq_,module,exports){
+},{}],209:[function(_dereq_,module,exports){
 (function (process,Buffer){
 /**
  * Wrapper for built-in http.js to emulate the browser XMLHttpRequest object.
@@ -21460,7 +20397,7 @@ exports.XMLHttpRequest = function() {
 };
 
 }).call(this,_dereq_('_process'),_dereq_("buffer").Buffer)
-},{"_process":175,"buffer":157,"child_process":156,"fs":156,"http":181,"https":164,"url":194}],201:[function(_dereq_,module,exports){
+},{"_process":172,"buffer":154,"child_process":153,"fs":153,"http":177,"https":161,"url":201}],210:[function(_dereq_,module,exports){
 module.exports = extend
 
 var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -21481,16 +20418,12 @@ function extend() {
     return target
 }
 
-},{}],202:[function(_dereq_,module,exports){
+},{}],211:[function(_dereq_,module,exports){
 module.exports={
   "name": "twilio-ip-messaging",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "description": "A library for Twilio IP messaging",
   "main": "lib/index.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/twilio/twilio-ip-messaging.js"
-  },
   "author": "Twilio",
   "license": "MIT",
   "dependencies": {
@@ -21499,8 +20432,11 @@ module.exports={
     "javascript-state-machine": "^2.3.5",
     "loglevel": "^1.3.1",
     "platform": "^1.3.0",
-    "q": "^1.4.1",
     "twilio": "^2.5.1",
+    "twilio-notifications": "^0.1.2",
+    "twilio-transport": "0.0.1",
+    "twilsock": "^0.1.1",
+    "uuid": "^2.0.2",
     "ws": "^0.8.0",
     "xmlhttprequest": "^1.7.0"
   },
@@ -21529,6 +20465,7 @@ module.exports={
     "gulp-replace": "^0.5.4",
     "gulp-tap": "^0.1.3",
     "gulp-uglify": "^1.2.0",
+    "ink-docstrap": "^1.1.4",
     "jsdoc": "^3.4.0",
     "jsdoc-babel": "^0.1.0",
     "mocha.parallel": "^0.11.2",
@@ -21545,7 +20482,7 @@ module.exports={
   }
 }
 
-},{}]},{},[38])(38)
+},{}]},{},[29])(29)
 });
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],2:[function(require,module,exports){
