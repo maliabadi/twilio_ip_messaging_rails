@@ -1,4 +1,4 @@
-/* twilio-ip-messaging.js 0.10.3
+/* twilio-ip-messaging.js 0.10.4
 The following license applies to all parts of this software except as
 documented below.
 
@@ -3243,9 +3243,10 @@ Client.prototype._updateToken = function _updateToken(token) {
   this._token = token;
   log.info('IPMSG I: authTokenUpdated');
 
-  return _promise2.default.all([this._twilsock.setAuthToken(token), this._notification.setAuthToken(token), this._datasync.setAuthToken(token), this._sessionPromise.then(function () {
+  this._datasync.setAuthToken(token);
+  return this._sessionPromise.then(function () {
     return _this4._session.updateToken(token);
-  })]).then(function () {
+  }).then(function () {
     return _this4;
   });
 };
@@ -6161,11 +6162,11 @@ module.exports = { "default": _dereq_("core-js/library/fn/symbol/iterator"), __e
 
 exports.__esModule = true;
 
-var _iterator = _dereq_("babel-runtime/core-js/symbol/iterator");
+var _iterator = _dereq_("../core-js/symbol/iterator");
 
 var _iterator2 = _interopRequireDefault(_iterator);
 
-var _symbol = _dereq_("babel-runtime/core-js/symbol");
+var _symbol = _dereq_("../core-js/symbol");
 
 var _symbol2 = _interopRequireDefault(_symbol);
 
@@ -6178,7 +6179,7 @@ exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.d
 } : function (obj) {
   return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
 };
-},{"babel-runtime/core-js/symbol":38,"babel-runtime/core-js/symbol/iterator":39}],41:[function(_dereq_,module,exports){
+},{"../core-js/symbol":38,"../core-js/symbol/iterator":39}],41:[function(_dereq_,module,exports){
 _dereq_('../modules/web.dom.iterable');
 _dereq_('../modules/es6.string.iterator');
 module.exports = _dereq_('../modules/core.get-iterator');
@@ -6594,7 +6595,7 @@ module.exports = function(NAME, wrapper, methods, common, IS_MAP, IS_WEAK){
   return C;
 };
 },{"./_an-instance":53,"./_array-methods":57,"./_descriptors":68,"./_export":72,"./_fails":73,"./_for-of":74,"./_global":75,"./_hide":77,"./_is-object":84,"./_meta":93,"./_object-dp":96,"./_redefine-all":108,"./_set-to-string-tag":112}],65:[function(_dereq_,module,exports){
-var core = module.exports = {version: '2.3.0'};
+var core = module.exports = {version: '2.4.0'};
 if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
 },{}],66:[function(_dereq_,module,exports){
 // optional / simple context binding
@@ -6733,20 +6734,26 @@ var ctx         = _dereq_('./_ctx')
   , isArrayIter = _dereq_('./_is-array-iter')
   , anObject    = _dereq_('./_an-object')
   , toLength    = _dereq_('./_to-length')
-  , getIterFn   = _dereq_('./core.get-iterator-method');
-module.exports = function(iterable, entries, fn, that, ITERATOR){
+  , getIterFn   = _dereq_('./core.get-iterator-method')
+  , BREAK       = {}
+  , RETURN      = {};
+var exports = module.exports = function(iterable, entries, fn, that, ITERATOR){
   var iterFn = ITERATOR ? function(){ return iterable; } : getIterFn(iterable)
     , f      = ctx(fn, that, entries ? 2 : 1)
     , index  = 0
-    , length, step, iterator;
+    , length, step, iterator, result;
   if(typeof iterFn != 'function')throw TypeError(iterable + ' is not iterable!');
   // fast case for arrays with default iterator
   if(isArrayIter(iterFn))for(length = toLength(iterable.length); length > index; index++){
-    entries ? f(anObject(step = iterable[index])[0], step[1]) : f(iterable[index]);
+    result = entries ? f(anObject(step = iterable[index])[0], step[1]) : f(iterable[index]);
+    if(result === BREAK || result === RETURN)return result;
   } else for(iterator = iterFn.call(iterable); !(step = iterator.next()).done; ){
-    call(iterator, f, step.value, entries);
+    result = call(iterator, f, step.value, entries);
+    if(result === BREAK || result === RETURN)return result;
   }
 };
+exports.BREAK  = BREAK;
+exports.RETURN = RETURN;
 },{"./_an-object":54,"./_ctx":66,"./_is-array-iter":82,"./_iter-call":85,"./_to-length":121,"./core.get-iterator-method":128}],75:[function(_dereq_,module,exports){
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 var global = module.exports = typeof window != 'undefined' && window.Math == Math
@@ -7980,6 +7987,7 @@ var global         = _dereq_('./_global')
   , isEnum         = {}.propertyIsEnumerable
   , SymbolRegistry = shared('symbol-registry')
   , AllSymbols     = shared('symbols')
+  , OPSymbols      = shared('op-symbols')
   , ObjectProto    = Object[PROTOTYPE]
   , USE_NATIVE     = typeof $Symbol == 'function'
   , QObject        = global.QObject;
@@ -8011,6 +8019,7 @@ var isSymbol = USE_NATIVE && typeof $Symbol.iterator == 'symbol' ? function(it){
 };
 
 var $defineProperty = function defineProperty(it, key, D){
+  if(it === ObjectProto)$defineProperty(OPSymbols, key, D);
   anObject(it);
   key = toPrimitive(key, true);
   anObject(D);
@@ -8038,10 +8047,14 @@ var $create = function create(it, P){
 };
 var $propertyIsEnumerable = function propertyIsEnumerable(key){
   var E = isEnum.call(this, key = toPrimitive(key, true));
+  if(this === ObjectProto && has(AllSymbols, key) && !has(OPSymbols, key))return false;
   return E || !has(this, key) || !has(AllSymbols, key) || has(this, HIDDEN) && this[HIDDEN][key] ? E : true;
 };
 var $getOwnPropertyDescriptor = function getOwnPropertyDescriptor(it, key){
-  var D = gOPD(it = toIObject(it), key = toPrimitive(key, true));
+  it  = toIObject(it);
+  key = toPrimitive(key, true);
+  if(it === ObjectProto && has(AllSymbols, key) && !has(OPSymbols, key))return;
+  var D = gOPD(it, key);
   if(D && has(AllSymbols, key) && !(has(it, HIDDEN) && it[HIDDEN][key]))D.enumerable = true;
   return D;
 };
@@ -8050,16 +8063,19 @@ var $getOwnPropertyNames = function getOwnPropertyNames(it){
     , result = []
     , i      = 0
     , key;
-  while(names.length > i)if(!has(AllSymbols, key = names[i++]) && key != HIDDEN && key != META)result.push(key);
-  return result;
+  while(names.length > i){
+    if(!has(AllSymbols, key = names[i++]) && key != HIDDEN && key != META)result.push(key);
+  } return result;
 };
 var $getOwnPropertySymbols = function getOwnPropertySymbols(it){
-  var names  = gOPN(toIObject(it))
+  var IS_OP  = it === ObjectProto
+    , names  = gOPN(IS_OP ? OPSymbols : toIObject(it))
     , result = []
     , i      = 0
     , key;
-  while(names.length > i)if(has(AllSymbols, key = names[i++]))result.push(AllSymbols[key]);
-  return result;
+  while(names.length > i){
+    if(has(AllSymbols, key = names[i++]) && (IS_OP ? has(ObjectProto, key) : true))result.push(AllSymbols[key]);
+  } return result;
 };
 
 // 19.4.1.1 Symbol([description])
@@ -8067,13 +8083,12 @@ if(!USE_NATIVE){
   $Symbol = function Symbol(){
     if(this instanceof $Symbol)throw TypeError('Symbol is not a constructor!');
     var tag = uid(arguments.length > 0 ? arguments[0] : undefined);
-    DESCRIPTORS && setter && setSymbolDesc(ObjectProto, tag, {
-      configurable: true,
-      set: function(value){
-        if(has(this, HIDDEN) && has(this[HIDDEN], tag))this[HIDDEN][tag] = false;
-        setSymbolDesc(this, tag, createDesc(1, value));
-      }
-    });
+    var $set = function(value){
+      if(this === ObjectProto)$set.call(OPSymbols, value);
+      if(has(this, HIDDEN) && has(this[HIDDEN], tag))this[HIDDEN][tag] = false;
+      setSymbolDesc(this, tag, createDesc(1, value));
+    };
+    if(DESCRIPTORS && setter)setSymbolDesc(ObjectProto, tag, {configurable: true, set: $set});
     return wrap(tag);
   };
   redefine($Symbol[PROTOTYPE], 'toString', function toString(){
@@ -16494,7 +16509,7 @@ RegistrarConnector.prototype.has = function (messageType) {
 
 RegistrarConnector.prototype.subscribe = function (messageType) {
   if (this._messageTypes.has(messageType)) {
-    log.warn('Message type already registered ', messageType);
+    log.debug('Message type already registered ', messageType);
     return false;
   }
 
@@ -16830,11 +16845,14 @@ function TwilsockConnector(context, twilsock, config) {
     context: { value: context }
   });
 
-  twilsock.on('disconnected', function () {
-    return _this.emit('transportReady', false);
+  twilsock.on('stateChanged', function (state) {
+    if (state !== 'connected') {
+      _this.emit('transportReady', false);
+    }
   });
+
   twilsock.on('registered', function (id) {
-    if (context && id === context.id) {
+    if (context && id === context.id && twilsock.state === 'connected') {
       _this.emit('transportReady', true);
     }
   });
@@ -16859,7 +16877,7 @@ TwilsockConnector.prototype.has = function (messageType) {
 
 TwilsockConnector.prototype.subscribe = function (messageType) {
   if (this._messageTypes.has(messageType)) {
-    log.warn('Message type already registered ', messageType);
+    log.debug('Message type already registered ', messageType);
     return false;
   }
 
@@ -17283,6 +17301,9 @@ function TwilsockClient(accessManager, options) {
       } },
     connected: { get: function get() {
         return _this._socket.isConnected;
+      } },
+    state: { get: function get() {
+        return _this._socket.state;
       } }
   });
 
@@ -17308,6 +17329,9 @@ function TwilsockClient(accessManager, options) {
   });
   this._socket.on('disconnected', function () {
     return _this.emit('disconnected');
+  });
+  this._socket.on('stateChanged', function (state) {
+    return _this.emit('stateChanged', state);
   });
 }
 
@@ -17648,7 +17672,7 @@ var WebSocket = _dereq_('ws');
 var StateMachine = _dereq_('javascript-state-machine');
 
 var ACTIVITY_CHECK_INTERVAL = 5000;
-var ACTIVITY_TIMEOUT = 43000;
+var ACTIVITY_TIMEOUT = 45000;
 
 /**
  * @class TwilsockChannel
@@ -17664,7 +17688,7 @@ function TwilsockChannel(config) {
 
   var fsm = StateMachine.create({
     initial: 'disconnected',
-    events: [{ name: 'userConnect', from: ['disconnected'], to: 'connecting' }, { name: 'userDisconnect', from: ['connecting', 'connected', 'retrying'], to: 'disconnecting' }, { name: 'userRetry', from: ['retrying'], to: 'connecting' }, { name: 'socketConnected', from: ['connecting'], to: 'connected' }, { name: 'socketClosed', from: ['connecting', 'connected'], to: 'retrying' }, { name: 'socketClosed', from: ['disconnecting'], to: 'disconnected' }, { name: 'socketRejected', from: ['connecting', 'connected'], to: 'disconnecting' }],
+    events: [{ name: 'userConnect', from: ['disconnected'], to: 'connecting' }, { name: 'userDisconnect', from: ['connecting', 'connected', 'retrying'], to: 'disconnecting' }, { name: 'userRetry', from: ['retrying'], to: 'connecting' }, { name: 'socketConnected', from: ['connecting'], to: 'connected' }, { name: 'socketClosed', from: ['connecting', 'connected', 'error'], to: 'retrying' }, { name: 'socketError', from: ['connected'], to: 'retrying' }, { name: 'socketClosed', from: ['disconnecting'], to: 'disconnected' }, { name: 'socketRejected', from: ['connecting', 'connected'], to: 'disconnecting' }, { name: 'protocolError', from: ['connected'], to: 'error' }],
     callbacks: {
       onconnecting: function onconnecting() {
         _this._startWatchdogTimer();
@@ -17689,6 +17713,12 @@ function TwilsockChannel(config) {
       onsocketRejected: function onsocketRejected() {
         var args = Array.prototype.slice.call(_arguments, 3, _arguments.length);
         _this._onSocketRejected(args);
+      },
+      onerror: function onerror() {
+        _this._closeSocket();
+      },
+      onenterstate: function onenterstate() {
+        _this.emit('stateChanged', _this.state);
       }
     },
     error: function error() {
@@ -17765,6 +17795,7 @@ TwilsockChannel.prototype._getState = function () {
     case 'disconnecting':
       return TwilsockChannel.state.DISCONNECTING;
     case 'disconnected':
+    case 'error':
     default:
       return TwilsockChannel.state.DISCONNECTED;
   }
@@ -17776,7 +17807,7 @@ TwilsockChannel.prototype._initRetry = function () {
 
 TwilsockChannel.prototype._retry = function () {
   this._socket = null;
-  this._token = null;
+  this._activeToken = null;
   this._fsm.userRetry();
 };
 
@@ -17789,7 +17820,7 @@ TwilsockChannel.prototype._onDisconnected = function () {
   this._backoff.reset();
   this._wschannelUrl = null;
   this._socket = null;
-  this._token = null;
+  this._activeToken = null;
   this.emit('disconnected');
 };
 
@@ -17846,11 +17877,10 @@ TwilsockChannel.prototype._setupSocket = function () {
   };
 
   socket.onerror = function (error) {
-    log.debug('Twilsock E: ', error);
+    log.error('Twilsock: ', error);
     // self._fsm.socketError();
   };
 
-  // Log messages from the server
   socket.onmessage = function (message) {
     log.trace('Twilsock: ', message.data);
 
@@ -17859,19 +17889,35 @@ TwilsockChannel.prototype._setupSocket = function () {
     var dataView = new Uint8Array(message.data);
     var magic = getMagic(dataView);
     if (magic.protocol !== 'TWILSOCK' || magic.version !== 'V1.0') {
-      throw new Error('Unsupported protocol: ' + magic.protocol + ' ver ' + magic.version);
+      log.error('Twilsock E: unsupported protocol: ' + magic.protocol + ' ver ' + magic.version);
+      self._fsm.socketRejected('Unsupported protocol');
+      return;
     }
 
-    var header = getJsonObject(dataView.subarray(magic.size, magic.size + magic.headerSize));
+    var header = null;
+    try {
+      header = getJsonObject(dataView.subarray(magic.size, magic.size + magic.headerSize));
+    } catch (e) {
+      log.error('Twilsock: failed to parse message header', e, message);
+      self._fsm.protocolError();
+      return;
+    }
     log.trace('Twilsock: message received: ', header);
 
     var payload = null;
     if (header.payload_size > 0) {
       var payloadOffset = fieldMargin + magic.size + magic.headerSize;
+      var payloadSize = header.payload_size;
       if (!header.hasOwnProperty('payload_type') || header.payload_type.indexOf('application/json') === 0) {
-        payload = getJsonObject(dataView.subarray(payloadOffset));
+        try {
+          payload = getJsonObject(dataView.subarray(payloadOffset, payloadOffset + payloadSize));
+        } catch (e) {
+          log.error('Twilsock: failed to parse message body', e, message);
+          self._fsm.protocolError();
+          return;
+        }
       } else if (header.payload_type.indexOf('text/plain') === 0) {
-        payload = new Buffer(dataView.subarray(payloadOffset)).toString();
+        payload = new Buffer(dataView.subarray(payloadOffset, payloadOffset + payloadSize)).toString();
       }
     }
 
@@ -18051,7 +18097,6 @@ TwilsockChannel.prototype.send = function (header, body) {
  */
 TwilsockChannel.prototype._onSocketRejected = function socketRejected(reason) {
   log.error('Twilsock connection closed by server', reason);
-  this.emit('remoteClose', reason);
   this._closeSocket();
 };
 
@@ -18065,6 +18110,9 @@ TwilsockChannel.prototype._startWatchdogTimer = function () {
   this._watchTimer = setInterval(function () {
     if (Date.now() - _this3._timestamp > ACTIVITY_TIMEOUT && _this3._socket) {
       _this3._socket.close();
+      _this3._socket.onmessage = null;
+      _this3._socket = null;
+      _this3._fsm.socketClosed();
     }
   }, ACTIVITY_CHECK_INTERVAL);
 };
@@ -20421,7 +20469,7 @@ function extend() {
 },{}],211:[function(_dereq_,module,exports){
 module.exports={
   "name": "twilio-ip-messaging",
-  "version": "0.10.3",
+  "version": "0.10.4",
   "description": "A library for Twilio IP messaging",
   "main": "lib/index.js",
   "author": "Twilio",
